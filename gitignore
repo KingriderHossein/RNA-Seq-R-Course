@@ -1,0 +1,17 @@
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data files
+.RData
+.RData-tmp
+
+# User-specific files
+.Ruserdata
+
+# Example patch for directory
+.Rproj.user/
+
+# Output files
+*.Rout
+*.RData
