@@ -1,4 +1,4 @@
-/* UI version: 1.0.1 */
+/* UI version: 1.2.0 */
 
 (() => {
   "use strict";
@@ -15,12 +15,10 @@
   const progressBar = document.getElementById("reading-progress-bar");
   const backToTop = document.getElementById("back-to-top");
 
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
-
   function getInitialTheme() {
     const stored = localStorage.getItem(THEME_KEY);
     if (stored === "light" || stored === "dark") return stored;
-    return prefersDark.matches ? "dark" : "light";
+    return "dark";
   }
 
   function setTheme(theme, persist = false) {
@@ -35,11 +33,6 @@
     setTheme(next, true);
   });
 
-  prefersDark.addEventListener?.("change", (event) => {
-    if (!localStorage.getItem(THEME_KEY)) {
-      setTheme(event.matches ? "dark" : "light");
-    }
-  });
 
   function slugify(value, fallback) {
     const normalized = value
@@ -177,6 +170,14 @@
       const code = pre.querySelector("code");
       const match = code?.className.match(/language-([\w-]+)/i);
       const label = match?.[1] || "Code";
+
+      if (code && window.hljs) {
+        try {
+          window.hljs.highlightElement(code);
+        } catch (error) {
+          console.warn("Syntax highlighting skipped.", error);
+        }
+      }
 
       const frame = document.createElement("section");
       frame.className = "code-frame";
