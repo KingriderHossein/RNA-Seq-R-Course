@@ -1,19 +1,26 @@
-/* UI version: 1.0.1 */
+/* UI version: 1.1.0 */
 
 :root {
-  --bg: #f7f7f4;
+  --bg: #f8f7fc;
   --surface: #ffffff;
-  --surface-soft: #f3f4f1;
-  --text: #161814;
-  --muted: #6f736b;
-  --line: #dddfd8;
-  --line-strong: #c7cac0;
-  --accent: #2f6f4e;
-  --accent-soft: #e9f1ec;
-  --code-bg: #f2f3f0;
-  --code-text: #1c221d;
-  --header-bg: rgba(247, 247, 244, 0.9);
-  --shadow: 0 10px 35px rgba(25, 31, 26, 0.06);
+  --surface-soft: #f1eef9;
+  --text: #17151f;
+  --muted: #716b80;
+  --line: #ded8eb;
+  --line-strong: #c8bfdc;
+  --accent: #7c3aed;
+  --accent-2: #06b6d4;
+  --accent-warm: #f59e0b;
+  --accent-pink: #db2777;
+  --accent-soft: #eee7ff;
+  --accent-cyan-soft: #e6f9fc;
+  --accent-pink-soft: #fce7f3;
+  --code-bg: #171522;
+  --code-surface: #201d2f;
+  --code-text: #f8f7ff;
+  --code-muted: #aaa3ba;
+  --header-bg: rgba(248, 247, 252, 0.92);
+  --shadow: 0 16px 44px rgba(50, 34, 86, 0.10);
   --header-height: 72px;
   --article-width: 820px;
   --toc-width: 270px;
@@ -23,19 +30,26 @@
 }
 
 :root[data-theme="dark"] {
-  --bg: #151715;
-  --surface: #1c1f1c;
-  --surface-soft: #222622;
-  --text: #f2f3ee;
-  --muted: #aaafa5;
-  --line: #343934;
-  --line-strong: #484f48;
-  --accent: #8ac5a2;
-  --accent-soft: #23372b;
-  --code-bg: #191c19;
-  --code-text: #e7ece6;
-  --header-bg: rgba(21, 23, 21, 0.9);
-  --shadow: 0 12px 38px rgba(0, 0, 0, 0.22);
+  --bg: #0f0d16;
+  --surface: #171522;
+  --surface-soft: #211e2f;
+  --text: #fbfaff;
+  --muted: #aaa3ba;
+  --line: #332e45;
+  --line-strong: #4a4262;
+  --accent: #a78bfa;
+  --accent-2: #22d3ee;
+  --accent-warm: #fbbf24;
+  --accent-pink: #f472b6;
+  --accent-soft: #2a2144;
+  --accent-cyan-soft: #132f35;
+  --accent-pink-soft: #3a1c32;
+  --code-bg: #0b0a10;
+  --code-surface: #15121f;
+  --code-text: #fbfaff;
+  --code-muted: #aaa3ba;
+  --header-bg: rgba(15, 13, 22, 0.92);
+  --shadow: 0 16px 48px rgba(0, 0, 0, 0.32);
 }
 
 *,
@@ -881,4 +895,230 @@ button {
   color: var(--text);
   font-size: 1.25rem;
   font-weight: 750;
+}
+
+
+/* rebelScience-inspired color pass — UI v1.1.0 */
+body {
+  background:
+    radial-gradient(circle at 8% -8%, color-mix(in srgb, var(--accent-pink) 10%, transparent), transparent 28rem),
+    radial-gradient(circle at 96% 2%, color-mix(in srgb, var(--accent-2) 10%, transparent), transparent 30rem),
+    var(--bg);
+}
+
+.reading-progress span {
+  background: linear-gradient(90deg, var(--accent-2), var(--accent), var(--accent-pink), var(--accent-warm));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 48%, transparent);
+}
+
+.site-header {
+  border-bottom-color: color-mix(in srgb, var(--accent) 18%, var(--line));
+}
+
+.site-mark__glyph {
+  border: 0;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent) 48%, var(--accent-pink) 100%);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--accent) 24%, transparent);
+}
+
+.site-mark__text {
+  background: linear-gradient(90deg, var(--text) 0 70%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.header-action:hover,
+.header-action:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.toc-label {
+  color: var(--accent-pink);
+}
+
+.toc-nav {
+  border-inline-start-color: color-mix(in srgb, var(--accent) 24%, var(--line));
+}
+
+.toc-link:hover,
+.toc-link:focus-visible {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.toc-link.is-active {
+  color: var(--text);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--accent) 15%, transparent),
+    color-mix(in srgb, var(--accent-2) 8%, transparent)
+  );
+}
+
+.toc-link.is-active::before {
+  width: 3px;
+  background: linear-gradient(var(--accent-2), var(--accent), var(--accent-pink));
+}
+
+.article .document-title {
+  position: relative;
+  padding-block-end: 18px;
+}
+
+.article .document-title::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-end: 0;
+  width: min(210px, 38%);
+  height: 5px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent-2), var(--accent), var(--accent-pink), var(--accent-warm));
+}
+
+.article h1:not(.document-title) {
+  color: var(--text);
+}
+
+.article h2 {
+  position: relative;
+  padding-inline-start: 16px;
+}
+
+.article h2::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block: 0.18em;
+  width: 4px;
+  border-radius: 999px;
+  background: linear-gradient(var(--accent-2), var(--accent));
+}
+
+.article h3 {
+  color: color-mix(in srgb, var(--text) 88%, var(--accent));
+}
+
+.article a {
+  color: var(--accent);
+  text-decoration-color: color-mix(in srgb, var(--accent-pink) 50%, transparent);
+}
+
+.article a:hover,
+.article a:focus-visible {
+  color: var(--accent-pink);
+  text-decoration-color: currentColor;
+}
+
+.article li::marker {
+  color: var(--accent);
+}
+
+.article blockquote {
+  padding: 1em 1.2em;
+  border-inline-start: 4px solid var(--accent-pink);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background:
+    linear-gradient(100deg, var(--accent-pink-soft), color-mix(in srgb, var(--accent-soft) 35%, transparent));
+  color: var(--text);
+}
+
+.article :not(pre) > code {
+  border-color: color-mix(in srgb, var(--accent) 24%, var(--line));
+  background: var(--accent-soft);
+  color: color-mix(in srgb, var(--text) 78%, var(--accent));
+}
+
+.code-frame {
+  border-color: color-mix(in srgb, var(--accent) 28%, #282235);
+  background: var(--code-bg);
+  box-shadow: 0 16px 38px rgba(24, 17, 42, 0.16);
+}
+
+.code-toolbar {
+  border-bottom-color: color-mix(in srgb, var(--accent) 22%, #302a41);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--accent-2) 12%, var(--code-surface)), var(--code-surface) 36%, color-mix(in srgb, var(--accent-pink) 10%, var(--code-surface)));
+  color: var(--code-muted);
+}
+
+.code-label {
+  color: var(--accent-2);
+}
+
+.code-action {
+  color: #d9d3e8;
+}
+
+.code-action:hover,
+.code-action:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 48%, #4a405f);
+  background: color-mix(in srgb, var(--accent) 18%, var(--code-surface));
+  color: #fff;
+}
+
+.code-frame pre {
+  color: var(--code-text);
+  background: var(--code-bg);
+}
+
+.code-frame.is-collapsible:not(.is-expanded) .code-body::after {
+  background: linear-gradient(to bottom, transparent, var(--code-bg));
+}
+
+.table-scroll {
+  border-color: color-mix(in srgb, var(--accent) 18%, var(--line));
+  box-shadow: 0 10px 26px rgba(50, 34, 86, 0.06);
+}
+
+.article th {
+  background:
+    linear-gradient(90deg, var(--accent-soft), var(--accent-cyan-soft));
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 18%, var(--line));
+}
+
+.article td {
+  border-color: color-mix(in srgb, var(--accent) 12%, var(--line));
+}
+
+.article tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--accent-soft) 34%, var(--surface));
+}
+
+.article .document-meta {
+  border-color: color-mix(in srgb, var(--accent-pink) 32%, var(--line));
+  background: linear-gradient(90deg, var(--accent-pink-soft), var(--accent-soft));
+  color: color-mix(in srgb, var(--text) 72%, var(--accent-pink));
+}
+
+.article .abstract-title {
+  color: var(--accent);
+}
+
+.back-to-top {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+  background: linear-gradient(135deg, var(--surface), var(--accent-soft));
+}
+
+.back-to-top:hover,
+.back-to-top:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.loading-dot {
+  background: var(--accent-pink);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent-pink) 12%, transparent);
+}
+
+@media (max-width: 1120px) {
+  .toc-panel {
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--accent-soft) 36%, var(--surface)), var(--surface) 180px);
+  }
 }
