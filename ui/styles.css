@@ -861,3 +861,24 @@ button {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* Source-derived document header roles */
+.article .document-meta {
+  width: fit-content;
+  margin-block: 1.4em 2.2em;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.article .abstract-title {
+  margin-block: 2.2em 0.75em;
+  color: var(--text);
+  font-size: 1.25rem;
+  font-weight: 750;
+}
