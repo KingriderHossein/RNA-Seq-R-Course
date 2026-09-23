@@ -1,121 +1,121 @@
-# ‫‫جریان کاری ⁦RNA-seq:⁩ تحلیل اکتشافی در سطح ژن و ⁦differential⁩ ⁦expression⁩ ⁦analysis⁩ (تحلیل بیان تفاضلی)‬
+# جریان کاری <span dir="ltr">RNA-seq:</span> تحلیل اکتشافی در سطح ژن و <span dir="ltr">differential</span> <span dir="ltr">expression</span> <span dir="ltr">analysis</span> (تحلیل بیان تفاضلی)
 
-‫⁦Michael⁩ ⁦I.⁩ ⁦Love⁩ 1,2 ، ⁦Simon⁩ ⁦Anders⁩ 3 ، ⁦Vladislav⁩ ⁦Kim⁩ 4 و ⁦Wolfgang⁩ ⁦Huber⁩ 4‬
+<span dir="ltr">Michael</span> <span dir="ltr">I.</span> <span dir="ltr">Love</span> 1,2 ، <span dir="ltr">Simon</span> <span dir="ltr">Anders</span> 3 ، <span dir="ltr">Vladislav</span> <span dir="ltr">Kim</span> 4 و <span dir="ltr">Wolfgang</span> <span dir="ltr">Huber</span> 4
 
-‫1 گروه آمارزیستی، ⁦UNC-Chapel⁩ ⁦Hill⁩، چپل‌هیل، کارولینای شمالی، آمریکا  ‬
-‫2 گروه ژنتیک، ⁦UNC-Chapel⁩ ⁦Hill⁩، چپل‌هیل، کارولینای شمالی، آمریکا  ‬
-‫3 مرکز زیست‌شناسی مولکولی دانشگاه هایدلبرگ، هایدلبرگ، آلمان  ‬
-‫4 آزمایشگاه اروپایی زیست‌شناسی مولکولی (⁦EMBL⁩)، هایدلبرگ، آلمان‬
+1 گروه آمارزیستی، <span dir="ltr">UNC-Chapel</span> <span dir="ltr">Hill</span>، چپل‌هیل، کارولینای شمالی، آمریکا  
+2 گروه ژنتیک، <span dir="ltr">UNC-Chapel</span> <span dir="ltr">Hill</span>، چپل‌هیل، کارولینای شمالی، آمریکا  
+3 مرکز زیست‌شناسی مولکولی دانشگاه هایدلبرگ، هایدلبرگ، آلمان  
+4 آزمایشگاه اروپایی زیست‌شناسی مولکولی (<span dir="ltr">EMBL</span>)، هایدلبرگ، آلمان
 
-#### ‫‫۱۶ اکتبر ۲۰۱۹‬
+#### ۱۶ اکتبر ۲۰۱۹
 
-#### ‫‫چکیده‬
+#### چکیده
 
-‫در اینجا گام‌به‌گام یک جریان کاری انتهابه‌انتها برای ⁦RNA-seq⁩ در سطح ژن برای انجام ⁦differential⁩ ⁦expression⁩ ⁦analysis⁩ (تحلیل بیان تفاضلی) در سطح ژن با استفاده از بسته‌های ⁦Bioconductor⁩ مرور می‌کنیم. از فایل‌های ⁦FASTQ⁩ آغاز می‌کنیم، نشان می‌دهیم چگونه این داده‌ها نسبت به ⁦transcripts⁩ (رونوشت‌ها)ی مرجع کمی‌سازی شده‌اند، و مجموعه‌داده‌های ⁦count⁩ (شمارش) در سطح ژن را برای تحلیل‌های پایین‌دستی آماده می‌کنیم. ⁦exploratory⁩ ⁦data⁩ ⁦analysis⁩ (تحلیل اکتشافی داده‌ها؛ ⁦EDA⁩) را برای ارزیابی کیفیت و بررسی ارتباط بین نمونه‌ها انجام می‌دهیم، تحلیل بیان تفاضلی ژنی را پیش می‌بریم، و نتایج را به‌صورت بصری بررسی می‌کنیم.‬
+در اینجا گام‌به‌گام یک جریان کاری انتهابه‌انتها برای <span dir="ltr">RNA-seq</span> در سطح ژن برای انجام <span dir="ltr">differential</span> <span dir="ltr">expression</span> <span dir="ltr">analysis</span> (تحلیل بیان تفاضلی) در سطح ژن با استفاده از بسته‌های <span dir="ltr">Bioconductor</span> مرور می‌کنیم. از فایل‌های <span dir="ltr">FASTQ</span> آغاز می‌کنیم، نشان می‌دهیم چگونه این داده‌ها نسبت به <span dir="ltr">transcripts</span> (رونوشت‌ها)ی مرجع کمی‌سازی شده‌اند، و مجموعه‌داده‌های <span dir="ltr">count</span> (شمارش) در سطح ژن را برای تحلیل‌های پایین‌دستی آماده می‌کنیم. <span dir="ltr">exploratory</span> <span dir="ltr">data</span> <span dir="ltr">analysis</span> (تحلیل اکتشافی داده‌ها؛ <span dir="ltr">EDA</span>) را برای ارزیابی کیفیت و بررسی ارتباط بین نمونه‌ها انجام می‌دهیم، تحلیل بیان تفاضلی ژنی را پیش می‌بریم، و نتایج را به‌صورت بصری بررسی می‌کنیم.
 
-# ‫‫فهرست مطالب‬
+# فهرست مطالب
 
-* ‫‫1 مقدمه‬
+* 1 مقدمه
   
-    + ‫‫1\.1 داده‌های آزمایشی‬
-* ‫‫2 آماده‌سازی ورودی کمی‌سازی برای _⁦DESeq2_⁩‬
+    + 1\.1 داده‌های آزمایشی
+* 2 آماده‌سازی ورودی کمی‌سازی برای _<span dir="ltr">DESeq2_</span>
   
-    + ‫‫2\.1 کمی‌سازی رونوشت و _⁦tximport_⁩ / _⁦tximeta_⁩‬
-    + ‫‫2\.2 کمی‌سازی با _⁦Salmon_⁩‬
-    + ‫‫2\.3 خواندن داده با _⁦tximeta_⁩‬
-    + ‫‫2\.4 توابع واردسازی _⁦DESeq2_⁩‬
-    + ‫‫2\.5 _⁦SummarizedExperiment_⁩‬
-    + ‫‫2\.6 نقطهٔ انشعاب‬
-* ‫‫3 شیء _⁦DESeqDataSet_⁩، اطلاعات نمونه و فرمول طراحی‬
+    + 2\.1 کمی‌سازی رونوشت و _<span dir="ltr">tximport_</span> / _<span dir="ltr">tximeta_</span>
+    + 2\.2 کمی‌سازی با _<span dir="ltr">Salmon_</span>
+    + 2\.3 خواندن داده با _<span dir="ltr">tximeta_</span>
+    + 2\.4 توابع واردسازی _<span dir="ltr">DESeq2_</span>
+    + 2\.5 _<span dir="ltr">SummarizedExperiment_</span>
+    + 2\.6 نقطهٔ انشعاب
+* 3 شیء _<span dir="ltr">DESeqDataSet_</span>، اطلاعات نمونه و فرمول طراحی
   
-    + ‫‫3\.1 شروع از _⁦SummarizedExperiment_⁩‬
-    + ‫‫3\.2 شروع از ماتریس‌های شمارش‬
-* ‫‫4 تحلیل اکتشافی و بصری‌سازی‬
+    + 3\.1 شروع از _<span dir="ltr">SummarizedExperiment_</span>
+    + 3\.2 شروع از ماتریس‌های شمارش
+* 4 تحلیل اکتشافی و بصری‌سازی
   
-    + ‫‫4\.1 پیش‌پالایش مجموعه‌داده‬
-    + ‫‫4\.2 تبدیل پایاساز واریانس و ⁦rlog⁩‬
-    + ‫‫4\.3 فاصله‌های نمونه‬
-    + ‫‫4\.4 نمودار ⁦PCA⁩‬
-    + ‫‫4\.5 نمودار ⁦PCA⁩ با استفاده از ⁦PCA⁩ تعمیم‌یافته‬
-    + ‫‫4\.6 نمودار ⁦MDS⁩‬
-* ‫‫5 تحلیل بیان تفاضلی‬
+    + 4\.1 پیش‌پالایش مجموعه‌داده
+    + 4\.2 تبدیل پایاساز واریانس و <span dir="ltr">rlog</span>
+    + 4\.3 فاصله‌های نمونه
+    + 4\.4 نمودار <span dir="ltr">PCA</span>
+    + 4\.5 نمودار <span dir="ltr">PCA</span> با استفاده از <span dir="ltr">PCA</span> تعمیم‌یافته
+    + 4\.6 نمودار <span dir="ltr">MDS</span>
+* 5 تحلیل بیان تفاضلی
   
-    + ‫‫5\.1 اجرای خط لولهٔ تحلیل بیان تفاضلی‬
-    + ‫‫5\.2 ساخت جدول نتایج‬
-    + ‫‫5\.3 مقایسه‌های دیگر‬
-    + ‫‫5\.4 ⁦multiple⁩ ⁦testing⁩ (آزمون‌های چندگانه)‬
-* ‫‫6 ترسیم نتایج‬
+    + 5\.1 اجرای خط لولهٔ تحلیل بیان تفاضلی
+    + 5\.2 ساخت جدول نتایج
+    + 5\.3 مقایسه‌های دیگر
+    + 5\.4 <span dir="ltr">multiple</span> <span dir="ltr">testing</span> (آزمون‌های چندگانه)
+* 6 ترسیم نتایج
   
-    + ‫‫6\.1 نمودار شمارش‌ها‬
-    + ‫‫6\.2 ⁦MA-plot⁩‬
-    + ‫‫6\.3 خوشه‌بندی ژن‬
-    + ‫‫6\.4 پالایش مستقل‬
-    + ‫‫6\.5 ⁦Independent⁩ ⁦Hypothesis⁩ ⁦Weighting⁩‬
-* ‫‫7 حاشیه‌نویسی و برون‌داد نتایج‬
+    + 6\.1 نمودار شمارش‌ها
+    + 6\.2 <span dir="ltr">MA-plot</span>
+    + 6\.3 خوشه‌بندی ژن
+    + 6\.4 پالایش مستقل
+    + 6\.5 <span dir="ltr">Independent</span> <span dir="ltr">Hypothesis</span> <span dir="ltr">Weighting</span>
+* 7 حاشیه‌نویسی و برون‌داد نتایج
   
-    + ‫‫7\.1 برون‌داد نتایج‬
-    + ‫‫7\.2 ترسیم تغییرِ نسبت‌ها در فضای ژنومی‬
-* ‫‫8 حذف ⁦batch⁩ ⁦effects⁩ (اثرهای دسته‌ای) نهفته‬
+    + 7\.1 برون‌داد نتایج
+    + 7\.2 ترسیم تغییرِ نسبت‌ها در فضای ژنومی
+* 8 حذف <span dir="ltr">batch</span> <span dir="ltr">effects</span> (اثرهای دسته‌ای) نهفته
   
-    + ‫‫8\.1 استفاده از ⁦SVA⁩ با ⁦DESeq2⁩‬
-    + ‫‫8\.2 استفاده از ⁦RUV⁩ با ⁦DESeq2⁩‬
-* ‫‫9 آزمایش‌های گذر زمان‬
-* ‫‫10 پیوست‬
+    + 8\.1 استفاده از <span dir="ltr">SVA</span> با <span dir="ltr">DESeq2</span>
+    + 8\.2 استفاده از <span dir="ltr">RUV</span> با <span dir="ltr">DESeq2</span>
+* 9 آزمایش‌های گذر زمان
+* 10 پیوست
   
-    + ‫‫10\.1 جزئیات به‌روز دربارهٔ کمی‌سازی‬
+    + 10\.1 جزئیات به‌روز دربارهٔ کمی‌سازی
         
-        - ‫‫10\.1.1 دانلود فایل‌های ⁦FASTQ⁩‬
-        - ‫‫10\.1.2 ساخت ایندکس ⁦salmon⁩‬
-        - ‫‫10\.1.3 کمی‌سازی ⁦abundance⁩ (فراوانی) با ⁦salmon⁩‬
-        - ‫‫10\.1.4 تولید یک ⁦RangedSummarizedExperiment⁩ با ⁦tximeta⁩‬
-* ‫‫11 اطلاعات نشست‬
-* ‫‫منابع‬
+        - 10\.1.1 دانلود فایل‌های <span dir="ltr">FASTQ</span>
+        - 10\.1.2 ساخت ایندکس <span dir="ltr">salmon</span>
+        - 10\.1.3 کمی‌سازی <span dir="ltr">abundance</span> (فراوانی) با <span dir="ltr">salmon</span>
+        - 10\.1.4 تولید یک <span dir="ltr">RangedSummarizedExperiment</span> با <span dir="ltr">tximeta</span>
+* 11 اطلاعات نشست
+* منابع
 
-‫**نسخهٔ ⁦R⁩** : ⁦R⁩ ⁦version⁩ 4.6.0 ⁦RC⁩ (2026-04-17 ⁦r89917⁩)‬
+**نسخهٔ <span dir="ltr">R</span>** : <span dir="ltr">R</span> <span dir="ltr">version</span> 4.6.0 <span dir="ltr">RC</span> (2026-04-17 <span dir="ltr">r89917</span>)
 
-‫**نسخهٔ ⁦Bioconductor⁩** : 3.23‬
+**نسخهٔ <span dir="ltr">Bioconductor</span>** : 3.23
 
-‫**بسته** : 1.36.0‬
+**بسته** : 1.36.0
 
-# ‫‫1 مقدمه‬
+# 1 مقدمه
 
-‫⁦Bioconductor⁩ مجموعهٔ بزرگی از بسته‌ها را برای تحلیل داده‌های توالی‌یابی پربازده، از جمله ⁦RNA-seq⁩، پشتیبانی می‌کند. بسته‌هایی که در این جریان کاری استفاده می‌کنیم شامل بسته‌های هسته‌ایِ نگه‌داری‌شده توسط تیم هستهٔ ⁦Bioconductor⁩ برای کار با حاشیه‌نویسی‌های ژنی هستند (مکان‌های ⁦gene⁩ (ژن) و ⁦transcript⁩ (رونوشت) در ژنوم، و نیز بازیابی شناسهٔ ژن). همچنین از بسته‌های مشارکتی برای تحلیل‌های آماری و بصری‌سازی داده‌های توالی‌یابی بهره می‌گیریم. با انتشارهای زمان‌بندی‌شدهٔ هر ۶ ماه، پروژهٔ ⁦Bioconductor⁩ اطمینان می‌دهد که همهٔ بسته‌های درون یک انتشار با هم سازگار و هماهنگ کار می‌کنند (و از این‌رو استعارهٔ «رسانه/رهبر ارکستر»). بسته‌های استفاده‌شده در این جریان کاری با تابع _⁦library_⁩ بارگذاری می‌شوند و می‌توان آن‌ها را با دنبال کردن [راهنمای نصب بسته‌های ⁦Bioconductor](http://bioconductor.org/install/)⁩ نصب کرد.‬
+<span dir="ltr">Bioconductor</span> مجموعهٔ بزرگی از بسته‌ها را برای تحلیل داده‌های توالی‌یابی پربازده، از جمله <span dir="ltr">RNA-seq</span>، پشتیبانی می‌کند. بسته‌هایی که در این جریان کاری استفاده می‌کنیم شامل بسته‌های هسته‌ایِ نگه‌داری‌شده توسط تیم هستهٔ <span dir="ltr">Bioconductor</span> برای کار با حاشیه‌نویسی‌های ژنی هستند (مکان‌های <span dir="ltr">gene</span> (ژن) و <span dir="ltr">transcript</span> (رونوشت) در ژنوم، و نیز بازیابی شناسهٔ ژن). همچنین از بسته‌های مشارکتی برای تحلیل‌های آماری و بصری‌سازی داده‌های توالی‌یابی بهره می‌گیریم. با انتشارهای زمان‌بندی‌شدهٔ هر ۶ ماه، پروژهٔ <span dir="ltr">Bioconductor</span> اطمینان می‌دهد که همهٔ بسته‌های درون یک انتشار با هم سازگار و هماهنگ کار می‌کنند (و از این‌رو استعارهٔ «رسانه/رهبر ارکستر»). بسته‌های استفاده‌شده در این جریان کاری با تابع _<span dir="ltr">library_</span> بارگذاری می‌شوند و می‌توان آن‌ها را با دنبال کردن [راهنمای نصب بسته‌های <span dir="ltr">Bioconductor](http://bioconductor.org/install/)</span> نصب کرد.
 
-* ‫‫نسخهٔ منتشرشدهٔ این جریان کاری، شامل گزارش‌های داوران و دیدگاه‌ها، در [⁦F1000Research](http://f1000research.com/articles/4-1070)⁩ در دسترس است. نسخه‌ای که اکنون می‌خوانید با آن متفاوت است، به‌ویژه از این جهت که اینجا کد اجرای سریع **⁦transcript⁩ ⁦quantification⁩ (کمی‌سازی رونوشت)** و سپس واردسازی در ⁦R/Bioconductor⁩ برای انجام تحلیل در سطح ژن را ارائه می‌کنیم.‬
-* ‫‫جریان کاری ⁦Bioconductor⁩ دیگری که **⁦differential⁩ ⁦transcript⁩ ⁦usage⁩ (⁦DTU⁩)** را پوشش می‌دهد، جریان کاری [⁦rnaseqDTU](https://bioconductor.org/packages/rnaseqDTU)⁩ است؛ نسخهٔ منتشرشدهٔ آن نیز در [⁦F1000Research](https://f1000research.com/articles/7-952/v3)⁩ در دسترس است.‬
-* ‫‫اگر دربارهٔ این جریان کاری یا هر نرم‌افزار ⁦Bioconductor⁩ پرسشی دارید، آن را در [⁦Bioconductor⁩ ⁦support⁩ ⁦site](https://support.bioconductor.org/)⁩ مطرح کنید. اگر پرسش به بسته‌ای مشخص مربوط است، می‌توانید پست را با نام آن بسته برچسب بزنید، و برای پرسش‌های کلی‌تر دربارهٔ جریان کاری، پست را با __⁦KEEP_BIDI_00001__⁩ برچسب بزنید. جهت طرح پرسشی بهینه در سایت پشتیبانی، [راهنمای ارسال__⁦KEEP_BIDI_00002__⁩ را ببینید.‬
+* نسخهٔ منتشرشدهٔ این جریان کاری، شامل گزارش‌های داوران و دیدگاه‌ها، در [<span dir="ltr">F1000Research](http://f1000research.com/articles/4-1070)</span> در دسترس است. نسخه‌ای که اکنون می‌خوانید با آن متفاوت است، به‌ویژه از این جهت که اینجا کد اجرای سریع **<span dir="ltr">transcript</span> <span dir="ltr">quantification</span> (کمی‌سازی رونوشت)** و سپس واردسازی در <span dir="ltr">R/Bioconductor</span> برای انجام تحلیل در سطح ژن را ارائه می‌کنیم.
+* جریان کاری <span dir="ltr">Bioconductor</span> دیگری که **<span dir="ltr">differential</span> <span dir="ltr">transcript</span> <span dir="ltr">usage</span> (<span dir="ltr">DTU</span>)** را پوشش می‌دهد، جریان کاری [<span dir="ltr">rnaseqDTU](https://bioconductor.org/packages/rnaseqDTU)</span> است؛ نسخهٔ منتشرشدهٔ آن نیز در [<span dir="ltr">F1000Research](https://f1000research.com/articles/7-952/v3)</span> در دسترس است.
+* اگر دربارهٔ این جریان کاری یا هر نرم‌افزار <span dir="ltr">Bioconductor</span> پرسشی دارید، آن را در [<span dir="ltr">Bioconductor</span> <span dir="ltr">support</span> <span dir="ltr">site](https://support.bioconductor.org/)</span> مطرح کنید. اگر پرسش به بسته‌ای مشخص مربوط است، می‌توانید پست را با نام آن بسته برچسب بزنید، و برای پرسش‌های کلی‌تر دربارهٔ جریان کاری، پست را با __<span dir="ltr">KEEP_BIDI_00001__</span> برچسب بزنید. جهت طرح پرسشی بهینه در سایت پشتیبانی، [راهنمای ارسال__<span dir="ltr">KEEP_BIDI_00002__</span> را ببینید.
 
-## ‫‫۱٫۱ داده‌های آزمایشی‬
+## ۱٫۱ داده‌های آزمایشی
 
-‫داده‌های به‌کاررفته در این جریان کاری در بستهٔ _[⁦airway](https://bioconductor.org/packages/3.23/airway)_⁩ ذخیره شده‌اند که خلاصه‌ای از یک آزمایش ⁦RNA-seq⁩ است؛ در آن، سلول‌های ماهیچهٔ صاف مجاری تنفسی با دگزامتازون، یک گلوکوکورتیکوئید صناعی با اثرات ضدالتهابی، تیمار شده‌اند (⁦Himes⁩ و همکاران 2014). گلوکوکورتیکوئیدها، برای نمونه، توسط بیماران آسمی برای کاهش التهاب راه‌های هوایی استفاده می‌شوند. در این آزمایش، چهار رده‌سلولی اولیهٔ انسانی از ماهیچهٔ صاف مجاری با ۱ میکرومولار دگزامتازون به‌مدت ۱۸ ساعت تیمار شدند. برای هر یک از این چهار رده‌سلولی، یک نمونهٔ تیمارشده و یک نمونهٔ تیمارنشده داریم. برای توضیحات بیشتر دربارهٔ آزمایش به [مدخل ⁦PubMed⁩ 24926665__⁦KEEP_BIDI_00001__⁩ و برای دادهٔ خام به [مدخل ⁦GEO⁩ ⁦GSE52778](http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE52778)⁩ مراجعه کنید.‬
+داده‌های به‌کاررفته در این جریان کاری در بستهٔ _[<span dir="ltr">airway](https://bioconductor.org/packages/3.23/airway)_</span> ذخیره شده‌اند که خلاصه‌ای از یک آزمایش <span dir="ltr">RNA-seq</span> است؛ در آن، سلول‌های ماهیچهٔ صاف مجاری تنفسی با دگزامتازون، یک گلوکوکورتیکوئید صناعی با اثرات ضدالتهابی، تیمار شده‌اند (<span dir="ltr">Himes</span> و همکاران 2014). گلوکوکورتیکوئیدها، برای نمونه، توسط بیماران آسمی برای کاهش التهاب راه‌های هوایی استفاده می‌شوند. در این آزمایش، چهار رده‌سلولی اولیهٔ انسانی از ماهیچهٔ صاف مجاری با ۱ میکرومولار دگزامتازون به‌مدت ۱۸ ساعت تیمار شدند. برای هر یک از این چهار رده‌سلولی، یک نمونهٔ تیمارشده و یک نمونهٔ تیمارنشده داریم. برای توضیحات بیشتر دربارهٔ آزمایش به [مدخل <span dir="ltr">PubMed</span> 24926665__<span dir="ltr">KEEP_BIDI_00001__</span> و برای دادهٔ خام به [مدخل <span dir="ltr">GEO</span> <span dir="ltr">GSE52778](http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE52778)</span> مراجعه کنید.
 
-# ‫‫2 آماده‌سازی ورودی کمی‌سازی برای ⁦DESeq2⁩‬
+# 2 آماده‌سازی ورودی کمی‌سازی برای <span dir="ltr">DESeq2</span>
 
-‫برای ورودی، روش‌های آماریِ مبتنی بر ⁦count⁩ (شمارش)، مانند _[⁦DESeq2](https://bioconductor.org/packages/3.23/DESeq2)_⁩ (⁦Love⁩، ⁦Huber⁩ و ⁦Anders⁩ 2014)، _[⁦edgeR](https://bioconductor.org/packages/3.23/edgeR)_⁩ (⁦Robinson⁩، ⁦McCarthy⁩ و ⁦Smyth⁩ 2009)، _[⁦limma](https://bioconductor.org/packages/3.23/limma)_⁩ با روش ⁦voom⁩ (⁦Law⁩ و همکاران 2014)، _[⁦DSS](https://bioconductor.org/packages/3.23/DSS)_⁩ (⁦Wu⁩، ⁦Wang⁩ و ⁦Wu⁩ 2013)، _[⁦EBSeq](https://bioconductor.org/packages/3.23/EBSeq)_⁩ (⁦Leng⁩ و همکاران 2013) و _[⁦baySeq](https://bioconductor.org/packages/3.23/baySeq)_⁩ (⁦Hardcastle⁩ و ⁦Kelly⁩ 2010)، انتظار دارند دادهٔ ورودی، مثلاً از ⁦RNA-seq⁩ یا هر آزمایش توالی‌یابی پربازده دیگر، به‌صورت ماتریسی از شمارش‌های نرمال‌سازی‌نشده باشد. مقدار خانهٔ واقع در ردیف _⁦i_⁩ ام و ستون _⁦j_⁩ ام ماتریس نشان می‌دهد چند ⁦reads⁩ (خوانش)‌ (یا قطعه، برای ⁦RNA-seq⁩ دوسر) می‌توان به ⁦gene⁩ (ژن) _⁦i_⁩ در نمونهٔ _⁦j_⁩ نسبت داد. به‌طور مشابه، برای انواع دیگر آزمون‌ها، ردیف‌های ماتریس ممکن است متناظر با نواحی اتصال (در ⁦ChIP-Seq⁩)، یا توالی‌های پپتیدی (در طیف‌سنجی جرمی کمی) باشند.‬
+برای ورودی، روش‌های آماریِ مبتنی بر <span dir="ltr">count</span> (شمارش)، مانند _[<span dir="ltr">DESeq2](https://bioconductor.org/packages/3.23/DESeq2)_</span> (<span dir="ltr">Love</span>، <span dir="ltr">Huber</span> و <span dir="ltr">Anders</span> 2014)، _[<span dir="ltr">edgeR](https://bioconductor.org/packages/3.23/edgeR)_</span> (<span dir="ltr">Robinson</span>، <span dir="ltr">McCarthy</span> و <span dir="ltr">Smyth</span> 2009)، _[<span dir="ltr">limma](https://bioconductor.org/packages/3.23/limma)_</span> با روش <span dir="ltr">voom</span> (<span dir="ltr">Law</span> و همکاران 2014)، _[<span dir="ltr">DSS](https://bioconductor.org/packages/3.23/DSS)_</span> (<span dir="ltr">Wu</span>، <span dir="ltr">Wang</span> و <span dir="ltr">Wu</span> 2013)، _[<span dir="ltr">EBSeq](https://bioconductor.org/packages/3.23/EBSeq)_</span> (<span dir="ltr">Leng</span> و همکاران 2013) و _[<span dir="ltr">baySeq](https://bioconductor.org/packages/3.23/baySeq)_</span> (<span dir="ltr">Hardcastle</span> و <span dir="ltr">Kelly</span> 2010)، انتظار دارند دادهٔ ورودی، مثلاً از <span dir="ltr">RNA-seq</span> یا هر آزمایش توالی‌یابی پربازده دیگر، به‌صورت ماتریسی از شمارش‌های نرمال‌سازی‌نشده باشد. مقدار خانهٔ واقع در ردیف _<span dir="ltr">i_</span> ام و ستون _<span dir="ltr">j_</span> ام ماتریس نشان می‌دهد چند <span dir="ltr">reads</span> (خوانش)‌ (یا قطعه، برای <span dir="ltr">RNA-seq</span> دوسر) می‌توان به <span dir="ltr">gene</span> (ژن) _<span dir="ltr">i_</span> در نمونهٔ _<span dir="ltr">j_</span> نسبت داد. به‌طور مشابه، برای انواع دیگر آزمون‌ها، ردیف‌های ماتریس ممکن است متناظر با نواحی اتصال (در <span dir="ltr">ChIP-Seq</span>)، یا توالی‌های پپتیدی (در طیف‌سنجی جرمی کمی) باشند.
 
-‫مقادیر در ماتریس باید شمارش‌ها یا شمارش‌های برآوردشدهٔ خوانش‌ها/قطعه‌های توالی‌یابی باشند. این موضوع برای برقرار بودن مدل آماری _⁦DESeq2_⁩ مهم است، زیرا تنها شمارش‌ها امکان برآوردِ ...‬
-‫تا دقت اندازه‌گیری را به‌درستی بازتاب دهد. بسیار مهم است که _هرگز_ ⁦count⁩ (شمارش)‌هایی را که از پیش برای عمق توالی‌یابی/اندازهٔ کتابخانهٔ نمونه ⁦normalization⁩ (نرمال‌سازی) شده‌اند ارائه نکنید؛ زیرا مدل آماری زمانی بیشترین توان را دارد که بر شمارش‌های نانرمال‌شده اعمال شود و به‌طور درون‌مدل برای اختلاف اندازهٔ کتابخانه‌ها نیز طراحی شده است.‬
+مقادیر در ماتریس باید شمارش‌ها یا شمارش‌های برآوردشدهٔ خوانش‌ها/قطعه‌های توالی‌یابی باشند. این موضوع برای برقرار بودن مدل آماری _<span dir="ltr">DESeq2_</span> مهم است، زیرا تنها شمارش‌ها امکان برآوردِ ...
+تا دقت اندازه‌گیری را به‌درستی بازتاب دهد. بسیار مهم است که _هرگز_ <span dir="ltr">count</span> (شمارش)‌هایی را که از پیش برای عمق توالی‌یابی/اندازهٔ کتابخانهٔ نمونه <span dir="ltr">normalization</span> (نرمال‌سازی) شده‌اند ارائه نکنید؛ زیرا مدل آماری زمانی بیشترین توان را دارد که بر شمارش‌های نانرمال‌شده اعمال شود و به‌طور درون‌مدل برای اختلاف اندازهٔ کتابخانه‌ها نیز طراحی شده است.
 
-## ‫‫۲٫۱ کمی‌سازی رونوشت‌ها با _⁦tximport_⁩ / _⁦tximeta_⁩‬
+## ۲٫۱ کمی‌سازی رونوشت‌ها با _<span dir="ltr">tximport_</span> / _<span dir="ltr">tximeta_</span>
 
-‫در نسخهٔ پیشین این جریان‌کار (از جمله نسخهٔ منتشرشده) نشان داده شد که چگونه می‌توان ⁦read⁩ (خوانش)‌ها را به ژنوم هم‌تراز کرد و سپس تعداد خوانش‌هایی را شمرد که با الگوهای ⁦gene⁩ (ژن) سازگارند. اکنون یک خط لولهٔ جایگزین و سریع‌تر به‌جای هم‌ترازی ژنومی و شمارش خوانش‌ها توصیه می‌شود. در این جریان‌کار نشان خواهیم داد چگونه داده‌های کمی‌سازی سطح ⁦transcript⁩ (رونوشت) را وارد کرده و با استفاده از _⁦tximport_⁩ یا _⁦tximeta_⁩ به سطح ژن تجمیع کنیم. روش‌های کمی‌سازی رونوشت مانند [⁦Salmon](https://combine-lab.github.io/salmon/)⁩ (⁦Patro⁩ ⁦et⁩ ⁦al.⁩ 2017 ) ، [⁦kallisto](https://pachterlab.github.io/kallisto/)⁩ (⁦Bray⁩ ⁦et⁩ ⁦al.⁩ 2016 ) یا [⁦RSEM](http://deweylab.github.io/RSEM/)⁩ (⁦Li⁩ ⁦and⁩ ⁦Dewey⁩ 2011 ) نگاشت یا هم‌ترازی خوانش‌ها به رونوشت‌های مرجع را انجام می‌دهند و در خروجی، شمارش‌های برآوردشده برای هر رونوشت و نیز طول‌های مؤثر رونوشت را می‌دهند که اثرات بایاس را خلاصه می‌کنند. پس از اجرای یکی از این ابزارها، بسته‌های _[⁦tximport](https://bioconductor.org/packages/3.23/tximport)_⁩ (⁦Soneson⁩, ⁦Love⁩, ⁦and⁩ ⁦Robinson⁩ 2015 ) یا _[⁦tximeta](https://bioconductor.org/packages/3.23/tximeta)_⁩ (⁦Love⁩ ⁦et⁩ ⁦al.⁩ 2020 ) می‌توانند ماتریس‌های شمارش و ⁦offset⁩ (افست) برآوردشده را برای استفاده در بسته‌های ⁦Bioconductor⁩ مربوط به ⁦differential⁩ ⁦expression⁩ ⁦analysis⁩ (تحلیل بیان تفاضلی) ژن‌ها بسازند؛ همان‌گونه که در ادامه نشان داده خواهد شد.‬
+در نسخهٔ پیشین این جریان‌کار (از جمله نسخهٔ منتشرشده) نشان داده شد که چگونه می‌توان <span dir="ltr">read</span> (خوانش)‌ها را به ژنوم هم‌تراز کرد و سپس تعداد خوانش‌هایی را شمرد که با الگوهای <span dir="ltr">gene</span> (ژن) سازگارند. اکنون یک خط لولهٔ جایگزین و سریع‌تر به‌جای هم‌ترازی ژنومی و شمارش خوانش‌ها توصیه می‌شود. در این جریان‌کار نشان خواهیم داد چگونه داده‌های کمی‌سازی سطح <span dir="ltr">transcript</span> (رونوشت) را وارد کرده و با استفاده از _<span dir="ltr">tximport_</span> یا _<span dir="ltr">tximeta_</span> به سطح ژن تجمیع کنیم. روش‌های کمی‌سازی رونوشت مانند [<span dir="ltr">Salmon](https://combine-lab.github.io/salmon/)</span> (<span dir="ltr">Patro</span> <span dir="ltr">et</span> <span dir="ltr">al.</span> 2017 ) ، [<span dir="ltr">kallisto](https://pachterlab.github.io/kallisto/)</span> (<span dir="ltr">Bray</span> <span dir="ltr">et</span> <span dir="ltr">al.</span> 2016 ) یا [<span dir="ltr">RSEM](http://deweylab.github.io/RSEM/)</span> (<span dir="ltr">Li</span> <span dir="ltr">and</span> <span dir="ltr">Dewey</span> 2011 ) نگاشت یا هم‌ترازی خوانش‌ها به رونوشت‌های مرجع را انجام می‌دهند و در خروجی، شمارش‌های برآوردشده برای هر رونوشت و نیز طول‌های مؤثر رونوشت را می‌دهند که اثرات بایاس را خلاصه می‌کنند. پس از اجرای یکی از این ابزارها، بسته‌های _[<span dir="ltr">tximport](https://bioconductor.org/packages/3.23/tximport)_</span> (<span dir="ltr">Soneson</span>, <span dir="ltr">Love</span>, <span dir="ltr">and</span> <span dir="ltr">Robinson</span> 2015 ) یا _[<span dir="ltr">tximeta](https://bioconductor.org/packages/3.23/tximeta)_</span> (<span dir="ltr">Love</span> <span dir="ltr">et</span> <span dir="ltr">al.</span> 2020 ) می‌توانند ماتریس‌های شمارش و <span dir="ltr">offset</span> (افست) برآوردشده را برای استفاده در بسته‌های <span dir="ltr">Bioconductor</span> مربوط به <span dir="ltr">differential</span> <span dir="ltr">expression</span> <span dir="ltr">analysis</span> (تحلیل بیان تفاضلی) ژن‌ها بسازند؛ همان‌گونه که در ادامه نشان داده خواهد شد.
 
-‫آموزشی کوتاه دربارهٔ استفاده از نرم‌افزار _⁦Salmon_⁩ برای کمی‌سازی ⁦abundance⁩ (فراوانی) رونوشت‬
-‫[اینجا__⁦KEEP_BIDI_00000__⁩ در دسترس است.‬
-‫توصیه می‌کنیم از __⁦KEEP_BIDI_00000__⁩ [⁦flag](http://salmon.readthedocs.io/en/latest/salmon.html)⁩ استفاده کنید که یک ضریب تصحیح برای بایاس‌های نظام‌مند که به‌طور معمول در داده‌های ⁦RNA-seq⁩ وجود دارند برآورد می‌کند (⁦Love⁩, ⁦Hogenesch⁩, ⁦and⁩ ⁦Irizarry⁩ 2016 ; ⁦Patro⁩ ⁦et⁩ ⁦al.⁩ 2017 ) ، مگر آن‌که مطمئن باشید داده‌های شما چنین بایاس‌هایی ندارند.‬
+آموزشی کوتاه دربارهٔ استفاده از نرم‌افزار _<span dir="ltr">Salmon_</span> برای کمی‌سازی <span dir="ltr">abundance</span> (فراوانی) رونوشت
+[اینجا__<span dir="ltr">KEEP_BIDI_00000__</span> در دسترس است.
+توصیه می‌کنیم از __<span dir="ltr">KEEP_BIDI_00000__</span> [<span dir="ltr">flag](http://salmon.readthedocs.io/en/latest/salmon.html)</span> استفاده کنید که یک ضریب تصحیح برای بایاس‌های نظام‌مند که به‌طور معمول در داده‌های <span dir="ltr">RNA-seq</span> وجود دارند برآورد می‌کند (<span dir="ltr">Love</span>, <span dir="ltr">Hogenesch</span>, <span dir="ltr">and</span> <span dir="ltr">Irizarry</span> 2016 ; <span dir="ltr">Patro</span> <span dir="ltr">et</span> <span dir="ltr">al.</span> 2017 ) ، مگر آن‌که مطمئن باشید داده‌های شما چنین بایاس‌هایی ندارند.
 
-‫مزیت‌های استفاده از ابزارهای کمی‌سازی فراوانی رونوشت در کنار _⁦tximport_⁩ / _⁦tximeta_⁩ برای تولید ماتریس‌های شمارش در سطح ژن و افست‌های نرمال‌سازی عبارت‌اند از: (1) این رویکرد هرگونه تغییر احتمالی در طول ژن‌ها در میان نمونه‌ها را تصحیح می‌کند (مثلاً ناشی از استفادهٔ تفاضلی ایزوفرم‌ها) (⁦Trapnell⁩ ⁦et⁩ ⁦al.⁩ 2013 ) ؛ (2) برخی از این روش‌ها به‌طور قابل‌توجهی سریع‌ترند و حافظه و دیسک کمتری نسبت به روش‌های مبتنی بر هم‌ترازی نیاز دارند؛ و (3) می‌توان از کنار گذاشتن آن دسته از قطعاتی که می‌توانند به چند ژن با توالی‌های همولوگ هم‌تراز شوند پرهیز کرد (⁦Robert⁩ ⁦and⁩ ⁦Watson⁩ 5 201 ) . توجه داشته باشید که ابزارهای کمی‌سازی فراوانی رونوشت از تولید فایل‌های بزرگ حاوی هم‌ترازی خوانش‌ها صرف‌نظر می‌کنند و در عوض، فایل‌های کوچک‌تری تولید می‌کنند که فراوانی‌های برآوردشده، شمارش‌ها و طول‌های مؤثر به‌ازای هر رونوشت را ذخیره می‌کنند. برای جزئیات بیشتر، به دست‌نوشتهٔ تشریح‌کنندهٔ این رویکرد (⁦Soneson⁩, ⁦Love⁩, ⁦and⁩ ⁦Robinson⁩ 2015 ) و وینگت بستهٔ _[⁦tximport](https://bioconductor.org/packages/3.23/tximport)_⁩ برای جزئیات نرم‌افزاری مراجعه کنید.‬
+مزیت‌های استفاده از ابزارهای کمی‌سازی فراوانی رونوشت در کنار _<span dir="ltr">tximport_</span> / _<span dir="ltr">tximeta_</span> برای تولید ماتریس‌های شمارش در سطح ژن و افست‌های نرمال‌سازی عبارت‌اند از: (1) این رویکرد هرگونه تغییر احتمالی در طول ژن‌ها در میان نمونه‌ها را تصحیح می‌کند (مثلاً ناشی از استفادهٔ تفاضلی ایزوفرم‌ها) (<span dir="ltr">Trapnell</span> <span dir="ltr">et</span> <span dir="ltr">al.</span> 2013 ) ؛ (2) برخی از این روش‌ها به‌طور قابل‌توجهی سریع‌ترند و حافظه و دیسک کمتری نسبت به روش‌های مبتنی بر هم‌ترازی نیاز دارند؛ و (3) می‌توان از کنار گذاشتن آن دسته از قطعاتی که می‌توانند به چند ژن با توالی‌های همولوگ هم‌تراز شوند پرهیز کرد (<span dir="ltr">Robert</span> <span dir="ltr">and</span> <span dir="ltr">Watson</span> 5 201 ) . توجه داشته باشید که ابزارهای کمی‌سازی فراوانی رونوشت از تولید فایل‌های بزرگ حاوی هم‌ترازی خوانش‌ها صرف‌نظر می‌کنند و در عوض، فایل‌های کوچک‌تری تولید می‌کنند که فراوانی‌های برآوردشده، شمارش‌ها و طول‌های مؤثر به‌ازای هر رونوشت را ذخیره می‌کنند. برای جزئیات بیشتر، به دست‌نوشتهٔ تشریح‌کنندهٔ این رویکرد (<span dir="ltr">Soneson</span>, <span dir="ltr">Love</span>, <span dir="ltr">and</span> <span dir="ltr">Robinson</span> 2015 ) و وینگت بستهٔ _[<span dir="ltr">tximport](https://bioconductor.org/packages/3.23/tximport)_</span> برای جزئیات نرم‌افزاری مراجعه کنید.
 
-‫_[⁦tximeta](https://bioconductor.org/packages/3.23/tximeta)_⁩ (⁦Love⁩ ⁦et⁩ ⁦al.⁩ 2020 ) گسترشی بر _⁦tximport_⁩ است که همان کارکردها را به‌همراه مزیت افزودهٔ افزودن خودکار فرادادهٔ شرح‌واره برای ترنسکریپتوم‌های پرتکرار (⁦GENCODE⁩، ⁦Ensembl⁩، ⁦RefSeq⁩ برای انسان و موش) ارائه می‌دهد. برای جزئیات بیشتر، وینگت بستهٔ [⁦tximeta⁩ ⁦vignette](https://bioconductor.org/packages/release/bioc/vignettes/tximeta/inst/doc/tximeta.htmlm)⁩ را ببینید. _⁦tximeta_⁩ یک _⁦SummarizedExperiment_⁩ تولید می‌کند که با استفاده از تابع __⁦KEEP_BIDI_00002__⁩ به‌آسانی در _⁦DESeq2_⁩ بارگذاری می‌شود؛ که در ادامه نشان داده خواهد شد. همچنین دربارهٔ ورودی‌های ممکن به _⁦DESeq2_⁩ نیز گفتگو خواهیم کرد، چه با استفاده از _⁦tximport_⁩ ، _⁦tximeta_⁩ ، _⁦htseq_⁩ (⁦Anders⁩, ⁦Pyl⁩, ⁦and⁩ ⁦Huber⁩ 2015 ) ، یا یک ماتریس شمارش از پیش محاسبه‌شده.‬
+_[<span dir="ltr">tximeta](https://bioconductor.org/packages/3.23/tximeta)_</span> (<span dir="ltr">Love</span> <span dir="ltr">et</span> <span dir="ltr">al.</span> 2020 ) گسترشی بر _<span dir="ltr">tximport_</span> است که همان کارکردها را به‌همراه مزیت افزودهٔ افزودن خودکار فرادادهٔ شرح‌واره برای ترنسکریپتوم‌های پرتکرار (<span dir="ltr">GENCODE</span>، <span dir="ltr">Ensembl</span>، <span dir="ltr">RefSeq</span> برای انسان و موش) ارائه می‌دهد. برای جزئیات بیشتر، وینگت بستهٔ [<span dir="ltr">tximeta</span> <span dir="ltr">vignette](https://bioconductor.org/packages/release/bioc/vignettes/tximeta/inst/doc/tximeta.htmlm)</span> را ببینید. _<span dir="ltr">tximeta_</span> یک _<span dir="ltr">SummarizedExperiment_</span> تولید می‌کند که با استفاده از تابع __<span dir="ltr">KEEP_BIDI_00002__</span> به‌آسانی در _<span dir="ltr">DESeq2_</span> بارگذاری می‌شود؛ که در ادامه نشان داده خواهد شد. همچنین دربارهٔ ورودی‌های ممکن به _<span dir="ltr">DESeq2_</span> نیز گفتگو خواهیم کرد، چه با استفاده از _<span dir="ltr">tximport_</span> ، _<span dir="ltr">tximeta_</span> ، _<span dir="ltr">htseq_</span> (<span dir="ltr">Anders</span>, <span dir="ltr">Pyl</span>, <span dir="ltr">and</span> <span dir="ltr">Huber</span> 2015 ) ، یا یک ماتریس شمارش از پیش محاسبه‌شده.
 
-## ‫‫۲٫۲ کمی‌سازی با _⁦Salmon_⁩‬
+## ۲٫۲ کمی‌سازی با _<span dir="ltr">Salmon_</span>
 
-‫همان‌گونه که در بالا اشاره شد، آموزشی کوتاه دربارهٔ نحوهٔ استفاده از _⁦Salmon_⁩ را می‌توان‬
-‫[اینجا__⁦KEEP_BIDI_00000__⁩‬
-‫یافت؛ بنابراین در عوض، کدی را ارائه می‌کنیم که برای کمی‌سازی فایل‌های به‌کاررفته در این جریان‌کار استفاده شد. _⁦Salmon_⁩ را می‌توان به‌راحتی روی یک کلاستر با استفاده از‬
-‫سیستم مدیریت جریان‌کار [⁦Snakemake](https://snakemake.readthedocs.io/en/stable/)⁩ (⁦K⁩ö⁦ster⁩ ⁦and⁩ ⁦Rahmann⁩ 2012 ) اجرا کرد.‬
+همان‌گونه که در بالا اشاره شد، آموزشی کوتاه دربارهٔ نحوهٔ استفاده از _<span dir="ltr">Salmon_</span> را می‌توان
+[اینجا__<span dir="ltr">KEEP_BIDI_00000__</span>
+یافت؛ بنابراین در عوض، کدی را ارائه می‌کنیم که برای کمی‌سازی فایل‌های به‌کاررفته در این جریان‌کار استفاده شد. _<span dir="ltr">Salmon_</span> را می‌توان به‌راحتی روی یک کلاستر با استفاده از
+سیستم مدیریت جریان‌کار [<span dir="ltr">Snakemake](https://snakemake.readthedocs.io/en/stable/)</span> (<span dir="ltr">K</span>ö<span dir="ltr">ster</span> <span dir="ltr">and</span> <span dir="ltr">Rahmann</span> 2012 ) اجرا کرد.
 
-‫__⁦KEEP_BIDI_00000__⁩ زیر برای کمی‌سازی هشت نمونه‌ای به‌کار رفت که از ⁦SRA⁩ دانلود شده بودند (شناسهٔ ⁦SRR⁩ همان شناسهٔ اجرا است، و برای این هشت نمونه، تنها یک اجرا به‌ازای هر نمونه وجود داشت).‬
+__<span dir="ltr">KEEP_BIDI_00000__</span> زیر برای کمی‌سازی هشت نمونه‌ای به‌کار رفت که از <span dir="ltr">SRA</span> دانلود شده بودند (شناسهٔ <span dir="ltr">SRR</span> همان شناسهٔ اجرا است، و برای این هشت نمونه، تنها یک اجرا به‌ازای هر نمونه وجود داشت).
 
 ```
 DATASETS = ["SRR1039508",
@@ -147,60 +147,60 @@ rule salmon_quant:
          -1 {input.r1} -2 {input.r2}"
 ```
 
-‫خط آخر، خط کلیدی‌ای است که _⁦Salmon_⁩ را اجرا می‌کند. این خط می‌گوید با استفاده از یک نمایهٔ مشخص، با تشخیص خودکار نوع کتابخانه، با به‌کارگیری 6 ترد، با گزینهٔ ⁦validate⁩ ⁦mappings⁩ (این گزینه در نسخه‌های _⁦Salmon_⁩ \\(\\⁦ge⁩\\) 0\.99 پیش‌فرض است)، با تصحیح بایاس ⁦GC⁩، و با نوشتن 20 نمونهٔ گیبس (این مورد اختیاری است) کمی‌سازی انجام شود. سه آرگومان پایانی، پوشهٔ خروجی و دو فایل خوانشِ جفت‌شده را مشخص می‌کنند.‬
+خط آخر، خط کلیدی‌ای است که _<span dir="ltr">Salmon_</span> را اجرا می‌کند. این خط می‌گوید با استفاده از یک نمایهٔ مشخص، با تشخیص خودکار نوع کتابخانه، با به‌کارگیری 6 ترد، با گزینهٔ <span dir="ltr">validate</span> <span dir="ltr">mappings</span> (این گزینه در نسخه‌های _<span dir="ltr">Salmon_</span> \\(\\<span dir="ltr">ge</span>\\) 0\.99 پیش‌فرض است)، با تصحیح بایاس <span dir="ltr">GC</span>، و با نوشتن 20 نمونهٔ گیبس (این مورد اختیاری است) کمی‌سازی انجام شود. سه آرگومان پایانی، پوشهٔ خروجی و دو فایل خوانشِ جفت‌شده را مشخص می‌کنند.
 
-‫فایل ⁦Snakemake⁩ فوق مستلزم آن است که یک نمایه در __⁦KEEP_BIDI_00000__⁩ ساخته شود؛ جایی که ⁦VV⁩ و ⁦X⁩,⁦Y⁩,⁦Z⁩ باید به مشخص کردن ویرایش رونوشت‌های مرجع و نسخهٔ _⁦Salmon_⁩ کمک کنند.‬
-‫برای رونوشت‌های مرجع انسان و موش، توصیه می‌کنیم از [⁦GENCODE](https://gencodegenes.org/)⁩ (⁦Frankish⁩ ⁦et⁩ ⁦al.⁩ 2018 ) استفاده شود.‬
+فایل <span dir="ltr">Snakemake</span> فوق مستلزم آن است که یک نمایه در __<span dir="ltr">KEEP_BIDI_00000__</span> ساخته شود؛ جایی که <span dir="ltr">VV</span> و <span dir="ltr">X</span>,<span dir="ltr">Y</span>,<span dir="ltr">Z</span> باید به مشخص کردن ویرایش رونوشت‌های مرجع و نسخهٔ _<span dir="ltr">Salmon_</span> کمک کنند.
+برای رونوشت‌های مرجع انسان و موش، توصیه می‌کنیم از [<span dir="ltr">GENCODE](https://gencodegenes.org/)</span> (<span dir="ltr">Frankish</span> <span dir="ltr">et</span> <span dir="ltr">al.</span> 2018 ) استفاده شود.
 
-‫نمایهٔ _⁦Salmon_⁩ را می‌توان به‌سادگی با دستور زیر ساخت:‬
+نمایهٔ _<span dir="ltr">Salmon_</span> را می‌توان به‌سادگی با دستور زیر ساخت:
 
 ```
 salmon index -t transcripts.fa.gz -i name_of_index
 ```
 
-‫**نکته:** _⁦Salmon_⁩ می‌تواند هنگام نمایه‌سازی از _⁦decoy⁩ ⁦sequences_⁩ (دنباله‌های دیکوی) نیز استفاده کند، همان‌گونه که در ⁦Srivastava⁩ ⁦et⁩ ⁦al.⁩ ( 2020 ) توصیف شده و نشان داده شده که دقت کمی‌سازی را بهبود می‌دهد. برای جزئیات بیشتر دربارهٔ نحوهٔ استفاده از دنباله‌های دیکوی در نرم‌افزار _⁦Salmon_⁩ لطفاً این یادداشت را در [⁦Salmon⁩ ⁦documentation](https://salmon.readthedocs.io/en/latest/salmon.html)⁩ ببینید. در این‌جا، نگاشت خوانش‌ها به ترنسکریپتوم را بدون دنباله‌های دیکوی ادامه می‌دهیم. هنگام نمایه‌سازی، پیامی ظاهر خواهد شد مبنی بر این‌که نمایهٔ _⁦Salmon_⁩ بدون هیچ دنبالهٔ دیکویی ساخته می‌شود.‬
+**نکته:** _<span dir="ltr">Salmon_</span> می‌تواند هنگام نمایه‌سازی از _<span dir="ltr">decoy</span> <span dir="ltr">sequences_</span> (دنباله‌های دیکوی) نیز استفاده کند، همان‌گونه که در <span dir="ltr">Srivastava</span> <span dir="ltr">et</span> <span dir="ltr">al.</span> ( 2020 ) توصیف شده و نشان داده شده که دقت کمی‌سازی را بهبود می‌دهد. برای جزئیات بیشتر دربارهٔ نحوهٔ استفاده از دنباله‌های دیکوی در نرم‌افزار _<span dir="ltr">Salmon_</span> لطفاً این یادداشت را در [<span dir="ltr">Salmon</span> <span dir="ltr">documentation](https://salmon.readthedocs.io/en/latest/salmon.html)</span> ببینید. در این‌جا، نگاشت خوانش‌ها به ترنسکریپتوم را بدون دنباله‌های دیکوی ادامه می‌دهیم. هنگام نمایه‌سازی، پیامی ظاهر خواهد شد مبنی بر این‌که نمایهٔ _<span dir="ltr">Salmon_</span> بدون هیچ دنبالهٔ دیکویی ساخته می‌شود.
 
-‫اگر رونوشت‌ها از ⁦GENCODE⁩ دانلود شده‌اند، توصیه می‌شود از دستوری مشابه دستور زیر استفاده شود (که صرفاً به حذف اطلاعات افزوده از نام رونوشت‌ها کمک می‌کند):‬
+اگر رونوشت‌ها از <span dir="ltr">GENCODE</span> دانلود شده‌اند، توصیه می‌شود از دستوری مشابه دستور زیر استفاده شود (که صرفاً به حذف اطلاعات افزوده از نام رونوشت‌ها کمک می‌کند):
 
 ```
 salmon index --gencode -t gencode.v29.transcripts.fa.gz \
   -i gencode.v29_salmon_X.Y.Z
 ```
 
-‫فایل ⁦Snakemake⁩ فوق را می‌توان سپس به روش‌های مختلف [⁦execute⁩ ⁦Snakemake](https://snakemake.readthedocs.io/en/stable/executing/cli.html)⁩ کرد، از جمله ارسال چندین کار به یک کلاستر محاسباتی یا در فضای ابری. فایل ⁦Snakemake⁩ فوق، پس از ویرایش برای بازتاب مسیرهای واقعی منابع، روی یک کلاستر با زمان‌بند ⁦SLURM⁩ اجرا شد، با خط زیر در یک کار جداگانه که به کلاستر ارسال شد:‬
+فایل <span dir="ltr">Snakemake</span> فوق را می‌توان سپس به روش‌های مختلف [<span dir="ltr">execute</span> <span dir="ltr">Snakemake](https://snakemake.readthedocs.io/en/stable/executing/cli.html)</span> کرد، از جمله ارسال چندین کار به یک کلاستر محاسباتی یا در فضای ابری. فایل <span dir="ltr">Snakemake</span> فوق، پس از ویرایش برای بازتاب مسیرهای واقعی منابع، روی یک کلاستر با زمان‌بند <span dir="ltr">SLURM</span> اجرا شد، با خط زیر در یک کار جداگانه که به کلاستر ارسال شد:
 
 ```
 snakemake -j 4 --latency-wait 30 --cluster "sbatch -N 1 -n 6"
 ```
 
-‫این دستور فرض می‌کند که دستورالعمل‌های ⁦Snakemake⁩ در فایلی به نام «⁦Snakefile⁩» قرار دارند.‬
-‫گزینه‌های استفاده‌شده در این‌جا شامل موارد زیر است:‬
+این دستور فرض می‌کند که دستورالعمل‌های <span dir="ltr">Snakemake</span> در فایلی به نام «<span dir="ltr">Snakefile</span>» قرار دارند.
+گزینه‌های استفاده‌شده در این‌جا شامل موارد زیر است:
 
-* ‫‫__⁦KEEP_BIDI_00000__⁩ : حداکثر تعداد کارهایی که به‌صورت موازی اجرا می‌شوند‬
-* ‫‫__⁦KEEP_BIDI_00000__⁩ : تعداد ثانیه‌های مجاز برای در دسترس شدن فایل جهت آغاز گام‌های بعدی، در صورت وجود تأخیر‬
-* ‫‫__⁦KEEP_BIDI_00000__⁩ : [در ⁦readthedocs.io⁩ وجود ندارد؟]‬
-* ‫‫گزینهٔ «-⁦s⁩» را می‌توان برای اجرای ⁦snakemake⁩ روی فایلی با نام مشخص استفاده کرد («⁦Snakefile⁩» پیش‌فرض است)‬
+* __<span dir="ltr">KEEP_BIDI_00000__</span> : حداکثر تعداد کارهایی که به‌صورت موازی اجرا می‌شوند
+* __<span dir="ltr">KEEP_BIDI_00000__</span> : تعداد ثانیه‌های مجاز برای در دسترس شدن فایل جهت آغاز گام‌های بعدی، در صورت وجود تأخیر
+* __<span dir="ltr">KEEP_BIDI_00000__</span> : [در <span dir="ltr">readthedocs.io</span> وجود ندارد؟]
+* گزینهٔ «-<span dir="ltr">s</span>» را می‌توان برای اجرای <span dir="ltr">snakemake</span> روی فایلی با نام مشخص استفاده کرد («<span dir="ltr">Snakefile</span>» پیش‌فرض است)
 
-## ‫‫۲٫۳ خواندن داده‌ها با _⁦tximeta_⁩‬
+## ۲٫۳ خواندن داده‌ها با _<span dir="ltr">tximeta_</span>
 
-‫در ادامهٔ جریان‌کار، شیئی را بارگذاری خواهیم کرد که شامل‬
-‫داده‌های کمی‌سازی در سطح ⁦gene⁩ (ژن) برای هر هشت نمونه. با این حال، بستهٔ _[⁦airway](https://bioconductor.org/packages/3.23/airway)_⁩ همچنین شامل دو پوشهٔ کمی‌سازیِ خروجی‌شده توسط _⁦Salmon_⁩ است تا نشان دهیم چگونه می‌توان این داده را در ⁦R/Bioconductor⁩ وارد کرد. برای کوچک‌تر نگه‌داشتن اندازهٔ بستهٔ داده، فایل‌های __⁦KEEP_BIDI_00001__⁩ در پوشه‌های کمی‌سازی فشرده‌سازی (⁦gzip⁩) شده‌اند؛ بنابراین در جاهایی که در ادامه __⁦KEEP_BIDI_00002__⁩ می‌بینید، احتمالاً روی رایانهٔ خود از __⁦KEEP_BIDI_00003__⁩ استفاده خواهید کرد.‬
+در ادامهٔ جریان‌کار، شیئی را بارگذاری خواهیم کرد که شامل
+داده‌های کمی‌سازی در سطح <span dir="ltr">gene</span> (ژن) برای هر هشت نمونه. با این حال، بستهٔ _[<span dir="ltr">airway](https://bioconductor.org/packages/3.23/airway)_</span> همچنین شامل دو پوشهٔ کمی‌سازیِ خروجی‌شده توسط _<span dir="ltr">Salmon_</span> است تا نشان دهیم چگونه می‌توان این داده را در <span dir="ltr">R/Bioconductor</span> وارد کرد. برای کوچک‌تر نگه‌داشتن اندازهٔ بستهٔ داده، فایل‌های __<span dir="ltr">KEEP_BIDI_00001__</span> در پوشه‌های کمی‌سازی فشرده‌سازی (<span dir="ltr">gzip</span>) شده‌اند؛ بنابراین در جاهایی که در ادامه __<span dir="ltr">KEEP_BIDI_00002__</span> می‌بینید، احتمالاً روی رایانهٔ خود از __<span dir="ltr">KEEP_BIDI_00003__</span> استفاده خواهید کرد.
 
-‫پس از نمایش واردسازی با _⁦tximeta_⁩، ماتریس کامل ⁦count⁩ (شمارش) متناظر با همهٔ نمونه‌ها و کل داده را که از پیش در همان بسته فراهم شده است بارگذاری می‌کنیم و تحلیل را با همان شیء دادهٔ کامل ادامه می‌دهیم.‬
+پس از نمایش واردسازی با _<span dir="ltr">tximeta_</span>، ماتریس کامل <span dir="ltr">count</span> (شمارش) متناظر با همهٔ نمونه‌ها و کل داده را که از پیش در همان بسته فراهم شده است بارگذاری می‌کنیم و تحلیل را با همان شیء دادهٔ کامل ادامه می‌دهیم.
 
-‫ابتدا بستهٔ داده شامل دادهٔ نمونه را بارگذاری می‌کنیم:‬
+ابتدا بستهٔ داده شامل دادهٔ نمونه را بارگذاری می‌کنیم:
 
 ```
 library("airway")
 ```
 
-‫تابع _⁦system.file_⁩ در ⁦R⁩ می‌تواند محل نصب فایل‌های یک بسته روی رایانهٔ شما را بیابد. در اینجا مسیر کامل پوشهٔ __⁦KEEP_BIDI_00000__⁩ را که محل نگهداری داده‌های خارجیِ بسته‌های ⁦R⁩ است و بخشی از بستهٔ _[⁦airway](https://bioconductor.org/packages/3.23/airway)_⁩ محسوب می‌شود، درخواست می‌کنیم.‬
+تابع _<span dir="ltr">system.file_</span> در <span dir="ltr">R</span> می‌تواند محل نصب فایل‌های یک بسته روی رایانهٔ شما را بیابد. در اینجا مسیر کامل پوشهٔ __<span dir="ltr">KEEP_BIDI_00000__</span> را که محل نگهداری داده‌های خارجیِ بسته‌های <span dir="ltr">R</span> است و بخشی از بستهٔ _[<span dir="ltr">airway](https://bioconductor.org/packages/3.23/airway)_</span> محسوب می‌شود، درخواست می‌کنیم.
 
 ```
 dir <- system.file("extdata", package="airway", mustWork=TRUE)
 ```
 
-‫در این پوشه، تعدادی فایل می‌یابیم؛ از جمله هشت فایل ⁦BAM⁩ که در نسخهٔ پیشین این گردش‌کار برای نشان‌دادن هم‌ترازسازی و شمارش به‌کار رفته بودند. تمرکز ما بر دو پوشه‌ای است که در مسیر __⁦KEEP_BIDI_00000__⁩ قرار دارند و خروجی _⁦Salmon_⁩ بر روی دو فایل را در خود دارند.‬
+در این پوشه، تعدادی فایل می‌یابیم؛ از جمله هشت فایل <span dir="ltr">BAM</span> که در نسخهٔ پیشین این گردش‌کار برای نشان‌دادن هم‌ترازسازی و شمارش به‌کار رفته بودند. تمرکز ما بر دو پوشه‌ای است که در مسیر __<span dir="ltr">KEEP_BIDI_00000__</span> قرار دارند و خروجی _<span dir="ltr">Salmon_</span> بر روی دو فایل را در خود دارند.
 
 ```
 list.files(dir)
@@ -224,9 +224,9 @@ list.files(file.path(dir, "quants"))
 ## [1] "SRR1039508" "SRR1039509"
 ```
 
-‫به‌طور معمول، جدولی شامل اطلاعات تفصیلی برای هر یک از نمونه‌ها داریم که آن‌ها را به فایل‌های ⁦FASTQ⁩ و پوشه‌های مربوط به _⁦Salmon_⁩ متصل می‌کند. برای پروژهٔ خود می‌توانید چنین فایلی با قالب مقادیر جداشده با کاما (⁦CSV⁩) را با یک ویرایشگر متن یا نرم‌افزار صفحه‌گسترده مانند ⁦Excel⁩ بسازید.‬
+به‌طور معمول، جدولی شامل اطلاعات تفصیلی برای هر یک از نمونه‌ها داریم که آن‌ها را به فایل‌های <span dir="ltr">FASTQ</span> و پوشه‌های مربوط به _<span dir="ltr">Salmon_</span> متصل می‌کند. برای پروژهٔ خود می‌توانید چنین فایلی با قالب مقادیر جداشده با کاما (<span dir="ltr">CSV</span>) را با یک ویرایشگر متن یا نرم‌افزار صفحه‌گسترده مانند <span dir="ltr">Excel</span> بسازید.
 
-‫چنین فایل ⁦CSV⁩‌ای را با _⁦read.csv_⁩ بارگذاری می‌کنیم:‬
+چنین فایل <span dir="ltr">CSV</span>‌ای را با _<span dir="ltr">read.csv_</span> بارگذاری می‌کنیم:
 
 ```
 csvfile <- file.path(dir, "sample_table.csv")
@@ -255,7 +255,7 @@ coldata
 ## SRR1039521 SRS508580 SAMN02422677
 ```
 
-‫برای نشان‌دادنِ واردسازی داده‌های کمی‌سازیِ _⁦Salmon_⁩ به ⁦R⁩، تنها با دو نمونه‌ای کار می‌کنیم که در بستهٔ _⁦airway_⁩ ارائه شده‌اند. یک ستون به نام __⁦KEEP_BIDI_00000__⁩ و ستونی دیگر به نام __⁦KEEP_BIDI_00001__⁩ می‌سازیم:‬
+برای نشان‌دادنِ واردسازی داده‌های کمی‌سازیِ _<span dir="ltr">Salmon_</span> به <span dir="ltr">R</span>، تنها با دو نمونه‌ای کار می‌کنیم که در بستهٔ _<span dir="ltr">airway_</span> ارائه شده‌اند. یک ستون به نام __<span dir="ltr">KEEP_BIDI_00000__</span> و ستونی دیگر به نام __<span dir="ltr">KEEP_BIDI_00001__</span> می‌سازیم:
 
 ```
 coldata <- coldata[1:2,]
@@ -268,7 +268,7 @@ file.exists(coldata$files)
 ## [1] TRUE TRUE
 ```
 
-‫اکنون بستهٔ _⁦tximeta_⁩ را بارگذاری و تابع اصلی آن را اجرا می‌کنیم:‬
+اکنون بستهٔ _<span dir="ltr">tximeta_</span> را بارگذاری و تابع اصلی آن را اجرا می‌کنیم:
 
 ```
 library("tximeta")
@@ -295,9 +295,9 @@ se <- tximeta(coldata)
 ## generating transcript ranges
 ```
 
-‫اگر _⁦tximeta_⁩ کدِ کنترلی (⁦checksum⁩) ترنسکریپتومِ مرجع را تشخیص داده باشد (جزئیات در وینگت _[⁦tximeta](https://bioconductor.org/packages/3.23/tximeta)_⁩) و اتصال اینترنتی فعال داشته باشیم، _⁦tximeta_⁩ داده‌های حاشیه‌نویسی مرتبط را از منابع مختلف یافته و بارگیری خواهد کرد. چند نکته: داده‌های حاشیه‌نویسی فقط یک‌بار بارگیری و تجزیه می‌شوند و از آن پس، در صورت نیاز، نسخه‌های ذخیره‌شده در نهانگاه محلیِ فرا‌داده استفاده خواهد شد (اگر برای بار دوم داده‌ای را بارگذاری کنید که در برابر همان ⁦transcript⁩ (رونوشت)‌های مرجع کمی‌سازی شده است). همچنین، در اولین اجرا، _⁦tximeta_⁩ از شما می‌خواهد محل پیش‌فرض نهانگاه را تأیید کنید (مطابق الگوی مکان نهانگاه که در سایر بسته‌های ⁦R⁩ و ⁦Bioconductor⁩ نیز به‌کار می‌رود). این مکان را می‌توانید هر زمان بعداً تغییر دهید.‬
+اگر _<span dir="ltr">tximeta_</span> کدِ کنترلی (<span dir="ltr">checksum</span>) ترنسکریپتومِ مرجع را تشخیص داده باشد (جزئیات در وینگت _[<span dir="ltr">tximeta](https://bioconductor.org/packages/3.23/tximeta)_</span>) و اتصال اینترنتی فعال داشته باشیم، _<span dir="ltr">tximeta_</span> داده‌های حاشیه‌نویسی مرتبط را از منابع مختلف یافته و بارگیری خواهد کرد. چند نکته: داده‌های حاشیه‌نویسی فقط یک‌بار بارگیری و تجزیه می‌شوند و از آن پس، در صورت نیاز، نسخه‌های ذخیره‌شده در نهانگاه محلیِ فرا‌داده استفاده خواهد شد (اگر برای بار دوم داده‌ای را بارگذاری کنید که در برابر همان <span dir="ltr">transcript</span> (رونوشت)‌های مرجع کمی‌سازی شده است). همچنین، در اولین اجرا، _<span dir="ltr">tximeta_</span> از شما می‌خواهد محل پیش‌فرض نهانگاه را تأیید کنید (مطابق الگوی مکان نهانگاه که در سایر بسته‌های <span dir="ltr">R</span> و <span dir="ltr">Bioconductor</span> نیز به‌کار می‌رود). این مکان را می‌توانید هر زمان بعداً تغییر دهید.
 
-‫در بخش بعدی دربارهٔ ساختار شیء __⁦KEEP_BIDI_00000__⁩ بحث خواهیم کرد، اما فعلاً صرفاً به ابعاد آن نگاه می‌کنیم. توجه داشته باشید که _⁦tximeta_⁩ داده را در سطح رونوشت وارد می‌کند.‬
+در بخش بعدی دربارهٔ ساختار شیء __<span dir="ltr">KEEP_BIDI_00000__</span> بحث خواهیم کرد، اما فعلاً صرفاً به ابعاد آن نگاه می‌کنیم. توجه داشته باشید که _<span dir="ltr">tximeta_</span> داده را در سطح رونوشت وارد می‌کند.
 
 ```
 dim(se)
@@ -316,7 +316,7 @@ head(rownames(se))
 ## [4] "ENST00000619216.1" "ENST00000473358.1" "ENST00000469289.1"
 ```
 
-‫از آنجا که این گردش‌کار بر تحلیل در سطح ژن متمرکز است، اکنون کمی‌سازی‌های سطح رونوشت را به سطح ژن خلاصه می‌کنیم (که درونی از روش‌های موجود در _⁦tximport_⁩ (⁦Soneson⁩, ⁦Love⁩, ⁦and⁩ ⁦Robinson⁩ 2015) بهره می‌گیرد). نگاشت صحیحِ رونوشت‌به-ژن به‌طور خودکار بر پایهٔ فرا‌دادهٔ ذخیره‌شده درون شیء __⁦KEEP_BIDI_00000__⁩ ساخته می‌شود.‬
+از آنجا که این گردش‌کار بر تحلیل در سطح ژن متمرکز است، اکنون کمی‌سازی‌های سطح رونوشت را به سطح ژن خلاصه می‌کنیم (که درونی از روش‌های موجود در _<span dir="ltr">tximport_</span> (<span dir="ltr">Soneson</span>, <span dir="ltr">Love</span>, <span dir="ltr">and</span> <span dir="ltr">Robinson</span> 2015) بهره می‌گیرد). نگاشت صحیحِ رونوشت‌به-ژن به‌طور خودکار بر پایهٔ فرا‌دادهٔ ذخیره‌شده درون شیء __<span dir="ltr">KEEP_BIDI_00000__</span> ساخته می‌شود.
 
 ```
 gse <- summarizeToGene(se)
@@ -351,7 +351,7 @@ gse <- summarizeToGene(se)
 ## summarizing length
 ```
 
-‫اکنون می‌توانیم بررسی کنیم که ابعاد کاهش یافته و شناسه‌های سطرها اکنون شناسه‌های ژن هستند:‬
+اکنون می‌توانیم بررسی کنیم که ابعاد کاهش یافته و شناسه‌های سطرها اکنون شناسه‌های ژن هستند:
 
 ```
 dim(gse)
@@ -370,31 +370,31 @@ head(rownames(gse))
 ## [4] "ENSG00000000457.13" "ENSG00000000460.16" "ENSG00000000938.12"
 ```
 
-## ‫‫۲٫۴ توابع واردسازی _⁦DESeq2_⁩‬
+## ۲٫۴ توابع واردسازی _<span dir="ltr">DESeq2_</span>
 
-‫هرچند بخش بالا به کاربرد _⁦Salmon_⁩ و _⁦tximeta_⁩ اختصاص داشت، ورودی‌های ممکن متعددی برای _⁦DESeq2_⁩ وجود دارد که هر یک توابع واردسازیِ ویژهٔ خود را دارند.‬
-‫ابزارهای زیر می‌توانند داده‌های شمارش را برای استفاده در _⁦DESeq2_⁩ تولید یا تجمیع کنند: _⁦tximport_⁩ (⁦Soneson⁩, ⁦Love⁩, ⁦and⁩ ⁦Robinson⁩ 2015)، _⁦tximeta_⁩ (⁦Love⁩ ⁦et⁩ ⁦al.⁩ 2020)، _⁦htseq-count_⁩ (⁦Anders⁩, ⁦Pyl⁩, ⁦and⁩ ⁦Huber⁩ 2015)، _⁦featureCounts_⁩ (⁦Liao⁩, ⁦Smyth⁩, ⁦and⁩ ⁦Shi⁩ 2014)، _⁦summarizeOverlaps_⁩ (⁦Lawrence⁩ ⁦et⁩ ⁦al.⁩ 2013).‬
+هرچند بخش بالا به کاربرد _<span dir="ltr">Salmon_</span> و _<span dir="ltr">tximeta_</span> اختصاص داشت، ورودی‌های ممکن متعددی برای _<span dir="ltr">DESeq2_</span> وجود دارد که هر یک توابع واردسازیِ ویژهٔ خود را دارند.
+ابزارهای زیر می‌توانند داده‌های شمارش را برای استفاده در _<span dir="ltr">DESeq2_</span> تولید یا تجمیع کنند: _<span dir="ltr">tximport_</span> (<span dir="ltr">Soneson</span>, <span dir="ltr">Love</span>, <span dir="ltr">and</span> <span dir="ltr">Robinson</span> 2015)، _<span dir="ltr">tximeta_</span> (<span dir="ltr">Love</span> <span dir="ltr">et</span> <span dir="ltr">al.</span> 2020)، _<span dir="ltr">htseq-count_</span> (<span dir="ltr">Anders</span>, <span dir="ltr">Pyl</span>, <span dir="ltr">and</span> <span dir="ltr">Huber</span> 2015)، _<span dir="ltr">featureCounts_</span> (<span dir="ltr">Liao</span>, <span dir="ltr">Smyth</span>, <span dir="ltr">and</span> <span dir="ltr">Shi</span> 2014)، _<span dir="ltr">summarizeOverlaps_</span> (<span dir="ltr">Lawrence</span> <span dir="ltr">et</span> <span dir="ltr">al.</span> 2013).
 
-|‫‫تابع |بسته |چارچوب |خروجی |تابع ورودی برای _⁦DESeq2_⁩ |‬
-|‫‫ --- | --- | --- | --- | --- |‬
-|‫‫_⁦tximport_⁩ |_[⁦tximport](https://bioconductor.org/packages/3.23/tximport)_⁩ |⁦R/Bioconductor⁩ |فهرستی از ماتریس‌ها |_⁦DESeqDataSetFromTximport_⁩ |‬
-|‫‫_⁦tximeta_⁩ |_[⁦tximeta](https://bioconductor.org/packages/3.23/tximeta)_⁩ |⁦R/Bioconductor⁩ |_⁦SummarizedExperiment_⁩ |_⁦DESeqDataSet_⁩ |‬
-|‫‫_⁦htseq-count_⁩ |[⁦HTSeq](http://www-huber.embl.de/users/anders/HTSeq)⁩ |⁦Python⁩ |فایل‌ها |_⁦DESeqDataSetFromHTSeq_⁩ |‬
-|‫‫_⁦featureCounts_⁩ |_[⁦Rsubread](https://bioconductor.org/packages/3.23/Rsubread)_⁩ |⁦R/Bioconductor⁩ |ماتریس |_⁦DESeqDataSetFromMatrix_⁩ |‬
-|‫‫_⁦summarizeOverlaps_⁩ |_[⁦GenomicAlignments](https://bioconductor.org/packages/3.23/GenomicAlignments)_⁩ |⁦R/Bioconductor⁩ |_⁦SummarizedExperiment_⁩ |_⁦DESeqDataSet_⁩ |‬
+|تابع |بسته |چارچوب |خروجی |تابع ورودی برای _<span dir="ltr">DESeq2_</span> |
+| --- | --- | --- | --- | --- |
+|_<span dir="ltr">tximport_</span> |_[<span dir="ltr">tximport](https://bioconductor.org/packages/3.23/tximport)_</span> |<span dir="ltr">R/Bioconductor</span> |فهرستی از ماتریس‌ها |_<span dir="ltr">DESeqDataSetFromTximport_</span> |
+|_<span dir="ltr">tximeta_</span> |_[<span dir="ltr">tximeta](https://bioconductor.org/packages/3.23/tximeta)_</span> |<span dir="ltr">R/Bioconductor</span> |_<span dir="ltr">SummarizedExperiment_</span> |_<span dir="ltr">DESeqDataSet_</span> |
+|_<span dir="ltr">htseq-count_</span> |[<span dir="ltr">HTSeq](http://www-huber.embl.de/users/anders/HTSeq)</span> |<span dir="ltr">Python</span> |فایل‌ها |_<span dir="ltr">DESeqDataSetFromHTSeq_</span> |
+|_<span dir="ltr">featureCounts_</span> |_[<span dir="ltr">Rsubread](https://bioconductor.org/packages/3.23/Rsubread)_</span> |<span dir="ltr">R/Bioconductor</span> |ماتریس |_<span dir="ltr">DESeqDataSetFromMatrix_</span> |
+|_<span dir="ltr">summarizeOverlaps_</span> |_[<span dir="ltr">GenomicAlignments](https://bioconductor.org/packages/3.23/GenomicAlignments)_</span> |<span dir="ltr">R/Bioconductor</span> |_<span dir="ltr">SummarizedExperiment_</span> |_<span dir="ltr">DESeqDataSet_</span> |
 
-‫در ادامه، کلاس شیئی را که _⁦tximeta_⁩ می‌سازد و در بالا به‌صورت __⁦KEEP_BIDI_00000__⁩ و __⁦KEEP_BIDI_00001__⁩ ذخیره شد توصیف می‌کنیم، و این‌که چگونه از آن برای استفاده در _⁦DESeq2_⁩ یک شیء _⁦DESeqDataSet_⁩ بسازیم (سایر توابعِ بالا نیز یک _⁦DESeqDataSet_⁩ ایجاد می‌کنند).‬
+در ادامه، کلاس شیئی را که _<span dir="ltr">tximeta_</span> می‌سازد و در بالا به‌صورت __<span dir="ltr">KEEP_BIDI_00000__</span> و __<span dir="ltr">KEEP_BIDI_00001__</span> ذخیره شد توصیف می‌کنیم، و این‌که چگونه از آن برای استفاده در _<span dir="ltr">DESeq2_</span> یک شیء _<span dir="ltr">DESeqDataSet_</span> بسازیم (سایر توابعِ بالا نیز یک _<span dir="ltr">DESeqDataSet_</span> ایجاد می‌کنند).
 
-## ‫‫۲٫۵ شیء _⁦SummarizedExperiment_⁩‬
+## ۲٫۵ شیء _<span dir="ltr">SummarizedExperiment_</span>
 
-‫**اجزای سازندهٔ یک شیء _⁦SummarizedExperiment_.⁩** __⁦KEEP_BIDI_00000__⁩ (بلوک صورتی) شامل ماتریس شمارش است، __⁦KEEP_BIDI_00001__⁩ (بلوک آبی) اطلاعات مربوط به بازه‌های ژنومی را دربر می‌گیرد و __⁦KEEP_BIDI_00002__⁩ (بلوک سبز) اطلاعات مربوط به نمونه‌ها را شامل می‌شود. خط هایلایت‌شده در هر بلوک نشان‌دهندهٔ سطر نخست است (توجه کنید که سطر نخستِ __⁦KEEP_BIDI_00003__⁩ با ستون نخستِ __⁦KEEP_BIDI_00004__⁩ هم‌تراز است).‬
+**اجزای سازندهٔ یک شیء _<span dir="ltr">SummarizedExperiment_.</span>** __<span dir="ltr">KEEP_BIDI_00000__</span> (بلوک صورتی) شامل ماتریس شمارش است، __<span dir="ltr">KEEP_BIDI_00001__</span> (بلوک آبی) اطلاعات مربوط به بازه‌های ژنومی را دربر می‌گیرد و __<span dir="ltr">KEEP_BIDI_00002__</span> (بلوک سبز) اطلاعات مربوط به نمونه‌ها را شامل می‌شود. خط هایلایت‌شده در هر بلوک نشان‌دهندهٔ سطر نخست است (توجه کنید که سطر نخستِ __<span dir="ltr">KEEP_BIDI_00003__</span> با ستون نخستِ __<span dir="ltr">KEEP_BIDI_00004__</span> هم‌تراز است).
 
-‫محفظهٔ _⁦SummarizedExperiment_⁩ در شکل بالا ترسیم شده و در تازه‌ترین مقالهٔ ⁦Bioconductor⁩ (⁦Huber⁩ ⁦et⁩ ⁦al.⁩ 2015) بحث شده است. در مورد ما، _⁦tximeta_⁩ شیئی به نام __⁦KEEP_BIDI_00000__⁩ با سه ماتریس ساخته است: «⁦counts⁩» — شمارش‌های برآوردیِ قطعه‌ها برای هر ژن و هر نمونه؛ «⁦abundance⁩» — ⁦abundance⁩ (فراوانی) برآوردیِ رونوشت‌ها برحسب ⁦TPM⁩؛ و «⁦length⁩» — طول‌های مؤثر ژن که تغییرات طول ناشی از سوگیری‌ها و نیز ناشی از الگوی استفاده از رونوشت‌ها را دربر می‌گیرند. نام آزمون‌ها را می‌توان با _⁦assayNames_⁩ مشاهده کرد و خودِ آزمون‌ها به‌صورت __⁦KEEP_BIDI_00001__⁩ (فهرستی از ماتریس‌ها) نگهداری می‌شوند. نخستین ماتریسِ این فهرست را می‌توان با __⁦KEEP_BIDI_00002__⁩ بیرون کشید. __⁦KEEP_BIDI_00003__⁩ برای شیء ما _⁦GRanges_⁩ ژن‌هاست (از چپ‌ترین موقعیتِ همهٔ رونوشت‌ها تا راست‌ترین موقعیتِ آن‌ها).‬
-‫اجزای سازنده‌ی _⁦SummarizedExperiment_⁩ با تابع هم‌نام در ⁦R⁩ در دسترس‌اند: __⁦KEEP_BIDI_00000__⁩ (یا __⁦KEEP_BIDI_00001__⁩)، __⁦KEEP_BIDI_00002__⁩ و __⁦KEEP_BIDI_00003__.⁩‬
+محفظهٔ _<span dir="ltr">SummarizedExperiment_</span> در شکل بالا ترسیم شده و در تازه‌ترین مقالهٔ <span dir="ltr">Bioconductor</span> (<span dir="ltr">Huber</span> <span dir="ltr">et</span> <span dir="ltr">al.</span> 2015) بحث شده است. در مورد ما، _<span dir="ltr">tximeta_</span> شیئی به نام __<span dir="ltr">KEEP_BIDI_00000__</span> با سه ماتریس ساخته است: «<span dir="ltr">counts</span>» — شمارش‌های برآوردیِ قطعه‌ها برای هر ژن و هر نمونه؛ «<span dir="ltr">abundance</span>» — <span dir="ltr">abundance</span> (فراوانی) برآوردیِ رونوشت‌ها برحسب <span dir="ltr">TPM</span>؛ و «<span dir="ltr">length</span>» — طول‌های مؤثر ژن که تغییرات طول ناشی از سوگیری‌ها و نیز ناشی از الگوی استفاده از رونوشت‌ها را دربر می‌گیرند. نام آزمون‌ها را می‌توان با _<span dir="ltr">assayNames_</span> مشاهده کرد و خودِ آزمون‌ها به‌صورت __<span dir="ltr">KEEP_BIDI_00001__</span> (فهرستی از ماتریس‌ها) نگهداری می‌شوند. نخستین ماتریسِ این فهرست را می‌توان با __<span dir="ltr">KEEP_BIDI_00002__</span> بیرون کشید. __<span dir="ltr">KEEP_BIDI_00003__</span> برای شیء ما _<span dir="ltr">GRanges_</span> ژن‌هاست (از چپ‌ترین موقعیتِ همهٔ رونوشت‌ها تا راست‌ترین موقعیتِ آن‌ها).
+اجزای سازنده‌ی _<span dir="ltr">SummarizedExperiment_</span> با تابع هم‌نام در <span dir="ltr">R</span> در دسترس‌اند: __<span dir="ltr">KEEP_BIDI_00000__</span> (یا __<span dir="ltr">KEEP_BIDI_00001__</span>)، __<span dir="ltr">KEEP_BIDI_00002__</span> و __<span dir="ltr">KEEP_BIDI_00003__.</span>
 
-‫اکنون ماتریس کامل ⁦count⁩ (شمارش) متناظر با همهٔ نمونه‌ها و همهٔ داده‌ها را که در بستهٔ _⁦airway_⁩ فراهم شده است بارگذاری می‌کنیم و تحلیل را با شیء کامل داده ادامه می‌دهیم. توجه کنید که اطلاعات مربوط به اهداکنندهٔ ردهٔ سلولی و تیمار با دگزامتازون اکنون ستون‌های __⁦KEEP_BIDI_00000__⁩ و __⁦KEEP_BIDI_00001__⁩ از فرادادهٔ ستون‌ها هستند.‬
+اکنون ماتریس کامل <span dir="ltr">count</span> (شمارش) متناظر با همهٔ نمونه‌ها و همهٔ داده‌ها را که در بستهٔ _<span dir="ltr">airway_</span> فراهم شده است بارگذاری می‌کنیم و تحلیل را با شیء کامل داده ادامه می‌دهیم. توجه کنید که اطلاعات مربوط به اهداکنندهٔ ردهٔ سلولی و تیمار با دگزامتازون اکنون ستون‌های __<span dir="ltr">KEEP_BIDI_00000__</span> و __<span dir="ltr">KEEP_BIDI_00001__</span> از فرادادهٔ ستون‌ها هستند.
 
-‫می‌توانیم این شیء _⁦SummarizedExperiment_⁩ را با نگاه کردن به ماتریس‌ها در شکاف __⁦KEEP_BIDI_00000__⁩، داده‌های فنوتیپی دربارهٔ نمونه‌ها در شکاف __⁦KEEP_BIDI_00001__⁩، و داده‌های مربوط به ⁦gene⁩ (ژن)‌ها در شکاف __⁦KEEP_BIDI_00002__⁩ بررسی کنیم.‬
+می‌توانیم این شیء _<span dir="ltr">SummarizedExperiment_</span> را با نگاه کردن به ماتریس‌ها در شکاف __<span dir="ltr">KEEP_BIDI_00000__</span>، داده‌های فنوتیپی دربارهٔ نمونه‌ها در شکاف __<span dir="ltr">KEEP_BIDI_00001__</span>، و داده‌های مربوط به <span dir="ltr">gene</span> (ژن)‌ها در شکاف __<span dir="ltr">KEEP_BIDI_00002__</span> بررسی کنیم.
 
 ```
 data(gse)
@@ -413,7 +413,7 @@ gse
 ## colData names(3): names donor condition
 ```
 
-‫شمارش‌ها نخستین ماتریس هستند، پس می‌توانیم آن‌ها را تنها با __⁦KEEP_BIDI_00000__⁩ بررسی کنیم:‬
+شمارش‌ها نخستین ماتریس هستند، پس می‌توانیم آن‌ها را تنها با __<span dir="ltr">KEEP_BIDI_00000__</span> بررسی کنیم:
 
 ```
 assayNames(gse)
@@ -449,7 +449,7 @@ colSums(assay(gse))
 ##   21813903
 ```
 
-‫هنگام چاپ __⁦KEEP_BIDI_00000__⁩، بازه‌ها برای پنج ژن نخست و پنج ژن آخر نشان داده می‌شوند:‬
+هنگام چاپ __<span dir="ltr">KEEP_BIDI_00000__</span>، بازه‌ها برای پنج ژن نخست و پنج ژن آخر نشان داده می‌شوند:
 
 ```
 rowRanges(gse)
@@ -474,7 +474,7 @@ rowRanges(gse)
 ##   seqinfo: 25 sequences (1 circular) from hg38 genome
 ```
 
-‫همچنین __⁦KEEP_BIDI_00000__⁩ در شکاف __⁦KEEP_BIDI_00001__⁩ فراداده‌ای دربارهٔ توالی‌ها (در این‌جا کروموزوم‌ها) دارد:‬
+همچنین __<span dir="ltr">KEEP_BIDI_00000__</span> در شکاف __<span dir="ltr">KEEP_BIDI_00001__</span> فراداده‌ای دربارهٔ توالی‌ها (در این‌جا کروموزوم‌ها) دارد:
 
 ```
 seqinfo(rowRanges(gse))
@@ -496,7 +496,7 @@ seqinfo(rowRanges(gse))
 ##   chrM          16569       TRUE   hg38
 ```
 
-‫__⁦KEEP_BIDI_00000__⁩ برای _⁦SummarizedExperiment_⁩ بازتاب‌دهندهٔ _⁦data.frame_⁩ای است که به تابع __⁦KEEP_BIDI_00001__⁩ برای وارد کردن داده‌های کمی‌سازی داده شده بود. در این‌جا می‌بینیم که ستون‌هایی برای نام نمونه‌ها، همچنین شناسهٔ اهداکننده و وضعیت تیمار (تیمار با دگزامتازون یا بدون تیمار) وجود دارد.‬
+__<span dir="ltr">KEEP_BIDI_00000__</span> برای _<span dir="ltr">SummarizedExperiment_</span> بازتاب‌دهندهٔ _<span dir="ltr">data.frame_</span>ای است که به تابع __<span dir="ltr">KEEP_BIDI_00001__</span> برای وارد کردن داده‌های کمی‌سازی داده شده بود. در این‌جا می‌بینیم که ستون‌هایی برای نام نمونه‌ها، همچنین شناسهٔ اهداکننده و وضعیت تیمار (تیمار با دگزامتازون یا بدون تیمار) وجود دارد.
 
 ```
 colData(gse)
@@ -516,19 +516,19 @@ colData(gse)
 ## SRR1039521 SRR1039521  N061011 Dexamethasone
 ```
 
-## ‫‫۲٫۶ نقطهٔ انشعاب‬
+## ۲٫۶ نقطهٔ انشعاب
 
-‫در این مرحله، قطعه‌هایی را که با ژن‌ها در مدل ژنی مشخص‌شده هم‌پوشانی داشتند شمرده‌ایم. این یک نقطهٔ انشعاب است که در آن می‌توان از انواع بسته‌های ⁦Bioconductor⁩ برای کاوش و ⁦differential⁩ ⁦expression⁩ ⁦analysis⁩ (تحلیل بیان تفاضلی) داده‌های شمارش استفاده کرد، از جمله _[⁦edgeR](https://bioconductor.org/packages/3.23/edgeR)_⁩ (⁦Robinson⁩, ⁦McCarthy⁩, ⁦and⁩ ⁦Smyth⁩ 2009)، _[⁦limma](https://bioconductor.org/packages/3.23/limma)_⁩ با روش ⁦voom⁩ (⁦Law⁩ ⁦et⁩ ⁦al.⁩ 2014)، _[⁦DSS](https://bioconductor.org/packages/3.23/DSS)_⁩ (⁦Wu⁩, ⁦Wang⁩, ⁦and⁩ ⁦Wu⁩ 2013)، _[⁦EBSeq](https://bioconductor.org/packages/3.23/EBSeq)_⁩ (⁦Leng⁩ ⁦et⁩ ⁦al.⁩ 2013) و _[⁦baySeq](https://bioconductor.org/packages/3.23/baySeq)_⁩ (⁦Hardcastle⁩ ⁦and⁩ ⁦Kelly⁩ 2010). ⁦Schurch⁩ و همکاران (2016) [عملکرد__⁦KEEP_BIDI_00005__⁩ روش‌های آماری مختلف برای ⁦RNA-seq⁩ را با تعداد زیادی تکرار زیستی مقایسه کردند و می‌تواند به کاربران کمک کند تصمیم بگیرند کدام ابزارها معقول است استفاده شوند و برای دستیابی به حساسیت معینی به چند تکرار زیستی نیاز است. ما با _[⁦DESeq2](https://bioconductor.org/packages/3.23/DESeq2)_⁩ (⁦Love⁩, ⁦Huber⁩, ⁦and⁩ ⁦Anders⁩ 2014) ادامه خواهیم داد. شیء _⁦SummarizedExperiment_⁩ تمام چیزی است که برای شروع تحلیل نیاز داریم. در بخش بعدی نشان می‌دهیم چگونه با استفاده از آن شیء دادهٔ مورد استفادهٔ _[⁦DESeq2](https://bioconductor.org/packages/3.23/DESeq2)_⁩ را بسازیم.‬
+در این مرحله، قطعه‌هایی را که با ژن‌ها در مدل ژنی مشخص‌شده هم‌پوشانی داشتند شمرده‌ایم. این یک نقطهٔ انشعاب است که در آن می‌توان از انواع بسته‌های <span dir="ltr">Bioconductor</span> برای کاوش و <span dir="ltr">differential</span> <span dir="ltr">expression</span> <span dir="ltr">analysis</span> (تحلیل بیان تفاضلی) داده‌های شمارش استفاده کرد، از جمله _[<span dir="ltr">edgeR](https://bioconductor.org/packages/3.23/edgeR)_</span> (<span dir="ltr">Robinson</span>, <span dir="ltr">McCarthy</span>, <span dir="ltr">and</span> <span dir="ltr">Smyth</span> 2009)، _[<span dir="ltr">limma](https://bioconductor.org/packages/3.23/limma)_</span> با روش <span dir="ltr">voom</span> (<span dir="ltr">Law</span> <span dir="ltr">et</span> <span dir="ltr">al.</span> 2014)، _[<span dir="ltr">DSS](https://bioconductor.org/packages/3.23/DSS)_</span> (<span dir="ltr">Wu</span>, <span dir="ltr">Wang</span>, <span dir="ltr">and</span> <span dir="ltr">Wu</span> 2013)، _[<span dir="ltr">EBSeq](https://bioconductor.org/packages/3.23/EBSeq)_</span> (<span dir="ltr">Leng</span> <span dir="ltr">et</span> <span dir="ltr">al.</span> 2013) و _[<span dir="ltr">baySeq](https://bioconductor.org/packages/3.23/baySeq)_</span> (<span dir="ltr">Hardcastle</span> <span dir="ltr">and</span> <span dir="ltr">Kelly</span> 2010). <span dir="ltr">Schurch</span> و همکاران (2016) [عملکرد__<span dir="ltr">KEEP_BIDI_00005__</span> روش‌های آماری مختلف برای <span dir="ltr">RNA-seq</span> را با تعداد زیادی تکرار زیستی مقایسه کردند و می‌تواند به کاربران کمک کند تصمیم بگیرند کدام ابزارها معقول است استفاده شوند و برای دستیابی به حساسیت معینی به چند تکرار زیستی نیاز است. ما با _[<span dir="ltr">DESeq2](https://bioconductor.org/packages/3.23/DESeq2)_</span> (<span dir="ltr">Love</span>, <span dir="ltr">Huber</span>, <span dir="ltr">and</span> <span dir="ltr">Anders</span> 2014) ادامه خواهیم داد. شیء _<span dir="ltr">SummarizedExperiment_</span> تمام چیزی است که برای شروع تحلیل نیاز داریم. در بخش بعدی نشان می‌دهیم چگونه با استفاده از آن شیء دادهٔ مورد استفادهٔ _[<span dir="ltr">DESeq2](https://bioconductor.org/packages/3.23/DESeq2)_</span> را بسازیم.
 
-# ‫‫3 شیء _⁦DESeqDataSet_⁩، اطلاعات نمونه و فرمول طراحی‬
+# 3 شیء _<span dir="ltr">DESeqDataSet_</span>، اطلاعات نمونه و فرمول طراحی
 
-‫بسته‌های نرم‌افزاری ⁦Bioconductor⁩ اغلب یک کلاس سفارشی برای نگه‌داری داده‌ها تعریف و استفاده می‌کنند تا مطمئن شوند همهٔ شکاف‌های داده‌ای لازم به‌طور یکنواخت فراهم شده و شرایط را برآورده می‌کنند. افزون بر این، ⁦Bioconductor⁩ کلاس‌های داده‌ای عمومی (مانند _⁦SummarizedExperiment_⁩) دارد که می‌توان از آن‌ها برای جابه‌جایی داده‌ها بین بسته‌ها استفاده کرد. همچنین کلاس‌های هسته‌ای ⁦Bioconductor⁩ قابلیت‌های مفیدی فراهم می‌کنند: برای نمونه، زیرمجموعه‌گیری یا بازچینی سطرها یا ستون‌های یک _⁦SummarizedExperiment_⁩ به‌طور خودکار _⁦rowRanges_⁩ و _⁦colData_⁩ متناظر را نیز زیرمجموعه‌گیری یا بازچینی می‌کند، که می‌تواند از جابه‌جایی تصادفی نمونه‌ها که در غیر این صورت به نتایج گمراه‌کننده منجر می‌شد جلوگیری کند. با _⁦SummarizedExperiment_⁩ همهٔ این‌ها در پس‌زمینه رسیدگی می‌شود.‬
+بسته‌های نرم‌افزاری <span dir="ltr">Bioconductor</span> اغلب یک کلاس سفارشی برای نگه‌داری داده‌ها تعریف و استفاده می‌کنند تا مطمئن شوند همهٔ شکاف‌های داده‌ای لازم به‌طور یکنواخت فراهم شده و شرایط را برآورده می‌کنند. افزون بر این، <span dir="ltr">Bioconductor</span> کلاس‌های داده‌ای عمومی (مانند _<span dir="ltr">SummarizedExperiment_</span>) دارد که می‌توان از آن‌ها برای جابه‌جایی داده‌ها بین بسته‌ها استفاده کرد. همچنین کلاس‌های هسته‌ای <span dir="ltr">Bioconductor</span> قابلیت‌های مفیدی فراهم می‌کنند: برای نمونه، زیرمجموعه‌گیری یا بازچینی سطرها یا ستون‌های یک _<span dir="ltr">SummarizedExperiment_</span> به‌طور خودکار _<span dir="ltr">rowRanges_</span> و _<span dir="ltr">colData_</span> متناظر را نیز زیرمجموعه‌گیری یا بازچینی می‌کند، که می‌تواند از جابه‌جایی تصادفی نمونه‌ها که در غیر این صورت به نتایج گمراه‌کننده منجر می‌شد جلوگیری کند. با _<span dir="ltr">SummarizedExperiment_</span> همهٔ این‌ها در پس‌زمینه رسیدگی می‌شود.
 
-‫در _⁦DESeq2_⁩، کلاس سفارشی _⁦DESeqDataSet_⁩ نام دارد. این کلاس بر پایهٔ _⁦SummarizedExperiment_⁩ ساخته شده است و تبدیل اشیای _⁦SummarizedExperiment_⁩ به _⁦DESeqDataSet_⁩ آسان است، که در ادامه نشان می‌دهیم. یکی از دو تفاوت اصلی این است که شکاف __⁦KEEP_BIDI_00000__⁩ به‌جای خود با استفاده از تابع دسترسی _⁦counts_⁩ در دسترس است و کلاس _⁦DESeqDataSet_⁩ اعمال می‌کند که مقادیر این ماتریس اعداد صحیح نامنفی باشند.‬
+در _<span dir="ltr">DESeq2_</span>، کلاس سفارشی _<span dir="ltr">DESeqDataSet_</span> نام دارد. این کلاس بر پایهٔ _<span dir="ltr">SummarizedExperiment_</span> ساخته شده است و تبدیل اشیای _<span dir="ltr">SummarizedExperiment_</span> به _<span dir="ltr">DESeqDataSet_</span> آسان است، که در ادامه نشان می‌دهیم. یکی از دو تفاوت اصلی این است که شکاف __<span dir="ltr">KEEP_BIDI_00000__</span> به‌جای خود با استفاده از تابع دسترسی _<span dir="ltr">counts_</span> در دسترس است و کلاس _<span dir="ltr">DESeqDataSet_</span> اعمال می‌کند که مقادیر این ماتریس اعداد صحیح نامنفی باشند.
 
-‫تفاوت دوم این است که _⁦DESeqDataSet_⁩ یک «فرمول طراحی» همراه دارد. طرح آزمایشی در ابتدای تحلیل تعیین می‌شود، زیرا به بسیاری از توابع _⁦DESeq2_⁩ اطلاع می‌دهد که با نمونه‌ها در تحلیل چگونه رفتار کنند (یک استثناء، برآورد عامل اندازه است؛ یعنی تعدیل برای اندازه‌های متفاوت کتابخانه‌ها که به فرمول طراحی وابسته نیست). فرمول طراحی مشخص می‌کند کدام ستون‌ها در جدول اطلاعات نمونه (__⁦KEEP_BIDI_00000__⁩) طرح آزمایشی را تعیین می‌کنند و این عوامل چگونه باید در تحلیل به کار روند.‬
+تفاوت دوم این است که _<span dir="ltr">DESeqDataSet_</span> یک «فرمول طراحی» همراه دارد. طرح آزمایشی در ابتدای تحلیل تعیین می‌شود، زیرا به بسیاری از توابع _<span dir="ltr">DESeq2_</span> اطلاع می‌دهد که با نمونه‌ها در تحلیل چگونه رفتار کنند (یک استثناء، برآورد عامل اندازه است؛ یعنی تعدیل برای اندازه‌های متفاوت کتابخانه‌ها که به فرمول طراحی وابسته نیست). فرمول طراحی مشخص می‌کند کدام ستون‌ها در جدول اطلاعات نمونه (__<span dir="ltr">KEEP_BIDI_00000__</span>) طرح آزمایشی را تعیین می‌کنند و این عوامل چگونه باید در تحلیل به کار روند.
 
-‫ابتدا، بیایید ستون‌های __⁦KEEP_BIDI_00000__⁩ از __⁦KEEP_BIDI_00001__⁩ را بررسی کنیم. می‌توان هر یک از ستون‌ها را تنها با استفاده از __⁦KEEP_BIDI_00002__⁩ مستقیماً روی _⁦SummarizedExperiment_⁩ یا _⁦DESeqDataSet_⁩ مشاهده کرد.‬
+ابتدا، بیایید ستون‌های __<span dir="ltr">KEEP_BIDI_00000__</span> از __<span dir="ltr">KEEP_BIDI_00001__</span> را بررسی کنیم. می‌توان هر یک از ستون‌ها را تنها با استفاده از __<span dir="ltr">KEEP_BIDI_00002__</span> مستقیماً روی _<span dir="ltr">SummarizedExperiment_</span> یا _<span dir="ltr">DESeqDataSet_</span> مشاهده کرد.
 
 ```
 gse$donor
@@ -549,14 +549,14 @@ gse$condition
 ## Levels: Untreated Dexamethasone
 ```
 
-‫در صورت تمایل می‌توانیم نام متغیرهای خود را عوض کنیم. بیایید از __⁦KEEP_BIDI_00000__⁩ برای نشان دادن ردهٔ سلولی اهداکننده و از __⁦KEEP_BIDI_00001__⁩ برای نشان دادن وضعیت تیمار استفاده کنیم.‬
+در صورت تمایل می‌توانیم نام متغیرهای خود را عوض کنیم. بیایید از __<span dir="ltr">KEEP_BIDI_00000__</span> برای نشان دادن ردهٔ سلولی اهداکننده و از __<span dir="ltr">KEEP_BIDI_00001__</span> برای نشان دادن وضعیت تیمار استفاده کنیم.
 
 ```
 gse$cell <- gse$donor
 gse$dex <- gse$condition
 ```
 
-‫همچنین می‌توانیم نام سطوح را تغییر دهیم. هنگام تغییر نام سطوح، حیاتی است که ترتیب را تغییر ندهیم. در این‌جا __⁦KEEP_BIDI_00000__⁩ را به __⁦KEEP_BIDI_00001__⁩ و __⁦KEEP_BIDI_00002__⁩ را به __⁦KEEP_BIDI_00003__⁩ تغییر نام می‌دهیم:‬
+همچنین می‌توانیم نام سطوح را تغییر دهیم. هنگام تغییر نام سطوح، حیاتی است که ترتیب را تغییر ندهیم. در این‌جا __<span dir="ltr">KEEP_BIDI_00000__</span> را به __<span dir="ltr">KEEP_BIDI_00001__</span> و __<span dir="ltr">KEEP_BIDI_00002__</span> را به __<span dir="ltr">KEEP_BIDI_00003__</span> تغییر نام می‌دهیم:
 
 ```
 levels(gse$dex)
@@ -571,9 +571,9 @@ levels(gse$dex)
 levels(gse$dex) <- c("untrt", "trt")
 ```
 
-‫ساده‌ترین فرمول طراحی برای ⁦differential⁩ ⁦expression⁩ ⁦analysis⁩ (تحلیل بیان تفاضلی) __⁦KEEP_BIDI_00000__⁩ است، که در آن __⁦KEEP_BIDI_00001__⁩ ستونی در __⁦KEEP_BIDI_00002__⁩ است که مشخص می‌کند نمونه‌ها به کدام‌یک از دو (یا چند) گروه تعلق دارند. برای آزمایش ⁦airway⁩، ما __⁦KEEP_BIDI_00003__⁩ را مشخص می‌کنیم؛ به این معنا که می‌خواهیم اثر دگزامتازون (__⁦KEEP_BIDI_00004__⁩) را در حالی بیازماییم که برای اثر رده‌های سلولی متفاوت (__⁦KEEP_BIDI_00005__⁩) کنترل می‌کنیم.‬
+ساده‌ترین فرمول طراحی برای <span dir="ltr">differential</span> <span dir="ltr">expression</span> <span dir="ltr">analysis</span> (تحلیل بیان تفاضلی) __<span dir="ltr">KEEP_BIDI_00000__</span> است، که در آن __<span dir="ltr">KEEP_BIDI_00001__</span> ستونی در __<span dir="ltr">KEEP_BIDI_00002__</span> است که مشخص می‌کند نمونه‌ها به کدام‌یک از دو (یا چند) گروه تعلق دارند. برای آزمایش <span dir="ltr">airway</span>، ما __<span dir="ltr">KEEP_BIDI_00003__</span> را مشخص می‌کنیم؛ به این معنا که می‌خواهیم اثر دگزامتازون (__<span dir="ltr">KEEP_BIDI_00004__</span>) را در حالی بیازماییم که برای اثر رده‌های سلولی متفاوت (__<span dir="ltr">KEEP_BIDI_00005__</span>) کنترل می‌کنیم.
 
-‫توجه: در ⁦R⁩ ترجیح داده می‌شود سطح نخست یک عامل، سطح مرجع باشد (برای مثال، کنترل یا نمونه‌های بدون تیمار). در این مورد، هنگامی که جدول __⁦KEEP_BIDI_00000__⁩ ساخته شد، نمونه‌های بدون تیمار از پیش به‌عنوان مرجع تنظیم شده بودند، اما اگر این‌گونه نبود می‌توانستیم همان‌طور که در پایین نشان داده شده از _⁦relevel_⁩ استفاده کنیم. در حالی که __⁦KEEP_BIDI_00001__⁩ در بالا صرفاً برای تغییر نام رشته‌های کاراکتری متناظر با سطوح بود، _⁦relevel_⁩ تابعی کاملاً متفاوت است که تعیین می‌کند متغیرها چگونه کُدگذاری شوند و ⁦contrast⁩ (مقایسه)ها چگونه محاسبه شوند. برای یک مقایسهٔ دو-گروهی، استفاده از _⁦relevel_⁩ برای تغییر سطح مرجع، علامت ضریب متناظر با یک مقایسه بین دو گروه را معکوس می‌کند.‬
+توجه: در <span dir="ltr">R</span> ترجیح داده می‌شود سطح نخست یک عامل، سطح مرجع باشد (برای مثال، کنترل یا نمونه‌های بدون تیمار). در این مورد، هنگامی که جدول __<span dir="ltr">KEEP_BIDI_00000__</span> ساخته شد، نمونه‌های بدون تیمار از پیش به‌عنوان مرجع تنظیم شده بودند، اما اگر این‌گونه نبود می‌توانستیم همان‌طور که در پایین نشان داده شده از _<span dir="ltr">relevel_</span> استفاده کنیم. در حالی که __<span dir="ltr">KEEP_BIDI_00001__</span> در بالا صرفاً برای تغییر نام رشته‌های کاراکتری متناظر با سطوح بود، _<span dir="ltr">relevel_</span> تابعی کاملاً متفاوت است که تعیین می‌کند متغیرها چگونه کُدگذاری شوند و <span dir="ltr">contrast</span> (مقایسه)ها چگونه محاسبه شوند. برای یک مقایسهٔ دو-گروهی، استفاده از _<span dir="ltr">relevel_</span> برای تغییر سطح مرجع، علامت ضریب متناظر با یک مقایسه بین دو گروه را معکوس می‌کند.
 
 ```
 library("magrittr")
@@ -586,25 +586,25 @@ gse$dex
 ## Levels: untrt trt
 ```
 
-‫__⁦KEEP_BIDI_00000__⁩ عملگر پایپیِ تخصیص مرکب از بستهٔ _[⁦magrittr](https://cran.r-project.org/package=magrittr)_⁩ است، خط کد بالا یک‬
-‫شیوهٔ بیان موجز:‬
+__<span dir="ltr">KEEP_BIDI_00000__</span> عملگر پایپیِ تخصیص مرکب از بستهٔ _[<span dir="ltr">magrittr](https://cran.r-project.org/package=magrittr)_</span> است، خط کد بالا یک
+شیوهٔ بیان موجز:
 
 ```
 gse$dex <- relevel(gse$dex, "untrt")
 ```
 
-‫برای اجرای مدل‌های _⁦DESeq2_⁩ می‌توانید از نگارش فرمول در ⁦R⁩ برای بیان هر طرح آزمایشی با اثرات ثابت استفاده کنید. توجه داشته باشید که _⁦DESeq2_⁩ همان نگارش فرمولِ تابع _⁦lm_⁩ در ⁦R⁩ پایه را به‌کار می‌گیرد. اگر هدف پژوهش این است که تعیین کنیم برای کدام ⁦genes⁩ (ژن‌ها) اثرِ تیمار در میان گروه‌ها متفاوت است، می‌توان عبارت‌های برهم‌کنشی را در طرح وارد و با طرحی مانند __⁦KEEP_BIDI_00000__⁩ آزمون کرد. برای نمونه‌های بیشتر به صفحهٔ راهنمای __⁦KEEP_BIDI_00001__⁩ مراجعه کنید. در ادامه نشان می‌دهیم که چگونه می‌توان از یک عبارت برهم‌کنشی برای آزمون تغییرات وابسته به شرط در طول زمان، در یک مثال دورهٔ زمانی، استفاده کرد.‬
+برای اجرای مدل‌های _<span dir="ltr">DESeq2_</span> می‌توانید از نگارش فرمول در <span dir="ltr">R</span> برای بیان هر طرح آزمایشی با اثرات ثابت استفاده کنید. توجه داشته باشید که _<span dir="ltr">DESeq2_</span> همان نگارش فرمولِ تابع _<span dir="ltr">lm_</span> در <span dir="ltr">R</span> پایه را به‌کار می‌گیرد. اگر هدف پژوهش این است که تعیین کنیم برای کدام <span dir="ltr">genes</span> (ژن‌ها) اثرِ تیمار در میان گروه‌ها متفاوت است، می‌توان عبارت‌های برهم‌کنشی را در طرح وارد و با طرحی مانند __<span dir="ltr">KEEP_BIDI_00000__</span> آزمون کرد. برای نمونه‌های بیشتر به صفحهٔ راهنمای __<span dir="ltr">KEEP_BIDI_00001__</span> مراجعه کنید. در ادامه نشان می‌دهیم که چگونه می‌توان از یک عبارت برهم‌کنشی برای آزمون تغییرات وابسته به شرط در طول زمان، در یک مثال دورهٔ زمانی، استفاده کرد.
 
-‫در بخش‌های بعدی، ساخت یک _⁦DESeqDataSet_⁩ را از دو نقطهٔ شروع نشان می‌دهیم:‬
+در بخش‌های بعدی، ساخت یک _<span dir="ltr">DESeqDataSet_</span> را از دو نقطهٔ شروع نشان می‌دهیم:
 
-* ‫‫از یک شیء _⁦SummarizedExperiment_⁩‬
-* ‫‫از یک ماتریس ⁦count⁩ (شمارش) و یک جدول اطلاعات نمونه‬
+* از یک شیء _<span dir="ltr">SummarizedExperiment_</span>
+* از یک ماتریس <span dir="ltr">count</span> (شمارش) و یک جدول اطلاعات نمونه
 
-‫برای یک مثال کامل از استفاده از بستهٔ پایتونی _⁦HTSeq_⁩ برای شمارش ⁦read⁩ (خوانش)، به وینیتِ _[⁦pasilla](https://bioconductor.org/packages/3.23/pasilla)_⁩ مراجعه کنید. برای مثالی از ساخت _⁦DESeqDataSet_⁩ از فایل‌هایی که به‌وسیلهٔ _⁦htseq-count_⁩ تولید شده‌اند، به وینیتِ _[⁦DESeq2](https://bioconductor.org/packages/3.23/DESeq2)_⁩ مراجعه کنید.‬
+برای یک مثال کامل از استفاده از بستهٔ پایتونی _<span dir="ltr">HTSeq_</span> برای شمارش <span dir="ltr">read</span> (خوانش)، به وینیتِ _[<span dir="ltr">pasilla](https://bioconductor.org/packages/3.23/pasilla)_</span> مراجعه کنید. برای مثالی از ساخت _<span dir="ltr">DESeqDataSet_</span> از فایل‌هایی که به‌وسیلهٔ _<span dir="ltr">htseq-count_</span> تولید شده‌اند، به وینیتِ _[<span dir="ltr">DESeq2](https://bioconductor.org/packages/3.23/DESeq2)_</span> مراجعه کنید.
 
-## ‫‫۳٫۱ شروع از _⁦SummarizedExperiment_⁩‬
+## ۳٫۱ شروع از _<span dir="ltr">SummarizedExperiment_</span>
 
-‫دوباره می‌توانیم به‌سرعت میلیون‌ها قطعه‌ای را که _⁦Salmon_⁩ می‌تواند به ژن‌ها نگاشت کند بررسی کنیم (آرگومان دوم تابع _⁦round_⁩ تعداد رقم‌های اعشاری را مشخص می‌کند).‬
+دوباره می‌توانیم به‌سرعت میلیون‌ها قطعه‌ای را که _<span dir="ltr">Salmon_</span> می‌تواند به ژن‌ها نگاشت کند بررسی کنیم (آرگومان دوم تابع _<span dir="ltr">round_</span> تعداد رقم‌های اعشاری را مشخص می‌کند).
 
 ```
 round( colSums(assay(gse)) / 1e6, 1 )
@@ -617,8 +617,8 @@ round( colSums(assay(gse)) / 1e6, 1 )
 ##       21.8
 ```
 
-‫وقتی شیء _⁦SummarizedExperiment_⁩ را به‌طور کامل حاشیه‌نویسی کردیم، می‌توانیم یک شیء _⁦DESeqDataSet_⁩ از آن بسازیم که نقطهٔ آغاز تحلیل خواهد بود.‬
-‫در این مرحله یک طرح مناسب برای تحلیل اضافه می‌کنیم:‬
+وقتی شیء _<span dir="ltr">SummarizedExperiment_</span> را به‌طور کامل حاشیه‌نویسی کردیم، می‌توانیم یک شیء _<span dir="ltr">DESeqDataSet_</span> از آن بسازیم که نقطهٔ آغاز تحلیل خواهد بود.
+در این مرحله یک طرح مناسب برای تحلیل اضافه می‌کنیم:
 
 ```
 library("DESeq2")
@@ -628,13 +628,13 @@ library("DESeq2")
 dds <- DESeqDataSet(gse, design = ~ cell + dex)
 ```
 
-## ‫‫۳٫۲ شروع از ماتریس‌های شمارش‬
+## ۳٫۲ شروع از ماتریس‌های شمارش
 
-‫در این بخش نشان می‌دهیم که چگونه یک _⁦DESeqDataSet_⁩ را در حالتی می‌سازیم که فقط یک ماتریس شمارش و یک جدول اطلاعات نمونه در اختیار داریم.‬
+در این بخش نشان می‌دهیم که چگونه یک _<span dir="ltr">DESeqDataSet_</span> را در حالتی می‌سازیم که فقط یک ماتریس شمارش و یک جدول اطلاعات نمونه در اختیار داریم.
 
-‫توجه: اگر یک _⁦SummarizedExperiment_⁩ آماده کرده‌اید باید از این بخش صرف‌نظر کنید. در حالی‌که در بخش پیشین، _⁦DESeqDataSet_⁩ را از یک _⁦SummarizedExperiment_⁩ می‌ساختیم، اینجا صرفاً برای نمایش، اجزای منفرد (ماتریس شمارش و اطلاعات نمونه) را از _⁦SummarizedExperiment_⁩ استخراج می‌کنیم تا دوباره یک شیء جدید بسازیم. در عمل، ماتریس شمارش معمولاً از یک فایل خوانده می‌شود یا شاید با تابعی در ⁦R⁩ مانند _⁦featureCounts_⁩ از بستهٔ _[⁦Rsubread](https://bioconductor.org/packages/3.23/Rsubread)_⁩ (⁦Liao⁩, ⁦Smyth⁩, ⁦and⁩ ⁦Shi⁩ 2014) تولید شود.‬
+توجه: اگر یک _<span dir="ltr">SummarizedExperiment_</span> آماده کرده‌اید باید از این بخش صرف‌نظر کنید. در حالی‌که در بخش پیشین، _<span dir="ltr">DESeqDataSet_</span> را از یک _<span dir="ltr">SummarizedExperiment_</span> می‌ساختیم، اینجا صرفاً برای نمایش، اجزای منفرد (ماتریس شمارش و اطلاعات نمونه) را از _<span dir="ltr">SummarizedExperiment_</span> استخراج می‌کنیم تا دوباره یک شیء جدید بسازیم. در عمل، ماتریس شمارش معمولاً از یک فایل خوانده می‌شود یا شاید با تابعی در <span dir="ltr">R</span> مانند _<span dir="ltr">featureCounts_</span> از بستهٔ _[<span dir="ltr">Rsubread](https://bioconductor.org/packages/3.23/Rsubread)_</span> (<span dir="ltr">Liao</span>, <span dir="ltr">Smyth</span>, <span dir="ltr">and</span> <span dir="ltr">Shi</span> 2014) تولید شود.
 
-‫اطلاعات در یک شیء _⁦SummarizedExperiment_⁩ با توابع دسترسی قابل بازیابی است. برای نمونه، برای دیدن داده‌های واقعی، یعنی در اینجا شمارش قطعه‌ها، از تابع _⁦assay_⁩ استفاده می‌کنیم. (تابع _⁦head_⁩ خروجی را به چند خط اول محدود می‌کند.)‬
+اطلاعات در یک شیء _<span dir="ltr">SummarizedExperiment_</span> با توابع دسترسی قابل بازیابی است. برای نمونه، برای دیدن داده‌های واقعی، یعنی در اینجا شمارش قطعه‌ها، از تابع _<span dir="ltr">assay_</span> استفاده می‌کنیم. (تابع _<span dir="ltr">head_</span> خروجی را به چند خط اول محدود می‌کند.)
 
 ```
 countdata <- round(assays(gse)[["counts"]])
@@ -652,18 +652,18 @@ head(countdata, 3)
 ## ENSG00000000419.12        774        410        499
 ```
 
-‫در این ماتریس شمارش، هر سطر نمایندهٔ یک ژن، هر ستون نمایندهٔ یک کتابخانهٔ ⁦RNA⁩ توالی‌یابی‌شده است، و مقادیر، شمارش‌های برآوردشدهٔ قطعه‌هایی را می‌دهند که به‌صورت احتمالی در هر کتابخانه به ژن متناظر توسط _⁦Salmon_⁩ انتساب یافته‌اند. همچنین دربارهٔ هر یک از نمونه‌ها (ستون‌های ماتریس شمارش) اطلاعاتی داریم. اگر داده‌های شمارش را به روش دیگری وارد کرده‌اید، مثلاً با بارگذاری یک ماتریس شمارش ازپیش‌محاسبه‌شده، بسیار مهم است که به‌صورت دستی بررسی کنید ستون‌های ماتریس شمارش با ردیف‌های جدول اطلاعات نمونه متناظر باشند.‬
+در این ماتریس شمارش، هر سطر نمایندهٔ یک ژن، هر ستون نمایندهٔ یک کتابخانهٔ <span dir="ltr">RNA</span> توالی‌یابی‌شده است، و مقادیر، شمارش‌های برآوردشدهٔ قطعه‌هایی را می‌دهند که به‌صورت احتمالی در هر کتابخانه به ژن متناظر توسط _<span dir="ltr">Salmon_</span> انتساب یافته‌اند. همچنین دربارهٔ هر یک از نمونه‌ها (ستون‌های ماتریس شمارش) اطلاعاتی داریم. اگر داده‌های شمارش را به روش دیگری وارد کرده‌اید، مثلاً با بارگذاری یک ماتریس شمارش ازپیش‌محاسبه‌شده، بسیار مهم است که به‌صورت دستی بررسی کنید ستون‌های ماتریس شمارش با ردیف‌های جدول اطلاعات نمونه متناظر باشند.
 
 ```
 coldata <- colData(gse)
 ```
 
-‫اکنون همهٔ اجزای لازم برای آماده‌سازی شیء داده‌ها در قالبی مناسب برای تحلیل را در اختیار داریم، یعنی:‬
+اکنون همهٔ اجزای لازم برای آماده‌سازی شیء داده‌ها در قالبی مناسب برای تحلیل را در اختیار داریم، یعنی:
 
-* ‫‫__⁦KEEP_BIDI_00000__⁩ : جدولی شامل شمارش‌های قطعه‌ها‬
-* ‫‫__⁦KEEP_BIDI_00000__⁩ : جدولی شامل اطلاعات مربوط به نمونه‌ها‬
+* __<span dir="ltr">KEEP_BIDI_00000__</span> : جدولی شامل شمارش‌های قطعه‌ها
+* __<span dir="ltr">KEEP_BIDI_00000__</span> : جدولی شامل اطلاعات مربوط به نمونه‌ها
 
-‫برای ساختن شیء _⁦DESeqDataSet_⁩ از ماتریس شمارش‌ها و جدول اطلاعات نمونه، از این دستور استفاده می‌کنیم:‬
+برای ساختن شیء _<span dir="ltr">DESeqDataSet_</span> از ماتریس شمارش‌ها و جدول اطلاعات نمونه، از این دستور استفاده می‌کنیم:
 
 ```
 ddsMat <- DESeqDataSetFromMatrix(countData = countdata,
@@ -671,15 +671,15 @@ ddsMat <- DESeqDataSetFromMatrix(countData = countdata,
                                  design = ~ cell + dex)
 ```
 
-‫در ادامه با شیئی کار خواهیم کرد که در بخش _⁦SummarizedExperiment_⁩ ساخته شد.‬
+در ادامه با شیئی کار خواهیم کرد که در بخش _<span dir="ltr">SummarizedExperiment_</span> ساخته شد.
 
-# ‫‫4 تحلیل اکتشافی و بصری‌سازی‬
+# 4 تحلیل اکتشافی و بصری‌سازی
 
-‫در این جریان کار دو مسیر جداگانه وجود دارد؛ مسیری که ابتدا می‌بینیم شامل دگرگونیِ شمارش‌ها برای کاوش بصریِ روابط میان نمونه‌هاست. در بخش دوم، برای آزمون‌های آماری به شمارش‌های خام اصلی برمی‌گردیم. این موضوع حیاتی است، زیرا روش‌های آزمون آماری برای محاسبهٔ دقت اندازه‌گیری‌ها به داده‌های شمارش اصلی (نه مقیاس‌بندی‌شده یا دگرگون‌شده) تکیه می‌کنند.‬
+در این جریان کار دو مسیر جداگانه وجود دارد؛ مسیری که ابتدا می‌بینیم شامل دگرگونیِ شمارش‌ها برای کاوش بصریِ روابط میان نمونه‌هاست. در بخش دوم، برای آزمون‌های آماری به شمارش‌های خام اصلی برمی‌گردیم. این موضوع حیاتی است، زیرا روش‌های آزمون آماری برای محاسبهٔ دقت اندازه‌گیری‌ها به داده‌های شمارش اصلی (نه مقیاس‌بندی‌شده یا دگرگون‌شده) تکیه می‌کنند.
 
-## ‫‫۴٫۱ پیش‌فیلتر کردن مجموعه‌داده‬
+## ۴٫۱ پیش‌فیلتر کردن مجموعه‌داده
 
-‫ماتریس شمارش ما در _⁦DESeqDataSet_⁩ شامل سطرهای زیادی با فقط صفر، و افزون بر آن، سطرهای زیادی با صرفاً چند قطعه در مجموع است. برای کاهش اندازهٔ شیء و افزایش سرعت اجرای توابع، می‌توانیم سطرهایی را که فاقد اطلاعات یا تقریباً بی‌اطلاعات دربارهٔ میزان بیان ژن هستند حذف کنیم. در اینجا پیش‌پالایش انجام می‌دهیم تا فقط سطرهایی را نگه داریم که حداقل برای تعدادِ مینیممی از نمونه‌ها، شمارشی دست‌کم ۱۰ دارند. آستانهٔ ۱۰ انتخابی معقول برای ⁦RNA-seq⁩ توده‌ای است. برای حداقل تعداد نمونه‌ها پیشنهاد می‌شود کوچک‌ترین اندازهٔ گروه مشخص شود؛ برای مثال اینجا در هر گروه ۴ نمونه وجود دارد. اگر گروه‌های گسسته وجود نداشته باشد، می‌توان حداقل تعداد نمونه‌هایی را به‌کار برد که در آن‌ها شمارش‌های ناصفر جالب توجه تلقی می‌شوند. وزن‌دهی/فیلترکردنِ افزوده برای بهبود توان، در گام‌های بعدی جریان کار اعمال خواهد شد.‬
+ماتریس شمارش ما در _<span dir="ltr">DESeqDataSet_</span> شامل سطرهای زیادی با فقط صفر، و افزون بر آن، سطرهای زیادی با صرفاً چند قطعه در مجموع است. برای کاهش اندازهٔ شیء و افزایش سرعت اجرای توابع، می‌توانیم سطرهایی را که فاقد اطلاعات یا تقریباً بی‌اطلاعات دربارهٔ میزان بیان ژن هستند حذف کنیم. در اینجا پیش‌پالایش انجام می‌دهیم تا فقط سطرهایی را نگه داریم که حداقل برای تعدادِ مینیممی از نمونه‌ها، شمارشی دست‌کم ۱۰ دارند. آستانهٔ ۱۰ انتخابی معقول برای <span dir="ltr">RNA-seq</span> توده‌ای است. برای حداقل تعداد نمونه‌ها پیشنهاد می‌شود کوچک‌ترین اندازهٔ گروه مشخص شود؛ برای مثال اینجا در هر گروه ۴ نمونه وجود دارد. اگر گروه‌های گسسته وجود نداشته باشد، می‌توان حداقل تعداد نمونه‌هایی را به‌کار برد که در آن‌ها شمارش‌های ناصفر جالب توجه تلقی می‌شوند. وزن‌دهی/فیلترکردنِ افزوده برای بهبود توان، در گام‌های بعدی جریان کار اعمال خواهد شد.
 
 ```
 nrow(dds)
@@ -700,9 +700,9 @@ nrow(dds)
 ## [1] 16637
 ```
 
-## ‫‫۴٫۲ تبدیل تثبیت‌کنندهٔ واریانس و تبدیل ⁦rlog⁩‬
+## ۴٫۲ تبدیل تثبیت‌کنندهٔ واریانس و تبدیل <span dir="ltr">rlog</span>
 
-‫بسیاری از روش‌های آماری متداول برای تحلیل اکتشافیِ داده‌های چندبعدی، مانند خوشه‌بندی و تحلیل مؤلفه‌های اصلی (⁦PCA⁩)، زمانی بهترین کارکرد را دارند که دامنهٔ واریانس در گستره‌های مختلفِ میانگین، به‌طور کلی مشابه باشد. هنگامی که مقدار مورد انتظارِ واریانس تقریباً در میانگین‌های مختلف یکسان است، می‌گوییم داده‌ها _هم‌واریانس_ هستند. بااین‌حال برای شمارش‌های ⁦RNA-seq⁩، واریانس مورد انتظار با افزایش میانگین رشد می‌کند. برای نمونه، اگر ⁦PCA⁩ مستقیماً روی یک ماتریسِ شمارش یا شمارش‌های برآمده از ⁦normalization⁩ (نرمال‌سازی) انجام شود (مثلاً برای تصحیح تفاوت‌های عمق توالی‌یابی)، نمودار حاصل معمولاً عمدتاً به ژن‌هایی وابسته است که بالاترین شمارش‌ها را دارند، زیرا این ژن‌ها بزرگ‌ترین تفاوت‌های مطلق را میان نمونه‌ها نشان می‌دهند. راهبردی ساده و پرتکرار برای پرهیز از این وضعیت، گرفتن لگاریتمِ مقادیرِ شمارشِ نرمال‌سازی‌شده به‌علاوهٔ یک شبه‌شمارشِ ۱ است؛ بااین‌حال، بسته به انتخاب شبه‌شمارش، این‌بار ژن‌هایی با بسیار کمترین شمارش، سهم زیادی از نویز را به نمودار حاصل می‌افزایند، زیرا گرفتن لگاریتم از شمارش‌های کوچک، واریانس‌شان را به‌طور کاذب افزایش می‌دهد. می‌توانیم این ویژگیِ شمارش‌ها را به‌سرعت با داده‌های شبیه‌سازی‌شده نشان دهیم (در اینجا، شمارش‌های پواسون با دامنه‌ای از پارامتر لاندا از 0.1 تا 100). انحراف معیار هر سطر (ژن‌ها) را در برابر میانگین ترسیم می‌کنیم:‬
+بسیاری از روش‌های آماری متداول برای تحلیل اکتشافیِ داده‌های چندبعدی، مانند خوشه‌بندی و تحلیل مؤلفه‌های اصلی (<span dir="ltr">PCA</span>)، زمانی بهترین کارکرد را دارند که دامنهٔ واریانس در گستره‌های مختلفِ میانگین، به‌طور کلی مشابه باشد. هنگامی که مقدار مورد انتظارِ واریانس تقریباً در میانگین‌های مختلف یکسان است، می‌گوییم داده‌ها _هم‌واریانس_ هستند. بااین‌حال برای شمارش‌های <span dir="ltr">RNA-seq</span>، واریانس مورد انتظار با افزایش میانگین رشد می‌کند. برای نمونه، اگر <span dir="ltr">PCA</span> مستقیماً روی یک ماتریسِ شمارش یا شمارش‌های برآمده از <span dir="ltr">normalization</span> (نرمال‌سازی) انجام شود (مثلاً برای تصحیح تفاوت‌های عمق توالی‌یابی)، نمودار حاصل معمولاً عمدتاً به ژن‌هایی وابسته است که بالاترین شمارش‌ها را دارند، زیرا این ژن‌ها بزرگ‌ترین تفاوت‌های مطلق را میان نمونه‌ها نشان می‌دهند. راهبردی ساده و پرتکرار برای پرهیز از این وضعیت، گرفتن لگاریتمِ مقادیرِ شمارشِ نرمال‌سازی‌شده به‌علاوهٔ یک شبه‌شمارشِ ۱ است؛ بااین‌حال، بسته به انتخاب شبه‌شمارش، این‌بار ژن‌هایی با بسیار کمترین شمارش، سهم زیادی از نویز را به نمودار حاصل می‌افزایند، زیرا گرفتن لگاریتم از شمارش‌های کوچک، واریانس‌شان را به‌طور کاذب افزایش می‌دهد. می‌توانیم این ویژگیِ شمارش‌ها را به‌سرعت با داده‌های شبیه‌سازی‌شده نشان دهیم (در اینجا، شمارش‌های پواسون با دامنه‌ای از پارامتر لاندا از 0.1 تا 100). انحراف معیار هر سطر (ژن‌ها) را در برابر میانگین ترسیم می‌کنیم:
 
 ```
 lambda <- 10^seq(from = -1, to = 2, length = 1000)
@@ -711,27 +711,27 @@ library("vsn")
 meanSdPlot(cts, ranks = FALSE)
 ```
 
-‫و برای شمارش‌های لگاریتم‌دگرگون‌شده:‬
+و برای شمارش‌های لگاریتم‌دگرگون‌شده:
 
 ```
 log.cts.one <- log2(cts + 1)
 meanSdPlot(log.cts.one, ranks = FALSE)
 ```
 
-‫لگاریتم با یک شبه‌شمارش کوچک، تفاوت‌ها را زمانی تقویت می‌کند که ...‬
-‫مقادیر نزدیک به صفر هستند. ژن‌های با ⁦count⁩ (شمارش) پایین و نسبت سیگنال به نویز کم، به‌شکل نامتناسبی بر فاصله‌های نمونه-به-نمونه و نمودارهای ⁦PCA⁩ اثر می‌گذارند.‬
+لگاریتم با یک شبه‌شمارش کوچک، تفاوت‌ها را زمانی تقویت می‌کند که ...
+مقادیر نزدیک به صفر هستند. ژن‌های با <span dir="ltr">count</span> (شمارش) پایین و نسبت سیگنال به نویز کم، به‌شکل نامتناسبی بر فاصله‌های نمونه-به-نمونه و نمودارهای <span dir="ltr">PCA</span> اثر می‌گذارند.
 
-‫به‌عنوان راه‌حل، _⁦DESeq2_⁩ دو تبدیل برای داده‌های شمارش ارائه می‌کند که واریانس را در سراسر میانگین پایدار می‌کنند:‬
-‫_⁦variance⁩ ⁦stabilizing⁩ ⁦transformation_⁩ یا ⁦VST⁩ برای داده‌های دوجمله‌ای منفی با روند ⁦dispersion⁩ (پراکندگی)-میانگین (⁦Anders⁩ ⁦and⁩ ⁦Huber⁩ 2010) که در تابع _⁦vst_⁩ پیاده‌سازی شده است،‬
-‫و _⁦regularized-logarithm⁩ ⁦transformation_⁩ یا _⁦rlog_⁩ (⁦Love⁩, ⁦Huber⁩, ⁦and⁩ ⁦Anders⁩ 2014).‬
+به‌عنوان راه‌حل، _<span dir="ltr">DESeq2_</span> دو تبدیل برای داده‌های شمارش ارائه می‌کند که واریانس را در سراسر میانگین پایدار می‌کنند:
+_<span dir="ltr">variance</span> <span dir="ltr">stabilizing</span> <span dir="ltr">transformation_</span> یا <span dir="ltr">VST</span> برای داده‌های دوجمله‌ای منفی با روند <span dir="ltr">dispersion</span> (پراکندگی)-میانگین (<span dir="ltr">Anders</span> <span dir="ltr">and</span> <span dir="ltr">Huber</span> 2010) که در تابع _<span dir="ltr">vst_</span> پیاده‌سازی شده است،
+و _<span dir="ltr">regularized-logarithm</span> <span dir="ltr">transformation_</span> یا _<span dir="ltr">rlog_</span> (<span dir="ltr">Love</span>, <span dir="ltr">Huber</span>, <span dir="ltr">and</span> <span dir="ltr">Anders</span> 2014).
 
-‫برای ژن‌های با شمارش‌های بالا، هر دو تبدیل ⁦VST⁩ و ⁦rlog⁩ نتیجه‌ای مشابه با تبدیل لگاریتمی معمولِ پایهٔ 2 روی شمارش‌های نرمال‌شدهٔ حاصل از ⁦normalization⁩ (نرمال‌سازی) می‌دهند. اما برای ژن‌های با شمارش‌های پایین‌تر، مقادیر به‌سمت یک مقدار میانی جمع می‌شوند. داده‌های تبدیل‌شده با ⁦VST⁩ یا ⁦rlog⁩ به‌تقریب هم‌واریانس می‌شوند (روند تخت‌تر در _⁦meanSdPlot_⁩) و بنابراین می‌توان آن‌ها را مستقیماً برای محاسبهٔ فاصله‌ها بین نمونه‌ها، ساخت نمودارهای ⁦PCA⁩، یا به‌عنوان ورودیِ روش‌های پایین‌دستی که با داده‌های هم‌واریانس بهترین کارکرد را دارند، به‌کار برد.‬
+برای ژن‌های با شمارش‌های بالا، هر دو تبدیل <span dir="ltr">VST</span> و <span dir="ltr">rlog</span> نتیجه‌ای مشابه با تبدیل لگاریتمی معمولِ پایهٔ 2 روی شمارش‌های نرمال‌شدهٔ حاصل از <span dir="ltr">normalization</span> (نرمال‌سازی) می‌دهند. اما برای ژن‌های با شمارش‌های پایین‌تر، مقادیر به‌سمت یک مقدار میانی جمع می‌شوند. داده‌های تبدیل‌شده با <span dir="ltr">VST</span> یا <span dir="ltr">rlog</span> به‌تقریب هم‌واریانس می‌شوند (روند تخت‌تر در _<span dir="ltr">meanSdPlot_</span>) و بنابراین می‌توان آن‌ها را مستقیماً برای محاسبهٔ فاصله‌ها بین نمونه‌ها، ساخت نمودارهای <span dir="ltr">PCA</span>، یا به‌عنوان ورودیِ روش‌های پایین‌دستی که با داده‌های هم‌واریانس بهترین کارکرد را دارند، به‌کار برد.
 
-‫⁦Which⁩ ⁦transformation⁩ ⁦to⁩ ⁦choose⁩? انتخاب کدام تبدیل مناسب‌تر است؟ ⁦VST⁩ بسیار سریع‌تر محاسبه می‌شود و نسبت به پرت‌های دارای شمارش بالا حساسیت کمتری از ⁦rlog⁩ دارد. ⁦rlog⁩ معمولاً روی مجموعه‌داده‌های کوچک (⁦n⁩ < 30) خوب عمل می‌کند و وقتی دامنهٔ عمق توالی‌گزینی بین نمونه‌ها بسیار گسترده باشد (اختلافی در حد یک مرتبهٔ بزرگی)، احتمال دارد از ⁦VST⁩ بهتر عمل کند. ازاین‌رو ⁦VST⁩ را برای مجموعه‌داده‌های متوسط تا بزرگ (⁦n⁩ > 30) توصیه می‌کنیم. می‌توانید هر دو تبدیل را انجام دهید و __⁦KEEP_BIDI_00000__⁩ یا نمودارهای ⁦PCA⁩ تولیدشده را مطابق توضیحات زیر مقایسه کنید.‬
+<span dir="ltr">Which</span> <span dir="ltr">transformation</span> <span dir="ltr">to</span> <span dir="ltr">choose</span>? انتخاب کدام تبدیل مناسب‌تر است؟ <span dir="ltr">VST</span> بسیار سریع‌تر محاسبه می‌شود و نسبت به پرت‌های دارای شمارش بالا حساسیت کمتری از <span dir="ltr">rlog</span> دارد. <span dir="ltr">rlog</span> معمولاً روی مجموعه‌داده‌های کوچک (<span dir="ltr">n</span> < 30) خوب عمل می‌کند و وقتی دامنهٔ عمق توالی‌گزینی بین نمونه‌ها بسیار گسترده باشد (اختلافی در حد یک مرتبهٔ بزرگی)، احتمال دارد از <span dir="ltr">VST</span> بهتر عمل کند. ازاین‌رو <span dir="ltr">VST</span> را برای مجموعه‌داده‌های متوسط تا بزرگ (<span dir="ltr">n</span> > 30) توصیه می‌کنیم. می‌توانید هر دو تبدیل را انجام دهید و __<span dir="ltr">KEEP_BIDI_00000__</span> یا نمودارهای <span dir="ltr">PCA</span> تولیدشده را مطابق توضیحات زیر مقایسه کنید.
 
-‫توجه کنید که دو تبدیل ارائه‌شده توسط ⁦DESeq2⁩ برای کاربردهایی غیر از ⁦differential⁩ ⁦expression⁩ ⁦analysis⁩ (تحلیل بیان تفاضلی) در نظر گرفته شده‌اند. برای این تحلیل توصیه می‌کنیم از تابع _⁦DESeq_⁩ روی شمارش‌های خام استفاده کنید، همان‌گونه که بعدتر در این جریان کار توضیح داده می‌شود؛ این روش در گام برآورد پراکندگی نیز وابستگی واریانسِ شمارش‌ها به مقدار میانگین را در نظر می‌گیرد.‬
+توجه کنید که دو تبدیل ارائه‌شده توسط <span dir="ltr">DESeq2</span> برای کاربردهایی غیر از <span dir="ltr">differential</span> <span dir="ltr">expression</span> <span dir="ltr">analysis</span> (تحلیل بیان تفاضلی) در نظر گرفته شده‌اند. برای این تحلیل توصیه می‌کنیم از تابع _<span dir="ltr">DESeq_</span> روی شمارش‌های خام استفاده کنید، همان‌گونه که بعدتر در این جریان کار توضیح داده می‌شود؛ این روش در گام برآورد پراکندگی نیز وابستگی واریانسِ شمارش‌ها به مقدار میانگین را در نظر می‌گیرد.
 
-‫هر دو تابع _⁦vst_⁩ و _⁦rlog_⁩ یک شیء از کلاس _⁦DESeqTransform_⁩ برمی‌گردانند که بر پایهٔ کلاس _⁦SummarizedExperiment_⁩ است. مقادیر تبدیل‌شده دیگر «شمارش» نیستند و در شکاف _⁦assay_⁩ ذخیره می‌شوند. _⁦colData_⁩ای که به __⁦KEEP_BIDI_00000__⁩ پیوست شده بود همچنان در دسترس است:‬
+هر دو تابع _<span dir="ltr">vst_</span> و _<span dir="ltr">rlog_</span> یک شیء از کلاس _<span dir="ltr">DESeqTransform_</span> برمی‌گردانند که بر پایهٔ کلاس _<span dir="ltr">SummarizedExperiment_</span> است. مقادیر تبدیل‌شده دیگر «شمارش» نیستند و در شکاف _<span dir="ltr">assay_</span> ذخیره می‌شوند. _<span dir="ltr">colData_</span>ای که به __<span dir="ltr">KEEP_BIDI_00000__</span> پیوست شده بود همچنان در دسترس است:
 
 ```
 vsd <- vst(dds, blind = FALSE)
@@ -767,7 +767,7 @@ colData(vsd)
 ## SRR1039521 SRR1039521  N061011 Dexamethasone  N061011    trt
 ```
 
-‫و نیز برای _⁦rlog_:⁩‬
+و نیز برای _<span dir="ltr">rlog_:</span>
 
 ```
 rld <- rlog(dds, blind = FALSE)
@@ -785,9 +785,9 @@ head(assay(rld), 3)
 ## ENSG00000000457.13   8.279323   8.396402   8.387635
 ```
 
-‫در فراخوانی‌های تابعی بالا، __⁦KEEP_BIDI_00000__⁩ را مشخص کردیم؛ یعنی تفاوت‌های بین رده‌های سلولی و تیمار (متغیرهای موجود در طرح آزمایش) در شکل‌گیری روند مورد انتظارِ واریانس-میانگینِ این آزمایش مشارکت نخواهند داشت. طرح آزمایشی مستقیماً در خودِ تبدیل به‌کار نمی‌رود، بلکه فقط برای برآورد میزان کلیِ تغییرپذیریِ موجود در شمارش‌ها استفاده می‌شود. برای یک تبدیل کاملاً بدون ناظر، می‌توان __⁦KEEP_BIDI_00001__⁩ را تنظیم کرد (که پیش‌فرض نیز همین است).‬
+در فراخوانی‌های تابعی بالا، __<span dir="ltr">KEEP_BIDI_00000__</span> را مشخص کردیم؛ یعنی تفاوت‌های بین رده‌های سلولی و تیمار (متغیرهای موجود در طرح آزمایش) در شکل‌گیری روند مورد انتظارِ واریانس-میانگینِ این آزمایش مشارکت نخواهند داشت. طرح آزمایشی مستقیماً در خودِ تبدیل به‌کار نمی‌رود، بلکه فقط برای برآورد میزان کلیِ تغییرپذیریِ موجود در شمارش‌ها استفاده می‌شود. برای یک تبدیل کاملاً بدون ناظر، می‌توان __<span dir="ltr">KEEP_BIDI_00001__</span> را تنظیم کرد (که پیش‌فرض نیز همین است).
 
-‫برای نمایش اثر تبدیل، در شکل زیر نمونهٔ اول را در برابر نمونهٔ دوم رسم می‌کنیم: ابتدا با استفادهٔ ساده از تابع _⁦log2_⁩ (پس از افزودن 1 برای پرهیز از گرفتن لگاریتمِ صفر)، و سپس با استفاده از مقادیر تبدیل‌شده با ⁦VST⁩ و ⁦rlog.⁩ برای رویکرد _⁦log2_⁩ لازم است ابتدا ضریب‌های اندازه را برای درنظرگرفتن عمق توالی‌گزینی برآورد کنیم و سپس __⁦KEEP_BIDI_00000__⁩ را مشخص کنیم. اصلاح عمق توالی‌گزینی برای _⁦vst_⁩ و _⁦rlog_⁩ به‌صورت خودکار انجام می‌شود.‬
+برای نمایش اثر تبدیل، در شکل زیر نمونهٔ اول را در برابر نمونهٔ دوم رسم می‌کنیم: ابتدا با استفادهٔ ساده از تابع _<span dir="ltr">log2_</span> (پس از افزودن 1 برای پرهیز از گرفتن لگاریتمِ صفر)، و سپس با استفاده از مقادیر تبدیل‌شده با <span dir="ltr">VST</span> و <span dir="ltr">rlog.</span> برای رویکرد _<span dir="ltr">log2_</span> لازم است ابتدا ضریب‌های اندازه را برای درنظرگرفتن عمق توالی‌گزینی برآورد کنیم و سپس __<span dir="ltr">KEEP_BIDI_00000__</span> را مشخص کنیم. اصلاح عمق توالی‌گزینی برای _<span dir="ltr">vst_</span> و _<span dir="ltr">rlog_</span> به‌صورت خودکار انجام می‌شود.
 
 ```
 library("dplyr")
@@ -810,15 +810,15 @@ ggplot(df, aes(x = x, y = y)) + geom_hex(bins = 80) +
   coord_fixed() + facet_grid( . ~ transformation)
 ```
 
-‫⁦Scatterplot⁩ ⁦of⁩ ⁦transformed⁩ ⁦counts⁩ ⁦from⁩ ⁦two⁩ ⁦samples.⁩ نمودار پراکنشِ شمارش‌های تبدیل‌شده از دو نمونه. نمودارهای پراکنش با تبدیل لگاریتمی پایهٔ 2 روی شمارش‌های نرمال‌شده (چپ)، با ⁦VST⁩ (میانه)، و با ⁦rlog⁩ (راست) نشان داده شده‌اند. در حالی‌که ⁦rlog⁩ تقریباً روی همان مقیاسِ شمارش‌های لگاریتمی پایهٔ 2 است، ⁦VST⁩ برای مقادیر کوچک‌تر یک جابه‌جایی رو به بالا دارد. این تفاوت‌ها بین نمونه‌هاست (انحراف از ⁦y⁩=⁦x⁩ در این نمودارهای پراکنش) که به محاسبات فاصله و نمودار ⁦PCA⁩ سهم می‌افزایند.‬
+<span dir="ltr">Scatterplot</span> <span dir="ltr">of</span> <span dir="ltr">transformed</span> <span dir="ltr">counts</span> <span dir="ltr">from</span> <span dir="ltr">two</span> <span dir="ltr">samples.</span> نمودار پراکنشِ شمارش‌های تبدیل‌شده از دو نمونه. نمودارهای پراکنش با تبدیل لگاریتمی پایهٔ 2 روی شمارش‌های نرمال‌شده (چپ)، با <span dir="ltr">VST</span> (میانه)، و با <span dir="ltr">rlog</span> (راست) نشان داده شده‌اند. در حالی‌که <span dir="ltr">rlog</span> تقریباً روی همان مقیاسِ شمارش‌های لگاریتمی پایهٔ 2 است، <span dir="ltr">VST</span> برای مقادیر کوچک‌تر یک جابه‌جایی رو به بالا دارد. این تفاوت‌ها بین نمونه‌هاست (انحراف از <span dir="ltr">y</span>=<span dir="ltr">x</span> در این نمودارهای پراکنش) که به محاسبات فاصله و نمودار <span dir="ltr">PCA</span> سهم می‌افزایند.
 
-‫می‌بینیم ژن‌هایی با شمارش‌های پایین (گوشهٔ پایین-چپ) روی مقیاس لگاریتمی معمول بیش‌ازحد متغیر به‌نظر می‌رسند، حال آن‌که ⁦VST⁩ و ⁦rlog⁩ اختلاف‌ها را برای ژن‌های کم‌شمارشی که داده‌ها دربارهٔ بیان تفاضلی آن‌ها اطلاعات اندکی فراهم می‌کنند، فشرده می‌سازند.‬
+می‌بینیم ژن‌هایی با شمارش‌های پایین (گوشهٔ پایین-چپ) روی مقیاس لگاریتمی معمول بیش‌ازحد متغیر به‌نظر می‌رسند، حال آن‌که <span dir="ltr">VST</span> و <span dir="ltr">rlog</span> اختلاف‌ها را برای ژن‌های کم‌شمارشی که داده‌ها دربارهٔ بیان تفاضلی آن‌ها اطلاعات اندکی فراهم می‌کنند، فشرده می‌سازند.
 
-## ‫‫۴٫۳ فاصلهٔ نمونه‌ها‬
+## ۴٫۳ فاصلهٔ نمونه‌ها
 
-‫یک گام آغازینِ مفید در تحلیل ⁦RNA-seq⁩ اغلب ارزیابی شباهت کلی بین نمونه‌هاست: کدام نمونه‌ها به‌هم شبیه‌اند و کدام متفاوت؟ آیا این با انتظار برآمده از طرح آزمایش سازگار است؟‬
+یک گام آغازینِ مفید در تحلیل <span dir="ltr">RNA-seq</span> اغلب ارزیابی شباهت کلی بین نمونه‌هاست: کدام نمونه‌ها به‌هم شبیه‌اند و کدام متفاوت؟ آیا این با انتظار برآمده از طرح آزمایش سازگار است؟
 
-‫از تابع ⁦R⁩ به‌نام _⁦dist_⁩ برای محاسبهٔ فاصلهٔ اقلیدسی بین نمونه‌ها استفاده می‌کنیم. برای اطمینان از مشارکت تقریباً یکنواختِ همهٔ ژن‌ها، این تابع را بر داده‌های ⁦VST⁩ به‌کار می‌بریم. باید ماتریس مقادیر را با _⁦t_⁩ ترانهاده کنیم، زیرا تابع _⁦dist_⁩ انتظار دارد نمونه‌های مختلف سطرهای آرگومان آن باشند و ابعاد مختلف (اینجا ژن‌ها) در ستون‌ها قرار گیرند.‬
+از تابع <span dir="ltr">R</span> به‌نام _<span dir="ltr">dist_</span> برای محاسبهٔ فاصلهٔ اقلیدسی بین نمونه‌ها استفاده می‌کنیم. برای اطمینان از مشارکت تقریباً یکنواختِ همهٔ ژن‌ها، این تابع را بر داده‌های <span dir="ltr">VST</span> به‌کار می‌بریم. باید ماتریس مقادیر را با _<span dir="ltr">t_</span> ترانهاده کنیم، زیرا تابع _<span dir="ltr">dist_</span> انتظار دارد نمونه‌های مختلف سطرهای آرگومان آن باشند و ابعاد مختلف (اینجا ژن‌ها) در ستون‌ها قرار گیرند.
 
 ```
 sampleDists <- dist(t(assay(vsd)))
@@ -844,14 +844,14 @@ sampleDists
 ## SRR1039521   41.45015
 ```
 
-‫فاصله‌ها را در شکل زیر به‌صورت نقشهٔ گرمایی ترسیم می‌کنیم، با استفاده از تابع _⁦pheatmap_⁩ از بستهٔ _[⁦pheatmap](https://cran.r-project.org/package=pheatmap)_.⁩‬
+فاصله‌ها را در شکل زیر به‌صورت نقشهٔ گرمایی ترسیم می‌کنیم، با استفاده از تابع _<span dir="ltr">pheatmap_</span> از بستهٔ _[<span dir="ltr">pheatmap](https://cran.r-project.org/package=pheatmap)_.</span>
 
 ```
 library("pheatmap")
 library("RColorBrewer")
 ```
 
-‫برای ترسیم ماتریس فاصلهٔ نمونه‌ها با آرایش ردیف‌ها/ستون‌ها بر پایهٔ فاصله‌های همین ماتریس، __⁦KEEP_BIDI_00000__⁩ را به آرگومان __⁦KEEP_BIDI_00001__⁩ در تابع _⁦pheatmap_⁩ به‌صورت دستی می‌دهیم. در غیر این‌صورت، تابع _⁦pheatmap_⁩ فرض می‌کند ماتریس شامل خودِ مقادیر داده است و فاصله‌ها را بین ردیف‌ها/ستون‌های ماتریسِ فاصله دوباره محاسبه می‌کند، که مطلوب ما نیست. همچنین یک پالت رنگیِ آبی را به‌صورت دستی با تابع _⁦colorRampPalette_⁩ از بستهٔ _[⁦RColorBrewer](https://cran.r-project.org/package=RColorBrewer)_⁩ مشخص می‌کنیم.‬
+برای ترسیم ماتریس فاصلهٔ نمونه‌ها با آرایش ردیف‌ها/ستون‌ها بر پایهٔ فاصله‌های همین ماتریس، __<span dir="ltr">KEEP_BIDI_00000__</span> را به آرگومان __<span dir="ltr">KEEP_BIDI_00001__</span> در تابع _<span dir="ltr">pheatmap_</span> به‌صورت دستی می‌دهیم. در غیر این‌صورت، تابع _<span dir="ltr">pheatmap_</span> فرض می‌کند ماتریس شامل خودِ مقادیر داده است و فاصله‌ها را بین ردیف‌ها/ستون‌های ماتریسِ فاصله دوباره محاسبه می‌کند، که مطلوب ما نیست. همچنین یک پالت رنگیِ آبی را به‌صورت دستی با تابع _<span dir="ltr">colorRampPalette_</span> از بستهٔ _[<span dir="ltr">RColorBrewer](https://cran.r-project.org/package=RColorBrewer)_</span> مشخص می‌کنیم.
 
 ```
 sampleDistMatrix <- as.matrix( sampleDists )
@@ -864,18 +864,18 @@ pheatmap(sampleDistMatrix,
          col = colors)
 ```
 
-‫⁦Heatmap⁩ ⁦of⁩ ⁦sample-to-sample⁩ ⁦distances⁩ ⁦using⁩ ⁦the⁩ ⁦variance⁩ ⁦stabilizing⁩ ⁦transformed⁩ ⁦values.⁩ نقشهٔ گرماییِ فاصله‌های نمونه-به-نمونه با استفاده از مقادیر تبدیل‌شدهٔ پایدارکنندهٔ واریانس.‬
+<span dir="ltr">Heatmap</span> <span dir="ltr">of</span> <span dir="ltr">sample-to-sample</span> <span dir="ltr">distances</span> <span dir="ltr">using</span> <span dir="ltr">the</span> <span dir="ltr">variance</span> <span dir="ltr">stabilizing</span> <span dir="ltr">transformed</span> <span dir="ltr">values.</span> نقشهٔ گرماییِ فاصله‌های نمونه-به-نمونه با استفاده از مقادیر تبدیل‌شدهٔ پایدارکنندهٔ واریانس.
 
-‫توجه کنید که نام سطرهای ماتریس فاصله را تغییر دادیم تا به‌جای شناسهٔ نمونه، نوع تیمار و شمارهٔ بیمار را شامل شود؛ تا هنگام مشاهدهٔ نقشهٔ گرمایی، همهٔ این اطلاعات در دسترس دید باشد.‬
+توجه کنید که نام سطرهای ماتریس فاصله را تغییر دادیم تا به‌جای شناسهٔ نمونه، نوع تیمار و شمارهٔ بیمار را شامل شود؛ تا هنگام مشاهدهٔ نقشهٔ گرمایی، همهٔ این اطلاعات در دسترس دید باشد.
 
-‫گزینهٔ دیگری برای محاسبهٔ فاصله‌های نمونه‌ها استفاده از ⁦Poisson⁩ ⁦Distance⁩ (⁦Witten⁩ 2011) است که در بستهٔ _[⁦PoiClaClu](https://cran.r-project.org/package=PoiClaClu)_⁩ پیاده‌سازی شده است. این معیارِ عدم شباهت بین شمارش‌ها، هنگام محاسبهٔ فاصله‌ها بین نمونه‌ها، ساختار واریانس ذاتیِ شمارش‌ها را نیز در نظر می‌گیرد. تابع _⁦PoissonDistance_⁩ ماتریس شمارشِ اصلی (نرنمال‌شده) را می‌پذیرد با این تفاوت که نمونه‌ها باید به‌جای ستون‌ها، سطرها باشند؛ بنابراین باید شمارش‌ها را در __⁦KEEP_BIDI_00001__⁩ ترانهاده کنیم.‬
+گزینهٔ دیگری برای محاسبهٔ فاصله‌های نمونه‌ها استفاده از <span dir="ltr">Poisson</span> <span dir="ltr">Distance</span> (<span dir="ltr">Witten</span> 2011) است که در بستهٔ _[<span dir="ltr">PoiClaClu](https://cran.r-project.org/package=PoiClaClu)_</span> پیاده‌سازی شده است. این معیارِ عدم شباهت بین شمارش‌ها، هنگام محاسبهٔ فاصله‌ها بین نمونه‌ها، ساختار واریانس ذاتیِ شمارش‌ها را نیز در نظر می‌گیرد. تابع _<span dir="ltr">PoissonDistance_</span> ماتریس شمارشِ اصلی (نرنمال‌شده) را می‌پذیرد با این تفاوت که نمونه‌ها باید به‌جای ستون‌ها، سطرها باشند؛ بنابراین باید شمارش‌ها را در __<span dir="ltr">KEEP_BIDI_00001__</span> ترانهاده کنیم.
 
 ```
 library("PoiClaClu")
 poisd <- PoissonDistance(t(counts(dds)))
 ```
 
-‫نقشهٔ گرمایی را در شکل زیر ترسیم می‌کنیم.‬
+نقشهٔ گرمایی را در شکل زیر ترسیم می‌کنیم.
 
 ```
 samplePoisDistMatrix <- as.matrix( poisd$dd )
@@ -887,20 +887,20 @@ pheatmap(samplePoisDistMatrix,
          col = colors)
 ```
 
-‫⁦Heatmap⁩ ⁦of⁩ ⁦sample-to-sample⁩ ⁦distances⁩ ⁦using⁩ ⁦the⁩ _⁦Poisson⁩ ⁦Distance_.⁩ نقشهٔ گرماییِ فاصله‌های نمونه-به-نمونه با استفاده از _⁦Poisson⁩ ⁦Distance_.⁩‬
+<span dir="ltr">Heatmap</span> <span dir="ltr">of</span> <span dir="ltr">sample-to-sample</span> <span dir="ltr">distances</span> <span dir="ltr">using</span> <span dir="ltr">the</span> _<span dir="ltr">Poisson</span> <span dir="ltr">Distance_.</span> نقشهٔ گرماییِ فاصله‌های نمونه-به-نمونه با استفاده از _<span dir="ltr">Poisson</span> <span dir="ltr">Distance_.</span>
 
-## ‫‫۴٫۴ نمودار ⁦PCA⁩‬
+## ۴٫۴ نمودار <span dir="ltr">PCA</span>
 
-‫راه دیگر برای نمایش فاصله‌های نمونه-به-نمونه، تحلیل مؤلفه‌های اصلی (⁦PCA⁩) است. در این روش، نقاط داده (اینجا نمونه‌ها) روی صفحهٔ دوبعدی افکنده می‌شوند به‌طوری‌که در دو جهتی که بیشترین مقدارِ توضیحِ واریانس را دارند، بیشترین پراکنش را بیابند.‬
-‫تفاوت‌ها (شکل زیر). محور ⁦x⁩ جهت تفکیک‌کننده‌ای است که بیشترین جدایی میان نقاط داده را فراهم می‌کند. مقادیر نمونه‌ها در این جهت با _⁦PC1_⁩ نشان داده می‌شوند. محور ⁦y⁩ جهت دیگری است (که باید نسبت به جهت اول _⁦orthogonal_⁩ باشد) که دومین بیشترین جدایی را ایجاد می‌کند. مقادیر نمونه‌ها در این جهت با _⁦PC2_⁩ نمایش داده می‌شوند. درصد واریانس کل که در هر جهت قرار دارد در برچسب محور نوشته شده است. توجه کنید که این درصدها با هم جمع‌شونده به 100٪ نمی‌شوند، چون ابعاد دیگری هم وجود دارند که واریانس باقی‌مانده را در خود دارند (گرچه هر یک از این ابعاد باقیمانده کمتر از دو بعدی خواهند بود که می‌بینیم).‬
+راه دیگر برای نمایش فاصله‌های نمونه-به-نمونه، تحلیل مؤلفه‌های اصلی (<span dir="ltr">PCA</span>) است. در این روش، نقاط داده (اینجا نمونه‌ها) روی صفحهٔ دوبعدی افکنده می‌شوند به‌طوری‌که در دو جهتی که بیشترین مقدارِ توضیحِ واریانس را دارند، بیشترین پراکنش را بیابند.
+تفاوت‌ها (شکل زیر). محور <span dir="ltr">x</span> جهت تفکیک‌کننده‌ای است که بیشترین جدایی میان نقاط داده را فراهم می‌کند. مقادیر نمونه‌ها در این جهت با _<span dir="ltr">PC1_</span> نشان داده می‌شوند. محور <span dir="ltr">y</span> جهت دیگری است (که باید نسبت به جهت اول _<span dir="ltr">orthogonal_</span> باشد) که دومین بیشترین جدایی را ایجاد می‌کند. مقادیر نمونه‌ها در این جهت با _<span dir="ltr">PC2_</span> نمایش داده می‌شوند. درصد واریانس کل که در هر جهت قرار دارد در برچسب محور نوشته شده است. توجه کنید که این درصدها با هم جمع‌شونده به 100٪ نمی‌شوند، چون ابعاد دیگری هم وجود دارند که واریانس باقی‌مانده را در خود دارند (گرچه هر یک از این ابعاد باقیمانده کمتر از دو بعدی خواهند بود که می‌بینیم).
 
 ```
 plotPCA(vsd, intgroup = c("dex", "cell"))
 ```
 
-‫**⁦PCA⁩ ⁦plot⁩ ⁦using⁩ ⁦the⁩ ⁦VST⁩ ⁦data.⁩** به هر ترکیب منحصربه‌فرد از درمان و ردهٔ سلولی رنگ متفاوتی اختصاص داده شده است.‬
+**<span dir="ltr">PCA</span> <span dir="ltr">plot</span> <span dir="ltr">using</span> <span dir="ltr">the</span> <span dir="ltr">VST</span> <span dir="ltr">data.</span>** به هر ترکیب منحصربه‌فرد از درمان و ردهٔ سلولی رنگ متفاوتی اختصاص داده شده است.
 
-‫در اینجا از تابع _⁦plotPCA_⁩ که همراه با _⁦DESeq2_⁩ ارائه می‌شود استفاده کرده‌ایم. دو عبارتی که توسط __⁦KEEP_BIDI_00000__⁩ مشخص شده‌اند، گروه‌های مورد نظر برای برچسب‌گذاری نمونه‌ها هستند؛ این عبارات به تابع می‌گویند که از آن‌ها برای انتخاب رنگ‌ها استفاده کند. همچنین می‌توانیم نمودار ⁦PCA⁩ را از ابتدا با استفاده از بستهٔ _[⁦ggplot2](https://cran.r-project.org/package=ggplot2)_⁩ بسازیم (⁦Wickham⁩ 2009). برای این کار، از تابع _⁦plotPCA_⁩ می‌خواهیم که به‌جای ساختن نمودار، داده‌های مورد استفاده برای رسم را برگرداند. برای جزئیات بیشتر دربارهٔ استفاده از _⁦ggplot_⁩ به مستندات _⁦ggplot2_⁩ مراجعه کنید: ⁦http://docs.ggplot2.org/current/.⁩‬
+در اینجا از تابع _<span dir="ltr">plotPCA_</span> که همراه با _<span dir="ltr">DESeq2_</span> ارائه می‌شود استفاده کرده‌ایم. دو عبارتی که توسط __<span dir="ltr">KEEP_BIDI_00000__</span> مشخص شده‌اند، گروه‌های مورد نظر برای برچسب‌گذاری نمونه‌ها هستند؛ این عبارات به تابع می‌گویند که از آن‌ها برای انتخاب رنگ‌ها استفاده کند. همچنین می‌توانیم نمودار <span dir="ltr">PCA</span> را از ابتدا با استفاده از بستهٔ _[<span dir="ltr">ggplot2](https://cran.r-project.org/package=ggplot2)_</span> بسازیم (<span dir="ltr">Wickham</span> 2009). برای این کار، از تابع _<span dir="ltr">plotPCA_</span> می‌خواهیم که به‌جای ساختن نمودار، داده‌های مورد استفاده برای رسم را برگرداند. برای جزئیات بیشتر دربارهٔ استفاده از _<span dir="ltr">ggplot_</span> به مستندات _<span dir="ltr">ggplot2_</span> مراجعه کنید: <span dir="ltr">http://docs.ggplot2.org/current/.</span>
 
 ```
 pcaData <- plotPCA(vsd, intgroup = c( "dex", "cell"), returnData = TRUE)
@@ -932,7 +932,7 @@ pcaData
 percentVar <- round(100 * attr(pcaData, "percentVar"))
 ```
 
-‫سپس می‌توانیم از این داده‌ها برای ساختن یک نمودار دوم در شکل زیر استفاده کنیم، طوری که رنگ نقاط نشان‌دهندهٔ درمان با دگزامتازون و شکل نمادها نشان‌دهندهٔ ردهٔ سلولی باشد.‬
+سپس می‌توانیم از این داده‌ها برای ساختن یک نمودار دوم در شکل زیر استفاده کنیم، طوری که رنگ نقاط نشان‌دهندهٔ درمان با دگزامتازون و شکل نمادها نشان‌دهندهٔ ردهٔ سلولی باشد.
 
 ```
 ggplot(pcaData, aes(x = PC1, y = PC2, color = dex, shape = cell)) +
@@ -943,19 +943,19 @@ ggplot(pcaData, aes(x = PC1, y = PC2, color = dex, shape = cell)) +
   ggtitle("PCA with VST data")
 ```
 
-‫**⁦PCA⁩ ⁦plot⁩ ⁦using⁩ ⁦the⁩ ⁦VST⁩ ⁦values⁩ ⁦with⁩ ⁦custom⁩ _⁦ggplot2_⁩ ⁦code.⁩** در اینجا ردهٔ سلولی (نماد رسم) و درمان با دگزامتازون (رنگ) مشخص شده‌اند.‬
+**<span dir="ltr">PCA</span> <span dir="ltr">plot</span> <span dir="ltr">using</span> <span dir="ltr">the</span> <span dir="ltr">VST</span> <span dir="ltr">values</span> <span dir="ltr">with</span> <span dir="ltr">custom</span> _<span dir="ltr">ggplot2_</span> <span dir="ltr">code.</span>** در اینجا ردهٔ سلولی (نماد رسم) و درمان با دگزامتازون (رنگ) مشخص شده‌اند.
 
-‫از نمودار ⁦PCA⁩ می‌بینیم که اختلافات بین سلول‌ها (شکل‌های رسم متفاوت) چشمگیر هستند، اگرچه قدرتمندتر از اختلافات ناشی از درمان با دگزامتازون (قرمز در مقابل آبی) نیستند. این نشان می‌دهد که در آزمون‌های تفاضلی لازم است این موضوع را با طراحی زوجی (⁦paired⁩)، یعنی جفت‌کردن، در نظر بگیریم چون هر نمونهٔ درمان‌شده با دگزامتازون با یک نمونهٔ بدون درمان از همان ردهٔ سلولی «جفت» شده است. ما قبلاً برای این طراحی آماده شده‌ایم چون فرمول __⁦KEEP_BIDI_00000__⁩ را قبلاً اختصاص داده‌ایم.‬
+از نمودار <span dir="ltr">PCA</span> می‌بینیم که اختلافات بین سلول‌ها (شکل‌های رسم متفاوت) چشمگیر هستند، اگرچه قدرتمندتر از اختلافات ناشی از درمان با دگزامتازون (قرمز در مقابل آبی) نیستند. این نشان می‌دهد که در آزمون‌های تفاضلی لازم است این موضوع را با طراحی زوجی (<span dir="ltr">paired</span>)، یعنی جفت‌کردن، در نظر بگیریم چون هر نمونهٔ درمان‌شده با دگزامتازون با یک نمونهٔ بدون درمان از همان ردهٔ سلولی «جفت» شده است. ما قبلاً برای این طراحی آماده شده‌ایم چون فرمول __<span dir="ltr">KEEP_BIDI_00000__</span> را قبلاً اختصاص داده‌ایم.
 
-## ‫‫۴٫۵ نمودار ⁦PCA⁩ با استفاده از ⁦PCA⁩ تعمیم‌یافته‬
+## ۴٫۵ نمودار <span dir="ltr">PCA</span> با استفاده از <span dir="ltr">PCA</span> تعمیم‌یافته
 
-‫یک روش دیگر برای کاهش بعد در داده‌هایی که توزیع نرمال ندارند (مثلاً داده‌های شمارش که بیش‌پراکنش دارند) استفاده از ⁦generalized⁩ ⁦principal⁩ ⁦component⁩ ⁦analysis⁩ یا ⁦GLM-PCA⁩ است (⁦Townes⁩ و همکاران، 2019) که در بستهٔ ⁦CRAN⁩ _[⁦glmpca](https://cran.r-project.org/package=glmpca)_⁩ پیاده‌سازی شده است. این بسته ماتریس شمارش (⁦count⁩ (شمارش)) را به‌عنوان ورودی می‌گیرد و همچنین تعداد ابعاد نهفته‌ای را که باید برازش شوند (در اینجا 2) می‌پذیرد. همان‌طور که ⁦Townes⁩ و همکاران (2019) بیان می‌کنند:‬
+یک روش دیگر برای کاهش بعد در داده‌هایی که توزیع نرمال ندارند (مثلاً داده‌های شمارش که بیش‌پراکنش دارند) استفاده از <span dir="ltr">generalized</span> <span dir="ltr">principal</span> <span dir="ltr">component</span> <span dir="ltr">analysis</span> یا <span dir="ltr">GLM-PCA</span> است (<span dir="ltr">Townes</span> و همکاران، 2019) که در بستهٔ <span dir="ltr">CRAN</span> _[<span dir="ltr">glmpca](https://cran.r-project.org/package=glmpca)_</span> پیاده‌سازی شده است. این بسته ماتریس شمارش (<span dir="ltr">count</span> (شمارش)) را به‌عنوان ورودی می‌گیرد و همچنین تعداد ابعاد نهفته‌ای را که باید برازش شوند (در اینجا 2) می‌پذیرد. همان‌طور که <span dir="ltr">Townes</span> و همکاران (2019) بیان می‌کنند:
 
-> ‫‫…ما پیشنهاد می‌کنیم از ⁦GLM-PCA⁩ استفاده شود، که تعمیمی از‬
-> ‫‫⁦PCA⁩ برای توزیع‌های خانوادهٔ نمایی است. ⁦GLM-PCA⁩ بر روی شمارش‌های خام عمل می‌کند‬
-> ‫‫و از مشکلات مربوط به نرمال‌سازی (⁦normalization⁩ (نرمال‌سازی)) اجتناب می‌نماید. همچنین نشان می‌دهیم که به‌کارگیری ⁦PCA⁩‬
-> ‫‫روی باقیمانده‌های ⁦deviance⁩ یا ⁦Pearson⁩ تقریب سودمند و سریعی از‬
-> ‫‫⁦GLM-PCA⁩ ارائه می‌دهد.‬
+> …ما پیشنهاد می‌کنیم از <span dir="ltr">GLM-PCA</span> استفاده شود، که تعمیمی از
+> <span dir="ltr">PCA</span> برای توزیع‌های خانوادهٔ نمایی است. <span dir="ltr">GLM-PCA</span> بر روی شمارش‌های خام عمل می‌کند
+> و از مشکلات مربوط به نرمال‌سازی (<span dir="ltr">normalization</span> (نرمال‌سازی)) اجتناب می‌نماید. همچنین نشان می‌دهیم که به‌کارگیری <span dir="ltr">PCA</span>
+> روی باقیمانده‌های <span dir="ltr">deviance</span> یا <span dir="ltr">Pearson</span> تقریب سودمند و سریعی از
+> <span dir="ltr">GLM-PCA</span> ارائه می‌دهد.
 
 ```
 library("glmpca")
@@ -970,9 +970,9 @@ ggplot(gpca.dat, aes(x = dim1, y = dim2, color = dex, shape = cell)) +
   geom_point(size =3) + coord_fixed() + ggtitle("glmpca - Generalized PCA")
 ```
 
-## ‫‫۴٫۶ نمودار ⁦MDS⁩‬
+## ۴٫۶ نمودار <span dir="ltr">MDS</span>
 
-‫نمودار دیگری، بسیار شبیه به نمودار ⁦PCA⁩، را می‌توان با استفاده از تابع _⁦multidimensional⁩ ⁦scaling_⁩ (⁦MDS⁩) در ⁦R⁩ پایه ساخت. این روش زمانی مفید است که ماتریس داده در اختیار نداریم و تنها یک ماتریس فواصل داریم. در اینجا ما ⁦MDS⁩ را برای فواصل محاسبه‌شده از داده‌های _⁦VST_⁩ محاسبه می‌کنیم و آن‌ها را در شکل زیر رسم می‌کنیم.‬
+نمودار دیگری، بسیار شبیه به نمودار <span dir="ltr">PCA</span>، را می‌توان با استفاده از تابع _<span dir="ltr">multidimensional</span> <span dir="ltr">scaling_</span> (<span dir="ltr">MDS</span>) در <span dir="ltr">R</span> پایه ساخت. این روش زمانی مفید است که ماتریس داده در اختیار نداریم و تنها یک ماتریس فواصل داریم. در اینجا ما <span dir="ltr">MDS</span> را برای فواصل محاسبه‌شده از داده‌های _<span dir="ltr">VST_</span> محاسبه می‌کنیم و آن‌ها را در شکل زیر رسم می‌کنیم.
 
 ```
 mds <- as.data.frame(colData(vsd))  %>%
@@ -981,9 +981,9 @@ ggplot(mds, aes(x = `1`, y = `2`, color = dex, shape = cell)) +
   geom_point(size = 3) + coord_fixed() + ggtitle("MDS with VST data")
 ```
 
-‫**⁦MDS⁩ ⁦plot⁩ ⁦using⁩ ⁦VST⁩ ⁦data.⁩**‬
+**<span dir="ltr">MDS</span> <span dir="ltr">plot</span> <span dir="ltr">using</span> <span dir="ltr">VST</span> <span dir="ltr">data.</span>**
 
-‫در شکل زیر همان نمودار را برای _⁦PoissonDistance_⁩ نشان داده‌ایم:‬
+در شکل زیر همان نمودار را برای _<span dir="ltr">PoissonDistance_</span> نشان داده‌ایم:
 
 ```
 mdsPois <- as.data.frame(colData(dds)) %>%
@@ -992,25 +992,25 @@ ggplot(mdsPois, aes(x = `1`, y = `2`, color = dex, shape = cell)) +
   geom_point(size = 3) + coord_fixed() + ggtitle("MDS with PoissonDistances")
 ```
 
-‫**⁦MDS⁩ ⁦plot⁩ ⁦using⁩ ⁦the⁩ _⁦Poisson⁩ ⁦Distance_⁩ .**‬
+**<span dir="ltr">MDS</span> <span dir="ltr">plot</span> <span dir="ltr">using</span> <span dir="ltr">the</span> _<span dir="ltr">Poisson</span> <span dir="ltr">Distance_</span> .**
 
-# ‫‫۵ ⁦differential⁩ ⁦expression⁩ ⁦analysis⁩ (تحلیل بیان تفاضلی)‬
+# ۵ <span dir="ltr">differential</span> <span dir="ltr">expression</span> <span dir="ltr">analysis</span> (تحلیل بیان تفاضلی)
 
-## ‫‫۵٫۱ اجرای خط لولهٔ تحلیل بیان تفاضلی‬
+## ۵٫۱ اجرای خط لولهٔ تحلیل بیان تفاضلی
 
-‫چون هنگام ساخت _⁦DESeqDataSet_⁩ طراحی تجربی را تعیین کرده‌ایم، می‌توانیم خط لولهٔ تحلیل بیان تفاضلی را روی شمارش‌های خام با یک فراخوانی به تابع _⁦DESeq_⁩ اجرا کنیم:‬
+چون هنگام ساخت _<span dir="ltr">DESeqDataSet_</span> طراحی تجربی را تعیین کرده‌ایم، می‌توانیم خط لولهٔ تحلیل بیان تفاضلی را روی شمارش‌های خام با یک فراخوانی به تابع _<span dir="ltr">DESeq_</span> اجرا کنیم:
 
 ```
 dds <- DESeq(dds)
 ```
 
-‫این تابع در هر مرحله پیام‌هایی دربارهٔ عملیات انجام‌شده چاپ می‌کند. این مراحل در صفحهٔ راهنمای تابع _⁦DESeq_⁩ که با تایپ __⁦KEEP_BIDI_00000__⁩ قابل دسترسی است، مفصل‌تر شرح داده شده‌اند. به‌طور خلاصه، این مراحل عبارت‌اند از: برآورد ⁦size⁩ ⁦factors⁩ (کنترل اختلاف در عمق توالی‌یابی نمونه‌ها)، برآورد مقدارهای ⁦dispersion⁩ (پراکندگی) برای هر ⁦gene⁩ (ژن)، و برازش یک مدل خطی تعمیم‌یافته.‬
+این تابع در هر مرحله پیام‌هایی دربارهٔ عملیات انجام‌شده چاپ می‌کند. این مراحل در صفحهٔ راهنمای تابع _<span dir="ltr">DESeq_</span> که با تایپ __<span dir="ltr">KEEP_BIDI_00000__</span> قابل دسترسی است، مفصل‌تر شرح داده شده‌اند. به‌طور خلاصه، این مراحل عبارت‌اند از: برآورد <span dir="ltr">size</span> <span dir="ltr">factors</span> (کنترل اختلاف در عمق توالی‌یابی نمونه‌ها)، برآورد مقدارهای <span dir="ltr">dispersion</span> (پراکندگی) برای هر <span dir="ltr">gene</span> (ژن)، و برازش یک مدل خطی تعمیم‌یافته.
 
-‫یک _⁦DESeqDataSet_⁩ بازگردانده می‌شود که شامل همهٔ پارامترهای برازش‌یافته در خود است، و بخش بعدی شرح می‌دهد چگونه جداول نتایج مورد علاقه را از این شی استخراج کنیم.‬
+یک _<span dir="ltr">DESeqDataSet_</span> بازگردانده می‌شود که شامل همهٔ پارامترهای برازش‌یافته در خود است، و بخش بعدی شرح می‌دهد چگونه جداول نتایج مورد علاقه را از این شی استخراج کنیم.
 
-## ‫‫۵٫۲ ساخت جدول نتایج‬
+## ۵٫۲ ساخت جدول نتایج
 
-‫فراخوانی _⁦results_⁩ بدون هیچ آرگومانی، برآوردهای ⁦log2⁩ ⁦fold⁩ ⁦change⁩ و مقادیر ⁦p⁩ را برای آخرین متغیر در فرمول طراحی استخراج می‌کند. اگر برای این متغیر بیش از دو سطح وجود داشته باشد، _⁦results_⁩ جدول نتایج مقایسهٔ سطح آخر نسبت به سطح اول را استخراج خواهد کرد. مقایسه در بالای خروجی چاپ می‌شود: __⁦KEEP_BIDI_00000__⁩ .‬
+فراخوانی _<span dir="ltr">results_</span> بدون هیچ آرگومانی، برآوردهای <span dir="ltr">log2</span> <span dir="ltr">fold</span> <span dir="ltr">change</span> و مقادیر <span dir="ltr">p</span> را برای آخرین متغیر در فرمول طراحی استخراج می‌کند. اگر برای این متغیر بیش از دو سطح وجود داشته باشد، _<span dir="ltr">results_</span> جدول نتایج مقایسهٔ سطح آخر نسبت به سطح اول را استخراج خواهد کرد. مقایسه در بالای خروجی چاپ می‌شود: __<span dir="ltr">KEEP_BIDI_00000__</span> .
 
 ```
 res <- results(dds)
@@ -1049,13 +1049,13 @@ res
 ## ENSG00000285991.1           NA
 ```
 
-‫ما می‌توانستیم همین جدول نتایج را با فرمان مشخص‌تری نیز تولید کنیم. چون __⁦KEEP_BIDI_00000__⁩ آخرین متغیر در طراحی است، می‌توانیم به‌طور اختیاری آرگومان __⁦KEEP_BIDI_00001__⁩ را حذف کنیم تا مقایسهٔ دو سطح __⁦KEEP_BIDI_00002__⁩ را استخراج نماییم.‬
+ما می‌توانستیم همین جدول نتایج را با فرمان مشخص‌تری نیز تولید کنیم. چون __<span dir="ltr">KEEP_BIDI_00000__</span> آخرین متغیر در طراحی است، می‌توانیم به‌طور اختیاری آرگومان __<span dir="ltr">KEEP_BIDI_00001__</span> را حذف کنیم تا مقایسهٔ دو سطح __<span dir="ltr">KEEP_BIDI_00002__</span> را استخراج نماییم.
 
 ```
 res <- results(dds, contrast=c("dex","trt","untrt"))
 ```
 
-‫چون __⁦KEEP_BIDI_00000__⁩ یک شیء _⁦DataFrame_⁩ است، متادیتایی را که معنی ستون‌ها را توضیح می‌دهد همراه دارد:‬
+چون __<span dir="ltr">KEEP_BIDI_00000__</span> یک شیء _<span dir="ltr">DataFrame_</span> است، متادیتایی را که معنی ستون‌ها را توضیح می‌دهد همراه دارد:
 
 ```
 mcols(res, use.names = TRUE)
@@ -1073,14 +1073,14 @@ mcols(res, use.names = TRUE)
 ## padj                results   BH adjusted p-values
 ```
 
-‫ستون اول، __⁦KEEP_BIDI_00000__⁩، صرفاً میانگین مقادیر شمارش نرمال‌شده (⁦normalized⁩ ⁦count⁩ (شمارش) ⁦values⁩)، تقسیم بر ⁦size⁩ ⁦factors⁩، گرفته‌شده بر روی تمام نمونه‌ها در _⁦DESeqDataSet_⁩ است. چهار ستون باقیمانده به یک ⁦contrast⁩ (مقایسه) مشخص اشاره دارند، یعنی مقایسهٔ سطح __⁦KEEP_BIDI_00001__⁩ نسبت به سطح __⁦KEEP_BIDI_00002__⁩ برای متغیر فاکتوری __⁦KEEP_BIDI_00003__.⁩ در بخش‌های بعدی خواهیم دید چگونه مقایسه‌های دیگر را به‌دست آوریم.‬
+ستون اول، __<span dir="ltr">KEEP_BIDI_00000__</span>، صرفاً میانگین مقادیر شمارش نرمال‌شده (<span dir="ltr">normalized</span> <span dir="ltr">count</span> (شمارش) <span dir="ltr">values</span>)، تقسیم بر <span dir="ltr">size</span> <span dir="ltr">factors</span>، گرفته‌شده بر روی تمام نمونه‌ها در _<span dir="ltr">DESeqDataSet_</span> است. چهار ستون باقیمانده به یک <span dir="ltr">contrast</span> (مقایسه) مشخص اشاره دارند، یعنی مقایسهٔ سطح __<span dir="ltr">KEEP_BIDI_00001__</span> نسبت به سطح __<span dir="ltr">KEEP_BIDI_00002__</span> برای متغیر فاکتوری __<span dir="ltr">KEEP_BIDI_00003__.</span> در بخش‌های بعدی خواهیم دید چگونه مقایسه‌های دیگر را به‌دست آوریم.
 
-‫ستون __⁦KEEP_BIDI_00000__⁩ برآورد اندازهٔ اثر است. این ستون نشان می‌دهد که بیان ژن (⁦gene⁩ (ژن)) تا چه حد به‌نظر می‌رسد بر اثر درمان با دگزامتازون نسبت به نمونه‌های بدون درمان تغییر کرده است. این مقدار روی مقیاس لگاریتمی پایهٔ 2 گزارش می‌شود: برای مثال، یک ⁦log2⁩ ⁦fold⁩ ⁦change⁩ برابر 1.5 یعنی بیان ژن حدوداً به‌مقدار ضریب 2^{1.5} ≈ 2.82 افزایش یافته است.‬
+ستون __<span dir="ltr">KEEP_BIDI_00000__</span> برآورد اندازهٔ اثر است. این ستون نشان می‌دهد که بیان ژن (<span dir="ltr">gene</span> (ژن)) تا چه حد به‌نظر می‌رسد بر اثر درمان با دگزامتازون نسبت به نمونه‌های بدون درمان تغییر کرده است. این مقدار روی مقیاس لگاریتمی پایهٔ 2 گزارش می‌شود: برای مثال، یک <span dir="ltr">log2</span> <span dir="ltr">fold</span> <span dir="ltr">change</span> برابر 1.5 یعنی بیان ژن حدوداً به‌مقدار ضریب 2^{1.5} ≈ 2.82 افزایش یافته است.
 
-‫بدیهی است که این برآورد با عدم‌قطعیتی همراه است، که در ستون __⁦KEEP_BIDI_00000__⁩ در دسترس است؛ این ستون برآورد خطای استاندارد برای برآورد ⁦log2⁩ ⁦fold⁩ ⁦change⁩ را نشان می‌دهد. همچنین می‌توان عدم‌قطعیت یک برآورد اندازهٔ اثر را به‌صورت نتیجهٔ یک آزمون آماری بیان کرد. هدف از یک آزمون برای تحلیل بیان تفاضلی (تحلیل بیان تفاضلی) این است که بررسی کند آیا داده‌ها شواهد کافی برای نتیجه‌گیری دربارهٔ اینکه این ...‬
-‫مقدار واقعاً از صفر متفاوت است. _⁦DESeq2_⁩ برای هر ⁦gene⁩ (ژن) یک آزمون فرضیه انجام می‌دهد تا بررسی کند آیا شواهد برای رد ⁦null⁩ ⁦hypothesis⁩ (فرض صفر) — که می‌گوید درمان بر ⁦gene⁩ (ژن) تأثیری ندارد — کافی هست یا خیر؛ در غیر این صورت تفاوت مشاهده‌شده بین گروه درمان و کنترل صرفاً ناشی از تغییرات تجربی است (یعنی همان نوع نوسانی که بین نمونه‌های مختلف در یک گروه درمانی انتظار می‌رود). همان‌طور که در آمار معمول است، نتیجهٔ این آزمون به‌صورت یک ⁦p⁩ ⁦value⁩ گزارش می‌شود و در ستون __⁦KEEP_BIDI_00000__⁩ قرار دارد. به‌خاطر داشته باشید که ⁦p⁩ ⁦value⁩ نشان‌دهندهٔ احتمال مشاهدهٔ تغییر توانی (⁦fold⁩ ⁦change⁩)‌ای به‌اندازهٔ مقدار مشاهده‌شده یا قوی‌تر، تحت مفروضات فرض صفر است.‬
+بدیهی است که این برآورد با عدم‌قطعیتی همراه است، که در ستون __<span dir="ltr">KEEP_BIDI_00000__</span> در دسترس است؛ این ستون برآورد خطای استاندارد برای برآورد <span dir="ltr">log2</span> <span dir="ltr">fold</span> <span dir="ltr">change</span> را نشان می‌دهد. همچنین می‌توان عدم‌قطعیت یک برآورد اندازهٔ اثر را به‌صورت نتیجهٔ یک آزمون آماری بیان کرد. هدف از یک آزمون برای تحلیل بیان تفاضلی (تحلیل بیان تفاضلی) این است که بررسی کند آیا داده‌ها شواهد کافی برای نتیجه‌گیری دربارهٔ اینکه این ...
+مقدار واقعاً از صفر متفاوت است. _<span dir="ltr">DESeq2_</span> برای هر <span dir="ltr">gene</span> (ژن) یک آزمون فرضیه انجام می‌دهد تا بررسی کند آیا شواهد برای رد <span dir="ltr">null</span> <span dir="ltr">hypothesis</span> (فرض صفر) — که می‌گوید درمان بر <span dir="ltr">gene</span> (ژن) تأثیری ندارد — کافی هست یا خیر؛ در غیر این صورت تفاوت مشاهده‌شده بین گروه درمان و کنترل صرفاً ناشی از تغییرات تجربی است (یعنی همان نوع نوسانی که بین نمونه‌های مختلف در یک گروه درمانی انتظار می‌رود). همان‌طور که در آمار معمول است، نتیجهٔ این آزمون به‌صورت یک <span dir="ltr">p</span> <span dir="ltr">value</span> گزارش می‌شود و در ستون __<span dir="ltr">KEEP_BIDI_00000__</span> قرار دارد. به‌خاطر داشته باشید که <span dir="ltr">p</span> <span dir="ltr">value</span> نشان‌دهندهٔ احتمال مشاهدهٔ تغییر توانی (<span dir="ltr">fold</span> <span dir="ltr">change</span>)‌ای به‌اندازهٔ مقدار مشاهده‌شده یا قوی‌تر، تحت مفروضات فرض صفر است.
 
-‫می‌توانیم نتایج را همچنین با خط کد زیر خلاصه کنیم؛ این خط اطلاعات اضافی‌ای گزارش می‌دهد که در بخش‌های بعد پوشش داده خواهد شد.‬
+می‌توانیم نتایج را همچنین با خط کد زیر خلاصه کنیم؛ این خط اطلاعات اضافی‌ای گزارش می‌دهد که در بخش‌های بعد پوشش داده خواهد شد.
 
 ```
 summary(res)
@@ -1099,12 +1099,12 @@ summary(res)
 ## [2] see 'independentFiltering' argument of ?results
 ```
 
-‫توجه کنید که در سطح ⁦false⁩ ⁦discovery⁩ ⁦rate⁩ (نرخ کشف کاذب) برابر 10%، تعداد زیادی ⁦gene⁩ (ژن) نشان‌دهندهٔ ⁦differential⁩ ⁦expression⁩ ⁦analysis⁩ (تحلیل بیان تفاضلی) در پاسخ به درمان با دگزامتازون هستند. این نتیجه معقول است، زیرا سلول‌های ماهیچهٔ صاف راه‌های هوایی به گلوکوکورتیکوئیدها شناخته‌شده واکنش نشان می‌دهند. با این حال دو راه برای محدودتر کردن مجموعهٔ ژن‌های مورد نظر به‌عنوان قابل‌توجه وجود دارد:‬
+توجه کنید که در سطح <span dir="ltr">false</span> <span dir="ltr">discovery</span> <span dir="ltr">rate</span> (نرخ کشف کاذب) برابر 10%، تعداد زیادی <span dir="ltr">gene</span> (ژن) نشان‌دهندهٔ <span dir="ltr">differential</span> <span dir="ltr">expression</span> <span dir="ltr">analysis</span> (تحلیل بیان تفاضلی) در پاسخ به درمان با دگزامتازون هستند. این نتیجه معقول است، زیرا سلول‌های ماهیچهٔ صاف راه‌های هوایی به گلوکوکورتیکوئیدها شناخته‌شده واکنش نشان می‌دهند. با این حال دو راه برای محدودتر کردن مجموعهٔ ژن‌های مورد نظر به‌عنوان قابل‌توجه وجود دارد:
 
-* ‫‫کاهش آستانهٔ نرخ کشف کاذب (آستانهٔ ستون __⁦KEEP_BIDI_00000__⁩ در جدول نتایج)‬
-* ‫‫افزایش آستانهٔ ⁦log2⁩ ⁦fold⁩ ⁦change⁩ از 0 با استفاده از آرگومان __⁦KEEP_BIDI_00000__⁩ در تابع _⁦results_⁩‬
+* کاهش آستانهٔ نرخ کشف کاذب (آستانهٔ ستون __<span dir="ltr">KEEP_BIDI_00000__</span> در جدول نتایج)
+* افزایش آستانهٔ <span dir="ltr">log2</span> <span dir="ltr">fold</span> <span dir="ltr">change</span> از 0 با استفاده از آرگومان __<span dir="ltr">KEEP_BIDI_00000__</span> در تابع _<span dir="ltr">results_</span>
 
-‫اگر آستانهٔ نرخ کشف کاذب را پایین‌تر ببریم، باید این آستانه را به تابع __⁦KEEP_BIDI_00000__⁩ اطلاع دهیم تا آن تابع بتواند از این آستانه در فرایند فیلترینگ مستقلِ بهینه‌اش استفاده کند:‬
+اگر آستانهٔ نرخ کشف کاذب را پایین‌تر ببریم، باید این آستانه را به تابع __<span dir="ltr">KEEP_BIDI_00000__</span> اطلاع دهیم تا آن تابع بتواند از این آستانه در فرایند فیلترینگ مستقلِ بهینه‌اش استفاده کند:
 
 ```
 res.05 <- results(dds, alpha = 0.05)
@@ -1117,7 +1117,7 @@ table(res.05$padj < 0.05)
 ## 12712  3602
 ```
 
-‫اگر بخواهیم آستانهٔ ⁦log2⁩ ⁦fold⁩ ⁦change⁩ را بالا ببریم تا فقط به ژن‌هایی توجه کنیم که تغییرات بزرگ‌تری در پاسخ به درمان نشان می‌دهند، کافی است مقداری را بر روی مقیاس ⁦log2⁩ تعیین کنیم. برای مثال با مشخص کردن __⁦KEEP_BIDI_00000__⁩، ما برای ژن‌هایی آزمون می‌کنیم که اثرات معناداری از درمان بر ⁦gene⁩ (ژن) ⁦count⁩ (شمارش) نشان می‌دهند که بیش از دو برابر شدن یا کمتر از نصف شدن هستند، زیرا \\(2^1 = 2\\).‬
+اگر بخواهیم آستانهٔ <span dir="ltr">log2</span> <span dir="ltr">fold</span> <span dir="ltr">change</span> را بالا ببریم تا فقط به ژن‌هایی توجه کنیم که تغییرات بزرگ‌تری در پاسخ به درمان نشان می‌دهند، کافی است مقداری را بر روی مقیاس <span dir="ltr">log2</span> تعیین کنیم. برای مثال با مشخص کردن __<span dir="ltr">KEEP_BIDI_00000__</span>، ما برای ژن‌هایی آزمون می‌کنیم که اثرات معناداری از درمان بر <span dir="ltr">gene</span> (ژن) <span dir="ltr">count</span> (شمارش) نشان می‌دهند که بیش از دو برابر شدن یا کمتر از نصف شدن هستند، زیرا \\(2^1 = 2\\).
 
 ```
 resLFC1 <- results(dds, lfcThreshold=1)
@@ -1130,13 +1130,13 @@ table(resLFC1$padj < 0.1)
 ## 16397   240
 ```
 
-‫گاهی زیرمجموعه‌ای از ⁦p⁩ ⁦values⁩ در __⁦KEEP_BIDI_00000__⁩ دارای مقدار __⁦KEEP_BIDI_00001__⁩ («⁦not⁩ ⁦available⁩») خواهند بود. این روش _⁦DESeq_⁩ برای گزارش این وضعیت است که تمام شمارش‌ها برای آن ⁦gene⁩ (ژن) صفر بوده‌اند و بنابراین هیچ آزمونی اعمال نشده است. علاوه بر این، ⁦p⁩ ⁦values⁩ ممکن است __⁦KEEP_BIDI_00002__⁩ اختصاص یابند اگر یک ژن از تحلیل حذف شده باشد چون شامل یک مقدار بیرونی بسیار دور از سایر شمارش‌ها بوده است. برای اطلاعات بیشتر، بخش شناسایی مقادیر بیرونی در وینیِت _⁦DESeq2_⁩ را ببینید.‬
+گاهی زیرمجموعه‌ای از <span dir="ltr">p</span> <span dir="ltr">values</span> در __<span dir="ltr">KEEP_BIDI_00000__</span> دارای مقدار __<span dir="ltr">KEEP_BIDI_00001__</span> («<span dir="ltr">not</span> <span dir="ltr">available</span>») خواهند بود. این روش _<span dir="ltr">DESeq_</span> برای گزارش این وضعیت است که تمام شمارش‌ها برای آن <span dir="ltr">gene</span> (ژن) صفر بوده‌اند و بنابراین هیچ آزمونی اعمال نشده است. علاوه بر این، <span dir="ltr">p</span> <span dir="ltr">values</span> ممکن است __<span dir="ltr">KEEP_BIDI_00002__</span> اختصاص یابند اگر یک ژن از تحلیل حذف شده باشد چون شامل یک مقدار بیرونی بسیار دور از سایر شمارش‌ها بوده است. برای اطلاعات بیشتر، بخش شناسایی مقادیر بیرونی در وینیِت _<span dir="ltr">DESeq2_</span> را ببینید.
 
-‫اگر از نتایج یک بستهٔ آنالیز ⁦R⁩ در پژوهش منتشرشده استفاده می‌کنید، می‌توانید ارجاع مناسب نرم‌افزار را با تایپ __⁦KEEP_BIDI_00000__⁩ بیابید؛ در آنجا باید نام بسته را به‌جای __⁦KEEP_BIDI_00001__⁩ قرار دهید. ارجاع دادن به مقالات روش‌شناسی به حمایت و پاداش دادن به افرادی که وقت صرف توسعهٔ نرم‌افزار متن‌باز برای تحلیل داده‌های ژنومی کرده‌اند کمک می‌کند.‬
+اگر از نتایج یک بستهٔ آنالیز <span dir="ltr">R</span> در پژوهش منتشرشده استفاده می‌کنید، می‌توانید ارجاع مناسب نرم‌افزار را با تایپ __<span dir="ltr">KEEP_BIDI_00000__</span> بیابید؛ در آنجا باید نام بسته را به‌جای __<span dir="ltr">KEEP_BIDI_00001__</span> قرار دهید. ارجاع دادن به مقالات روش‌شناسی به حمایت و پاداش دادن به افرادی که وقت صرف توسعهٔ نرم‌افزار متن‌باز برای تحلیل داده‌های ژنومی کرده‌اند کمک می‌کند.
 
-## ‫‫۵٫۳ مقایسه‌های دیگر‬
+## ۵٫۳ مقایسه‌های دیگر
 
-‫به‌طور کلی، نتایج مربوط به مقایسهٔ هر دو سطحِ یک متغیر را می‌توان با استفاده از آرگومان __⁦KEEP_BIDI_00000__⁩ در تابع _⁦results_⁩ استخراج کرد. کاربر باید سه مقدار را مشخص کند: نام متغیر، نام سطحِ صورت‌گر (صورت‌مقام) و نام سطحِ مخرج. در اینجا نتایج برای ⁦log2⁩ ⁦fold⁩ ⁦change⁩ یک خط سلولی نسبت به خط سلولی دیگر را استخراج می‌کنیم:‬
+به‌طور کلی، نتایج مربوط به مقایسهٔ هر دو سطحِ یک متغیر را می‌توان با استفاده از آرگومان __<span dir="ltr">KEEP_BIDI_00000__</span> در تابع _<span dir="ltr">results_</span> استخراج کرد. کاربر باید سه مقدار را مشخص کند: نام متغیر، نام سطحِ صورت‌گر (صورت‌مقام) و نام سطحِ مخرج. در اینجا نتایج برای <span dir="ltr">log2</span> <span dir="ltr">fold</span> <span dir="ltr">change</span> یک خط سلولی نسبت به خط سلولی دیگر را استخراج می‌کنیم:
 
 ```
 results(dds, contrast = c("cell", "N061011", "N61311"))
@@ -1174,11 +1174,11 @@ results(dds, contrast = c("cell", "N061011", "N61311"))
 ## ENSG00000285991.1           NA
 ```
 
-‫پس از اجرای _⁦DESeq_⁩ یک بار، راه‌های اضافی‌ای برای ساخت جداول نتایج برای برخی مقایسه‌ها وجود دارد. اگر نتایج برای یک ترمِ تعامل (⁦interaction⁩) مورد نیاز باشد، باید از آرگومان __⁦KEEP_BIDI_00000__⁩ در _⁦results_⁩ استفاده کنید. برای جزئیات بیشتر به صفحهٔ راهنمای تابع _⁦results_⁩ مراجعه کنید؛ بخش ⁦Examples⁩ در آن صفحه مثال‌های مرتبطی ارائه می‌دهد.‬
+پس از اجرای _<span dir="ltr">DESeq_</span> یک بار، راه‌های اضافی‌ای برای ساخت جداول نتایج برای برخی مقایسه‌ها وجود دارد. اگر نتایج برای یک ترمِ تعامل (<span dir="ltr">interaction</span>) مورد نیاز باشد، باید از آرگومان __<span dir="ltr">KEEP_BIDI_00000__</span> در _<span dir="ltr">results_</span> استفاده کنید. برای جزئیات بیشتر به صفحهٔ راهنمای تابع _<span dir="ltr">results_</span> مراجعه کنید؛ بخش <span dir="ltr">Examples</span> در آن صفحه مثال‌های مرتبطی ارائه می‌دهد.
 
-## ‫‫۵٫۴ ⁦multiple⁩ ⁦testing⁩ (آزمون‌های چندگانه)‬
+## ۵٫۴ <span dir="ltr">multiple</span> <span dir="ltr">testing</span> (آزمون‌های چندگانه)
 
-‫در زیست‌شناسی با توان بالا، احتیاط می‌کنیم که از ⁦p⁩ ⁦values⁩ مستقیماً به‌عنوان شواهد علیه فرض صفر استفاده نکنیم و در عوض برای اصلاح ⁦multiple⁩ ⁦testing⁩ (آزمون‌های چندگانه) اقدام نماییم. اگر بخواهیم به‌سادگی ⁦p⁩ ⁦values⁩ را در آستانهٔ کمی، مثلاً 0.05، محدود کنیم چه اتفاقی می‌افتد؟ از بین 16637 ⁦gene⁩ (ژن) که آزمون برای آن‌ها قادر به گزارش ⁦p⁩ ⁦value⁩ بود، 5069 ⁦gene⁩ (ژن) دارای ⁦p⁩ ⁦value⁩ کمتر از 0.05 هستند:‬
+در زیست‌شناسی با توان بالا، احتیاط می‌کنیم که از <span dir="ltr">p</span> <span dir="ltr">values</span> مستقیماً به‌عنوان شواهد علیه فرض صفر استفاده نکنیم و در عوض برای اصلاح <span dir="ltr">multiple</span> <span dir="ltr">testing</span> (آزمون‌های چندگانه) اقدام نماییم. اگر بخواهیم به‌سادگی <span dir="ltr">p</span> <span dir="ltr">values</span> را در آستانهٔ کمی، مثلاً 0.05، محدود کنیم چه اتفاقی می‌افتد؟ از بین 16637 <span dir="ltr">gene</span> (ژن) که آزمون برای آن‌ها قادر به گزارش <span dir="ltr">p</span> <span dir="ltr">value</span> بود، 5069 <span dir="ltr">gene</span> (ژن) دارای <span dir="ltr">p</span> <span dir="ltr">value</span> کمتر از 0.05 هستند:
 
 ```
 sum(res$pvalue < 0.05, na.rm=TRUE)
@@ -1196,13 +1196,13 @@ sum(!is.na(res$pvalue))
 ## [1] 16637
 ```
 
-‫اکنون فرض کنید برای لحظه‌ای که فرض صفر برای همهٔ ژن‌ها برقرار است، یعنی هیچ ژنی توسط درمان دگزامتازون تحت تأثیر قرار نگرفته است. آنگاه طبق تعریف ⁦p⁩ ⁦value⁩، انتظار داریم تا 5% از ژن‌ها مقدار ⁦p⁩ پایین‌تر از 0.05 داشته باشند؛ این معادل 832 ژن است. اگر صرفاً فهرست ژن‌هایی را که ⁦p⁩ ⁦value⁩ آن‌ها کمتر از 0.05 است به‌عنوان دارای بیان تفاضلی در نظر بگیریم، این فهرست بنابراین انتظار می‌رود شامل تا 832 / 5069 = 16% نتایج مثبت کاذب باشد.‬
+اکنون فرض کنید برای لحظه‌ای که فرض صفر برای همهٔ ژن‌ها برقرار است، یعنی هیچ ژنی توسط درمان دگزامتازون تحت تأثیر قرار نگرفته است. آنگاه طبق تعریف <span dir="ltr">p</span> <span dir="ltr">value</span>، انتظار داریم تا 5% از ژن‌ها مقدار <span dir="ltr">p</span> پایین‌تر از 0.05 داشته باشند؛ این معادل 832 ژن است. اگر صرفاً فهرست ژن‌هایی را که <span dir="ltr">p</span> <span dir="ltr">value</span> آن‌ها کمتر از 0.05 است به‌عنوان دارای بیان تفاضلی در نظر بگیریم، این فهرست بنابراین انتظار می‌رود شامل تا 832 / 5069 = 16% نتایج مثبت کاذب باشد.
 
-‫_⁦DESeq2_⁩ از اصلاح بنجامینی-هوچبرگ (⁦Benjamini-Hochberg⁩, ⁦BH⁩) که در تابع پایهٔ ⁦R⁩ به نام _⁦p.adjust_⁩ پیاده‌سازی شده است استفاده می‌کند؛ به‌اختصار، این روش برای هر ژن یک ⁦adjusted⁩ ⁦p-value⁩ (مقدار ⁦p⁩ تعدیل‌شده) محاسبه می‌کند که به سوال زیر پاسخ می‌دهد: اگر همهٔ ژن‌هایی را که مقدار ⁦p⁩ تعدیل‌شدهٔ آن‌ها کمتر یا برابر آستانهٔ مقدار ⁦p⁩ تعدیل‌شدهٔ این ژن باشند را «معنادار» فرض کنیم، چه کسری از آن‌ها مثبت کاذب خواهند بود (⁦false⁩ ⁦discovery⁩ ⁦rate⁩) با محاسبه‌ای مشابه آنچه پیش‌تر توضیح داده شد؟ این مقادیر، که ⁦BH-adjusted⁩ ⁦p⁩ ⁦values⁩ نامیده می‌شوند، در ستون __⁦KEEP_BIDI_00000__⁩ شیٔ __⁦KEEP_BIDI_00001__⁩ قرار دارند.‬
+_<span dir="ltr">DESeq2_</span> از اصلاح بنجامینی-هوچبرگ (<span dir="ltr">Benjamini-Hochberg</span>, <span dir="ltr">BH</span>) که در تابع پایهٔ <span dir="ltr">R</span> به نام _<span dir="ltr">p.adjust_</span> پیاده‌سازی شده است استفاده می‌کند؛ به‌اختصار، این روش برای هر ژن یک <span dir="ltr">adjusted</span> <span dir="ltr">p-value</span> (مقدار <span dir="ltr">p</span> تعدیل‌شده) محاسبه می‌کند که به سوال زیر پاسخ می‌دهد: اگر همهٔ ژن‌هایی را که مقدار <span dir="ltr">p</span> تعدیل‌شدهٔ آن‌ها کمتر یا برابر آستانهٔ مقدار <span dir="ltr">p</span> تعدیل‌شدهٔ این ژن باشند را «معنادار» فرض کنیم، چه کسری از آن‌ها مثبت کاذب خواهند بود (<span dir="ltr">false</span> <span dir="ltr">discovery</span> <span dir="ltr">rate</span>) با محاسبه‌ای مشابه آنچه پیش‌تر توضیح داده شد؟ این مقادیر، که <span dir="ltr">BH-adjusted</span> <span dir="ltr">p</span> <span dir="ltr">values</span> نامیده می‌شوند، در ستون __<span dir="ltr">KEEP_BIDI_00000__</span> شیٔ __<span dir="ltr">KEEP_BIDI_00001__</span> قرار دارند.
 
-‫نرخ کشف کاذب برای بسیاری از آزمایش‌های با توان بالا آمار مفیدی است، چون اغلب علاقه‌مند به گزارش یا تمرکز بر یک مجموعهٔ مشخص از ژن‌های جالب هستیم و می‌خواهیم یک کرانهٔ بالایی برای درصد نتایج مثبت کاذب در این مجموعه تعیین کنیم.‬
+نرخ کشف کاذب برای بسیاری از آزمایش‌های با توان بالا آمار مفیدی است، چون اغلب علاقه‌مند به گزارش یا تمرکز بر یک مجموعهٔ مشخص از ژن‌های جالب هستیم و می‌خواهیم یک کرانهٔ بالایی برای درصد نتایج مثبت کاذب در این مجموعه تعیین کنیم.
 
-‫بنابراین، اگر یک کسر 10% نتایج مثبت کاذب قابل‌قبول بدانیم، می‌توانیم همهٔ ژن‌هایی را که مقدار ⁦p⁩ تعدیل‌شدهٔ آن‌ها کمتر از 10% = 0.1 است به‌عنوان معنادار در نظر بگیریم. تعداد این ژن‌ها چقدر است؟‬
+بنابراین، اگر یک کسر 10% نتایج مثبت کاذب قابل‌قبول بدانیم، می‌توانیم همهٔ ژن‌هایی را که مقدار <span dir="ltr">p</span> تعدیل‌شدهٔ آن‌ها کمتر از 10% = 0.1 است به‌عنوان معنادار در نظر بگیریم. تعداد این ژن‌ها چقدر است؟
 
 ```
 sum(res$padj < 0.1, na.rm=TRUE)
@@ -1212,7 +1212,7 @@ sum(res$padj < 0.1, na.rm=TRUE)
 ## [1] 4381
 ```
 
-‫جدول نتایج را به این ژن‌ها زیرمجموعه‌گیری کرده و سپس بر اساس برآورد ⁦log2⁩ ⁦fold⁩ ⁦change⁩ مرتب می‌کنیم تا ژن‌های معنادار با شدتِ بیشترین کاهش بیان را به‌دست آوریم:‬
+جدول نتایج را به این ژن‌ها زیرمجموعه‌گیری کرده و سپس بر اساس برآورد <span dir="ltr">log2</span> <span dir="ltr">fold</span> <span dir="ltr">change</span> مرتب می‌کنیم تا ژن‌های معنادار با شدتِ بیشترین کاهش بیان را به‌دست آوریم:
 
 ```
 resSig <- subset(res, padj < 0.1)
@@ -1241,7 +1241,7 @@ head(resSig[ order(resSig$log2FoldChange), ])
 ## ENSG00000162692.11 2.00666e-71
 ```
 
-‫…و برای بیشترین افزایش بیان:‬
+…و برای بیشترین افزایش بیان:
 
 ```
 head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
@@ -1269,20 +1269,20 @@ head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
 ## ENSG00000250978.5  4.32141e-15
 ```
 
-# ‫‫۶ ترسیم نتایج‬
+# ۶ ترسیم نتایج
 
-## ‫‫۶٫۱ نمودار شمارش‌ها‬
+## ۶٫۱ نمودار شمارش‌ها
 
-‫یک روش سریع برای دیدن شمارش‌ها برای یک ⁦gene⁩ (ژن) خاص استفاده از تابع _⁦plotCounts_⁩ است که آرگومان‌های آن عبارت‌اند از یک _⁦DESeqDataSet_⁩، نام ژن و گروهی که بر اساس آن شمارش‌ها رسم خواهد شد (شکل زیر).‬
+یک روش سریع برای دیدن شمارش‌ها برای یک <span dir="ltr">gene</span> (ژن) خاص استفاده از تابع _<span dir="ltr">plotCounts_</span> است که آرگومان‌های آن عبارت‌اند از یک _<span dir="ltr">DESeqDataSet_</span>، نام ژن و گروهی که بر اساس آن شمارش‌ها رسم خواهد شد (شکل زیر).
 
 ```
 topGene <- rownames(res)[which.min(res$padj)]
 plotCounts(dds, gene = topGene, intgroup=c("dex"))
 ```
 
-‫**شمارش‌های نرمال‌شده برای یک ژن منفرد در گروه‌های درمان.**‬
+**شمارش‌های نرمال‌شده برای یک ژن منفرد در گروه‌های درمان.**
 
-‫همچنین می‌توانیم نمودارهای سفارشی با استفاده از تابع _⁦ggplot_⁩ از بستهٔ _[⁦ggplot2](https://cran.r-project.org/package=ggplot2)_⁩ بسازیم (اشکال زیر).‬
+همچنین می‌توانیم نمودارهای سفارشی با استفاده از تابع _<span dir="ltr">ggplot_</span> از بستهٔ _[<span dir="ltr">ggplot2](https://cran.r-project.org/package=ggplot2)_</span> بسازیم (اشکال زیر).
 
 ```
 library("ggbeeswarm")
@@ -1296,13 +1296,13 @@ ggplot(geneCounts, aes(x = dex, y = count, color = cell)) +
 ggplot(geneCounts, aes(x = dex, y = count, color = cell, group = cell)) +
   scale_y_log10() + geom_point(size = 3) + geom_line()
 ```
-‫**شمارش‌های ⁦normalization⁩ (نرمال‌سازی) شده با خطوطی که خطوط سلولی را به هم وصل می‌کنند.** توجه داشته باشید که آزمون _⁦DESeq_⁩ در واقع اثر خط سلولی را در نظر می‌گیرد، بنابراین این شکل تصویر دقیق‌تری از اختلافی که مورد آزمایش است ارائه می‌دهد.‬
+**شمارش‌های <span dir="ltr">normalization</span> (نرمال‌سازی) شده با خطوطی که خطوط سلولی را به هم وصل می‌کنند.** توجه داشته باشید که آزمون _<span dir="ltr">DESeq_</span> در واقع اثر خط سلولی را در نظر می‌گیرد، بنابراین این شکل تصویر دقیق‌تری از اختلافی که مورد آزمایش است ارائه می‌دهد.
 
-## ‫‫۶٫۲ نمودار ⁦MA⁩‬
+## ۶٫۲ نمودار <span dir="ltr">MA</span>
 
-‫یک _نمودار ⁦MA_⁩ (⁦Dudoit⁩ ⁦et⁩ ⁦al.⁩ 2002) نمای کلی مفیدی از توزیع ضرایب برآوردشده در مدل، مانند مقایسه‌های موردِ علاقه، در میان همه ⁦gene⁩ (ژن) فراهم می‌آورد. در محور عمودی، «⁦M⁩» از «⁦minus⁩» گرفته شده — تفریق مقادیر لگاریتمی معادل لگاریتمِ نسبت است — و در محور افقی، «⁦A⁩» از «⁦average⁩» گرفته شده است. ممکن است این نمودار را همچنین به‌عنوان یک نمودار میانگین-تفاوت یا نمودار بلاند-آلتمن بشناسید.‬
+یک _نمودار <span dir="ltr">MA_</span> (<span dir="ltr">Dudoit</span> <span dir="ltr">et</span> <span dir="ltr">al.</span> 2002) نمای کلی مفیدی از توزیع ضرایب برآوردشده در مدل، مانند مقایسه‌های موردِ علاقه، در میان همه <span dir="ltr">gene</span> (ژن) فراهم می‌آورد. در محور عمودی، «<span dir="ltr">M</span>» از «<span dir="ltr">minus</span>» گرفته شده — تفریق مقادیر لگاریتمی معادل لگاریتمِ نسبت است — و در محور افقی، «<span dir="ltr">A</span>» از «<span dir="ltr">average</span>» گرفته شده است. ممکن است این نمودار را همچنین به‌عنوان یک نمودار میانگین-تفاوت یا نمودار بلاند-آلتمن بشناسید.
 
-‫پیش از رسم _نمودار ⁦MA_⁩، از تابع _⁦lfcShrink_⁩ برای کوچک‌سازی (⁦shrink⁩) تغییرات لگاریتمی دو‌برابر (⁦log2⁩ ⁦fold⁩ ⁦changes⁩) در مقایسه نمونه‌های درمان‌شده با ⁦dex⁩ در برابر نمونه‌های درمان‌نشده استفاده می‌کنیم. در _⁦DESeq2_⁩ سه نوع برآوردگر کوچک‌سازی وجود دارد که در [⁦DESeq2⁩ ⁦vignette](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html)⁩ پوشش داده شده‌اند. در اینجا روش _⁦apeglm_⁩ را برای کوچک‌سازی ضرایب مشخص می‌کنیم، روشی که برای کاهش نویز برآوردهای ⁦LFC⁩ مناسب است و در عین حال برای اختلافات واقعی بزرگ برآوردهای با بایاس کم تولید می‌کند (⁦Zhu⁩, ⁦Ibrahim⁩, ⁦and⁩ ⁦Love⁩ 2018). برای استفاده از _⁦apeglm_⁩ باید یک ضریب از مدل را برای کوچک‌سازی مشخص کنیم، یا با نام یا با شماره‌ای که ضریب در __⁦KEEP_BIDI_00001__⁩ ظاهر می‌شود.‬
+پیش از رسم _نمودار <span dir="ltr">MA_</span>، از تابع _<span dir="ltr">lfcShrink_</span> برای کوچک‌سازی (<span dir="ltr">shrink</span>) تغییرات لگاریتمی دو‌برابر (<span dir="ltr">log2</span> <span dir="ltr">fold</span> <span dir="ltr">changes</span>) در مقایسه نمونه‌های درمان‌شده با <span dir="ltr">dex</span> در برابر نمونه‌های درمان‌نشده استفاده می‌کنیم. در _<span dir="ltr">DESeq2_</span> سه نوع برآوردگر کوچک‌سازی وجود دارد که در [<span dir="ltr">DESeq2</span> <span dir="ltr">vignette](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html)</span> پوشش داده شده‌اند. در اینجا روش _<span dir="ltr">apeglm_</span> را برای کوچک‌سازی ضرایب مشخص می‌کنیم، روشی که برای کاهش نویز برآوردهای <span dir="ltr">LFC</span> مناسب است و در عین حال برای اختلافات واقعی بزرگ برآوردهای با بایاس کم تولید می‌کند (<span dir="ltr">Zhu</span>, <span dir="ltr">Ibrahim</span>, <span dir="ltr">and</span> <span dir="ltr">Love</span> 2018). برای استفاده از _<span dir="ltr">apeglm_</span> باید یک ضریب از مدل را برای کوچک‌سازی مشخص کنیم، یا با نام یا با شماره‌ای که ضریب در __<span dir="ltr">KEEP_BIDI_00001__</span> ظاهر می‌شود.
 
 ```
 library("apeglm")
@@ -1320,14 +1320,14 @@ res <- lfcShrink(dds, coef="dex_trt_vs_untrt", type="apeglm")
 plotMA(res, ylim = c(-5, 5))
 ```
 
-‫اگر لازم باشد که یک ⁦contrast⁩ (مقایسه) که در __⁦KEEP_BIDI_00000__⁩ نشان داده نشده را مشخص کنیم، می‌توان از هر یک از دو روش کوچک‌سازی دیگر استفاده کرد، یا در برخی موارد بازتعریف متغیرهای مربوطه و اجرای __⁦KEEP_BIDI_00001__⁩ و سپس __⁦KEEP_BIDI_00002__⁩ کافی است. برای جزئیات بیشتر به ⁦vignette⁩ مربوط به ⁦DESeq2⁩ مراجعه کنید.‬
+اگر لازم باشد که یک <span dir="ltr">contrast</span> (مقایسه) که در __<span dir="ltr">KEEP_BIDI_00000__</span> نشان داده نشده را مشخص کنیم، می‌توان از هر یک از دو روش کوچک‌سازی دیگر استفاده کرد، یا در برخی موارد بازتعریف متغیرهای مربوطه و اجرای __<span dir="ltr">KEEP_BIDI_00001__</span> و سپس __<span dir="ltr">KEEP_BIDI_00002__</span> کافی است. برای جزئیات بیشتر به <span dir="ltr">vignette</span> مربوط به <span dir="ltr">DESeq2</span> مراجعه کنید.
 
 ```
 res.noshr <- results(dds, name="dex_trt_vs_untrt")
 plotMA(res.noshr, ylim = c(-5, 5))
 ```
 
-‫ما همچنین می‌توانیم نقاط منفرد را روی _نمودار ⁦MA_⁩ برچسب‌گذاری کنیم. در اینجا از تابع _⁦with_⁩ در ⁦R⁩ برای رسم یک دایره و متن برای یک ردیف انتخاب‌شده از شیء نتایج استفاده می‌کنیم. درون تابع _⁦with_⁩ تنها مقادیر __⁦KEEP_BIDI_00000__⁩ و __⁦KEEP_BIDI_00001__⁩ برای ردیف‌های انتخاب‌شده از __⁦KEEP_BIDI_00002__⁩ به کار می‌روند.‬
+ما همچنین می‌توانیم نقاط منفرد را روی _نمودار <span dir="ltr">MA_</span> برچسب‌گذاری کنیم. در اینجا از تابع _<span dir="ltr">with_</span> در <span dir="ltr">R</span> برای رسم یک دایره و متن برای یک ردیف انتخاب‌شده از شیء نتایج استفاده می‌کنیم. درون تابع _<span dir="ltr">with_</span> تنها مقادیر __<span dir="ltr">KEEP_BIDI_00000__</span> و __<span dir="ltr">KEEP_BIDI_00001__</span> برای ردیف‌های انتخاب‌شده از __<span dir="ltr">KEEP_BIDI_00002__</span> به کار می‌روند.
 
 ```
 plotMA(res, ylim = c(-5,5))
@@ -1338,25 +1338,25 @@ with(res[topGene, ], {
 })
 ```
 
-‫یکی دیگر از نمودارهای تشخیصی مفید، هیستوگرام مقادیر _⁦p_⁩ است (شکل زیر). این نمودار بهتر است با حذف ژن‌هایی که شمارش‌های بسیار کوچکی دارند ساخته شود، زیرا در غیر این صورت باعث ایجاد قله‌هایی در هیستوگرام می‌شوند.‬
+یکی دیگر از نمودارهای تشخیصی مفید، هیستوگرام مقادیر _<span dir="ltr">p_</span> است (شکل زیر). این نمودار بهتر است با حذف ژن‌هایی که شمارش‌های بسیار کوچکی دارند ساخته شود، زیرا در غیر این صورت باعث ایجاد قله‌هایی در هیستوگرام می‌شوند.
 
 ```
 hist(res$pvalue[res$baseMean > 1], breaks = 0:20/20,
      col = "grey50", border = "white")
 ```
 
-‫**هیستوگرام مقادیر _⁦p_⁩ برای ژن‌هایی که میانگین شمارش ⁦normalization⁩ (نرمال‌سازی) شده آن‌ها بزرگ‌تر از 1 است.**‬
+**هیستوگرام مقادیر _<span dir="ltr">p_</span> برای ژن‌هایی که میانگین شمارش <span dir="ltr">normalization</span> (نرمال‌سازی) شده آن‌ها بزرگ‌تر از 1 است.**
 
-## ‫‫۶٫۳ خوشه‌بندی ژن‌ها‬
+## ۶٫۳ خوشه‌بندی ژن‌ها
 
-‫در نقشه گرمایی فواصل نمونه که پیش‌تر ساخته شد، دندروگرام در کنار نشان‌دهنده خوشه‌بندی سلسله‌مراتبی نمونه‌هاست. چنین خوشه‌بندی‌ای را می‌توان برای ژن‌ها نیز انجام داد. از آنجا که خوشه‌بندی تنها برای ژن‌هایی معنی‌دار است که واقعاً سیگنال دارند، معمولاً تنها زیرمجموعه‌ای از پر‌تغییرترین ژن‌ها را خوشه‌بندی می‌کنند. برای نمایش، بیایید 20 ژنی را انتخاب کنیم که بیشترین واریانس را در میان نمونه‌ها دارند. برای این کار از داده‌های ⁦VST⁩ استفاده خواهیم کرد.‬
+در نقشه گرمایی فواصل نمونه که پیش‌تر ساخته شد، دندروگرام در کنار نشان‌دهنده خوشه‌بندی سلسله‌مراتبی نمونه‌هاست. چنین خوشه‌بندی‌ای را می‌توان برای ژن‌ها نیز انجام داد. از آنجا که خوشه‌بندی تنها برای ژن‌هایی معنی‌دار است که واقعاً سیگنال دارند، معمولاً تنها زیرمجموعه‌ای از پر‌تغییرترین ژن‌ها را خوشه‌بندی می‌کنند. برای نمایش، بیایید 20 ژنی را انتخاب کنیم که بیشترین واریانس را در میان نمونه‌ها دارند. برای این کار از داده‌های <span dir="ltr">VST</span> استفاده خواهیم کرد.
 
 ```
 library("genefilter")
 topVarGenes <- head(order(rowVars(assay(vsd)), decreasing = TRUE), 20)
 ```
 
-‫نقشهٔ گرمایی زمانی جالب‌تر می‌شود که به جای قدر مطلقِ میزان بیان، به میزان انحراف هر ژن در یک نمونه خاص از میانگین آن ژن در تمام نمونه‌ها نگاه کنیم. بنابراین، مقادیر هر ژن را در میان نمونه‌ها مرکزی (⁦center⁩) می‌کنیم و یک نقشهٔ گرمایی رسم می‌کنیم (شکل زیر). ما یک _⁦data.frame_⁩ فراهم می‌کنیم که به تابع _⁦pheatmap_⁩ می‌گوید چگونه ستون‌ها را برچسب‌گذاری کند.‬
+نقشهٔ گرمایی زمانی جالب‌تر می‌شود که به جای قدر مطلقِ میزان بیان، به میزان انحراف هر ژن در یک نمونه خاص از میانگین آن ژن در تمام نمونه‌ها نگاه کنیم. بنابراین، مقادیر هر ژن را در میان نمونه‌ها مرکزی (<span dir="ltr">center</span>) می‌کنیم و یک نقشهٔ گرمایی رسم می‌کنیم (شکل زیر). ما یک _<span dir="ltr">data.frame_</span> فراهم می‌کنیم که به تابع _<span dir="ltr">pheatmap_</span> می‌گوید چگونه ستون‌ها را برچسب‌گذاری کند.
 
 ```
 mat  <- assay(vsd)[ topVarGenes, ]
@@ -1365,13 +1365,13 @@ anno <- as.data.frame(colData(vsd)[, c("cell","dex")])
 pheatmap(mat, annotation_col = anno)
 ```
 
-‫**نقشهٔ گرماییِ مقادیر تبدیل‌شده توسط ⁦VST⁩ به صورت نسبی در میان نمونه‌ها.** وضعیت درمان و اطلاعات خط سلولی با میله‌های رنگی در بالای نقشهٔ گرمایی نشان داده شده‌اند. بلوک‌هایی از ژن‌ها که به صورت هم‌تغییر در بین بیماران ظاهر می‌شوند دیده می‌شوند. توجه داشته باشید که مجموعه‌ای از ژن‌ها در نقشهٔ گرمایی خط سلولی ⁦N061011⁩ را از بقیه جدا می‌کنند، و مجموعهٔ دیگری از ژن‌ها وجود دارد که در آن‌ها نمونه‌های درمان‌شده با دگزامتازون بیان ژن بالاتری دارند.‬
+**نقشهٔ گرماییِ مقادیر تبدیل‌شده توسط <span dir="ltr">VST</span> به صورت نسبی در میان نمونه‌ها.** وضعیت درمان و اطلاعات خط سلولی با میله‌های رنگی در بالای نقشهٔ گرمایی نشان داده شده‌اند. بلوک‌هایی از ژن‌ها که به صورت هم‌تغییر در بین بیماران ظاهر می‌شوند دیده می‌شوند. توجه داشته باشید که مجموعه‌ای از ژن‌ها در نقشهٔ گرمایی خط سلولی <span dir="ltr">N061011</span> را از بقیه جدا می‌کنند، و مجموعهٔ دیگری از ژن‌ها وجود دارد که در آن‌ها نمونه‌های درمان‌شده با دگزامتازون بیان ژن بالاتری دارند.
 
-## ‫‫۶٫۴ پالایش مستقل‬
+## ۶٫۴ پالایش مستقل
 
-‫_⁦n⁩ نمودار ⁦MA⁩ _ ویژگی مهمی از داده‌های ⁦RNA-seq⁩ را برجسته می‌کند. برای ژن‌هایی که ضعیف بیان می‌شوند، شانس دیدن ⁦differential⁩ ⁦expression⁩ ⁦analysis⁩ (تحلیل بیان تفاضلی) عملاً وجود ندارد، زیرا شمارش‌های کمِ ⁦read⁩ (خوانش) از نویز پواسونِ بسیار بالایی رنج می‌برند به‌طوری که هر اثر زیستی در عدم‌قطعیت‌های نمونه‌برداریِ با نرخ پایین غرق می‌شود. این موضوع را می‌توان با بررسی نسبت مقادیر _⁦p_⁩ کوچک (مثلاً کمتر از 0.05) برای ژن‌هایی که بر اساس میانگین شمارش ⁦normalization⁩ (نرمال‌سازی) شده دسته‌بندی شده‌اند نیز نشان داد. ما از جدول نتایج مشروط به آستانه استفاده خواهیم کرد تا نشان دهیم این وضعیت چگونه وقتی تست‌های کمی با مقادیر _⁦p_⁩ کوچک وجود دارد به نظر می‌رسد.‬
+_<span dir="ltr">n</span> نمودار <span dir="ltr">MA</span> _ ویژگی مهمی از داده‌های <span dir="ltr">RNA-seq</span> را برجسته می‌کند. برای ژن‌هایی که ضعیف بیان می‌شوند، شانس دیدن <span dir="ltr">differential</span> <span dir="ltr">expression</span> <span dir="ltr">analysis</span> (تحلیل بیان تفاضلی) عملاً وجود ندارد، زیرا شمارش‌های کمِ <span dir="ltr">read</span> (خوانش) از نویز پواسونِ بسیار بالایی رنج می‌برند به‌طوری که هر اثر زیستی در عدم‌قطعیت‌های نمونه‌برداریِ با نرخ پایین غرق می‌شود. این موضوع را می‌توان با بررسی نسبت مقادیر _<span dir="ltr">p_</span> کوچک (مثلاً کمتر از 0.05) برای ژن‌هایی که بر اساس میانگین شمارش <span dir="ltr">normalization</span> (نرمال‌سازی) شده دسته‌بندی شده‌اند نیز نشان داد. ما از جدول نتایج مشروط به آستانه استفاده خواهیم کرد تا نشان دهیم این وضعیت چگونه وقتی تست‌های کمی با مقادیر _<span dir="ltr">p_</span> کوچک وجود دارد به نظر می‌رسد.
 
-‫در قطعهٔ کد زیر، با استفاده از تابع _⁦quantile_⁩ بین ایجاد می‌کنیم، ژن‌ها را بر اساس ⁦base⁩ ⁦mean⁩ با _⁦cut_⁩ دسته‌بندی می‌کنیم، سطوح باین‌ها را با استفاده از نقطهٔ میانی نام‌گذاری مجدد می‌کنیم، نسبت مقادیر _⁦p_⁩ کمتر از 0.05 را برای هر باین محاسبه می‌کنیم و در نهایت این نسبت‌ها را رسم می‌کنیم (شکل زیر).‬
+در قطعهٔ کد زیر، با استفاده از تابع _<span dir="ltr">quantile_</span> بین ایجاد می‌کنیم، ژن‌ها را بر اساس <span dir="ltr">base</span> <span dir="ltr">mean</span> با _<span dir="ltr">cut_</span> دسته‌بندی می‌کنیم، سطوح باین‌ها را با استفاده از نقطهٔ میانی نام‌گذاری مجدد می‌کنیم، نسبت مقادیر _<span dir="ltr">p_</span> کمتر از 0.05 را برای هر باین محاسبه می‌کنیم و در نهایت این نسبت‌ها را رسم می‌کنیم (شکل زیر).
 
 ```
 qs <- c(0, quantile(resLFC1$baseMean[resLFC1$baseMean > 0], 0:6/6))
@@ -1383,34 +1383,34 @@ barplot(fractionSig, xlab = "mean normalized count",
                      ylab = "fraction of small p values")
 ```
 
-‫**نسبت مقادیر کوچک _⁦p_⁩ برای ژن‌هایی که بر اساس میانگین شمارش ⁦normalization⁩ (نرمال‌سازی) شده دسته‌بندی شده‌اند.** مقادیر _⁦p_⁩ حاصل از یک آزمون برای بررسی این است که ⁦log2⁩ ⁦fold⁩ ⁦change⁩ بزرگ‌تر از 1 یا کمتر از -1 است. این نمودار نشان می‌دهد ژن‌هایی با میانگین شمارش بسیار کم قدرت آماری اندکی دارند یا عملاً هیچ قدرتی ندارند و بهتر است از آزمون حذف شوند.‬
+**نسبت مقادیر کوچک _<span dir="ltr">p_</span> برای ژن‌هایی که بر اساس میانگین شمارش <span dir="ltr">normalization</span> (نرمال‌سازی) شده دسته‌بندی شده‌اند.** مقادیر _<span dir="ltr">p_</span> حاصل از یک آزمون برای بررسی این است که <span dir="ltr">log2</span> <span dir="ltr">fold</span> <span dir="ltr">change</span> بزرگ‌تر از 1 یا کمتر از -1 است. این نمودار نشان می‌دهد ژن‌هایی با میانگین شمارش بسیار کم قدرت آماری اندکی دارند یا عملاً هیچ قدرتی ندارند و بهتر است از آزمون حذف شوند.
 
-‫در نگاه اول شاید حذف این ژن‌ها فایدهٔ کمی به‌نظر برسد؛ بالاخره آزمون آن‌ها را غیر‌معنادار تشخیص داده است. با این حال، این ژن‌ها بر روی تعدیل ⁦multiple⁩ ⁦testing⁩ (آزمون‌های چندگانه) تأثیر دارند و عملکرد این تعدیل با حذف چنین ژن‌هایی بهتر می‌شود. با حذف ژن‌های با شمارش کم از ورودی رویهٔ ⁦false⁩ ⁦discovery⁩ ⁦rate⁩ (نرخ کشف کاذب)، می‌توانیم ژن‌های بیشتری را در میان ژن‌های باقی‌مانده به‌عنوان معنادار بیابیم و در نتیجه قدرت آزمون‌مان افزایش یابد. این رویکرد به عنوان فیلترینگ مستقل شناخته می‌شود.‬
+در نگاه اول شاید حذف این ژن‌ها فایدهٔ کمی به‌نظر برسد؛ بالاخره آزمون آن‌ها را غیر‌معنادار تشخیص داده است. با این حال، این ژن‌ها بر روی تعدیل <span dir="ltr">multiple</span> <span dir="ltr">testing</span> (آزمون‌های چندگانه) تأثیر دارند و عملکرد این تعدیل با حذف چنین ژن‌هایی بهتر می‌شود. با حذف ژن‌های با شمارش کم از ورودی رویهٔ <span dir="ltr">false</span> <span dir="ltr">discovery</span> <span dir="ltr">rate</span> (نرخ کشف کاذب)، می‌توانیم ژن‌های بیشتری را در میان ژن‌های باقی‌مانده به‌عنوان معنادار بیابیم و در نتیجه قدرت آزمون‌مان افزایش یابد. این رویکرد به عنوان فیلترینگ مستقل شناخته می‌شود.
 
-‫نرم‌افزار _⁦DESeq2_⁩ به‌طور خودکار فیلترینگ مستقل را انجام می‌دهد تا تعداد ژن‌هایی با مقدار ⁦p⁩ تعدیل‌شده کمتر از یک مقدار بحرانی را بیشینه کند (به‌طور پیش‌فرض __⁦KEEP_BIDI_00000__⁩ بر روی 0.1 تنظیم شده است). این فیلترینگ مستقل خودکار توسط تابع _⁦results_⁩ انجام می‌شود و می‌توان آن را از طریق این تابع کنترل کرد.‬
+نرم‌افزار _<span dir="ltr">DESeq2_</span> به‌طور خودکار فیلترینگ مستقل را انجام می‌دهد تا تعداد ژن‌هایی با مقدار <span dir="ltr">p</span> تعدیل‌شده کمتر از یک مقدار بحرانی را بیشینه کند (به‌طور پیش‌فرض __<span dir="ltr">KEEP_BIDI_00000__</span> بر روی 0.1 تنظیم شده است). این فیلترینگ مستقل خودکار توسط تابع _<span dir="ltr">results_</span> انجام می‌شود و می‌توان آن را از طریق این تابع کنترل کرد.
 
-‫اصطلاح _⁦independent_⁩ یک نکتهٔ مهم را برجسته می‌کند. چنین فیلتری...‬
-‫مجاز بودن این کار تنها زمانی برقرار است که آماری که براساس آن فیلتر انجام می‌دهیم (در اینجا میانگین ⁦normalized⁩ ⁦count⁩ (شمارش) نرمال‌شده در میان همهٔ نمونه‌ها) تحت فرض صفر مستقل از آمارهٔ آزمون واقعی (مقدار ⁦p⁩) باشد. در غیر این صورت، فیلتر کردن آزمون را نامعتبر خواهد کرد و در نتیجه فروض روش ⁦BH⁩ نقض می‌شود. نرم‌افزار فیلترینگ مستقل که درون _⁦DESeq2_⁩ استفاده شده از بستهٔ _[⁦genefilter](https://bioconductor.org/packages/3.23/genefilter)_⁩ گرفته شده است، که مرجعی به مقاله‌ای دربارهٔ پایه‌های آماری فیلترینگ مستقل دارد (⁦Bourgon⁩, ⁦Gentleman⁩, ⁦and⁩ ⁦Huber⁩ 2010).‬
+اصطلاح _<span dir="ltr">independent_</span> یک نکتهٔ مهم را برجسته می‌کند. چنین فیلتری...
+مجاز بودن این کار تنها زمانی برقرار است که آماری که براساس آن فیلتر انجام می‌دهیم (در اینجا میانگین <span dir="ltr">normalized</span> <span dir="ltr">count</span> (شمارش) نرمال‌شده در میان همهٔ نمونه‌ها) تحت فرض صفر مستقل از آمارهٔ آزمون واقعی (مقدار <span dir="ltr">p</span>) باشد. در غیر این صورت، فیلتر کردن آزمون را نامعتبر خواهد کرد و در نتیجه فروض روش <span dir="ltr">BH</span> نقض می‌شود. نرم‌افزار فیلترینگ مستقل که درون _<span dir="ltr">DESeq2_</span> استفاده شده از بستهٔ _[<span dir="ltr">genefilter](https://bioconductor.org/packages/3.23/genefilter)_</span> گرفته شده است، که مرجعی به مقاله‌ای دربارهٔ پایه‌های آماری فیلترینگ مستقل دارد (<span dir="ltr">Bourgon</span>, <span dir="ltr">Gentleman</span>, <span dir="ltr">and</span> <span dir="ltr">Huber</span> 2010).
 
-## ‫‫۶٫۵ وزن‌دهی مستقل فرضیه‌ها‬
+## ۶٫۵ وزن‌دهی مستقل فرضیه‌ها
 
-‫تعمیم کلی ایدهٔ فیلتر بر اساس مقدار ⁦p⁩ این است که به هر فرضیه وزن تخصیص دهیم تا توان آزمون بهینه شود. بسته‌ای در ⁦Bioconductor⁩ به نام _[⁦IHW](https://bioconductor.org/packages/3.23/IHW)_⁩ روش _⁦Independent⁩ ⁦Hypothesis⁩ ⁦Weighting_⁩ را پیاده‌سازی می‌کند (⁦Ignatiadis⁩ ⁦et⁩ ⁦al.⁩ 2016). برای نمونهٔ استفاده از _⁦IHW_⁩ در کنار _⁦DESeq2_⁩ به ویگنت بستهٔ _⁦DESeq2_⁩ مراجعه کنید. به‌ویژه، قطعه‌کد زیر (که در اینجا اجرا نشده است) را می‌توان به‌جای فیلترینگ مستقل شرح‌داده‌شدهٔ بالا برای اجرای ⁦IHW⁩ به‌کار برد.‬
+تعمیم کلی ایدهٔ فیلتر بر اساس مقدار <span dir="ltr">p</span> این است که به هر فرضیه وزن تخصیص دهیم تا توان آزمون بهینه شود. بسته‌ای در <span dir="ltr">Bioconductor</span> به نام _[<span dir="ltr">IHW](https://bioconductor.org/packages/3.23/IHW)_</span> روش _<span dir="ltr">Independent</span> <span dir="ltr">Hypothesis</span> <span dir="ltr">Weighting_</span> را پیاده‌سازی می‌کند (<span dir="ltr">Ignatiadis</span> <span dir="ltr">et</span> <span dir="ltr">al.</span> 2016). برای نمونهٔ استفاده از _<span dir="ltr">IHW_</span> در کنار _<span dir="ltr">DESeq2_</span> به ویگنت بستهٔ _<span dir="ltr">DESeq2_</span> مراجعه کنید. به‌ویژه، قطعه‌کد زیر (که در اینجا اجرا نشده است) را می‌توان به‌جای فیلترینگ مستقل شرح‌داده‌شدهٔ بالا برای اجرای <span dir="ltr">IHW</span> به‌کار برد.
 
 ```
 library("IHW")
 res.ihw <- results(dds, filterFun=ihw)
 ```
 
-# ‫‫7 حاشیه‌نویسی و صدور نتایج‬
+# 7 حاشیه‌نویسی و صدور نتایج
 
-‫جدول نتایج ما تا کنون تنها شامل شناسه‌های ⁦Ensembl⁩ ⁦gene⁩ (ژن) است، اما نام‌های جایگزین ژن ممکن است در تفسیر اطلاعات مفیدتر باشند. بسته‌های حاشیه‌نویسی در ⁦Bioconductor⁩ در نگاشتن طرح‌های مختلف شناسه به یکدیگر کمک می‌کنند. بستهٔ _[⁦AnnotationDbi](https://bioconductor.org/packages/3.23/AnnotationDbi)_⁩ و بستهٔ حاشیه‌نویسی _[⁦org.Hs.eg.db](https://bioconductor.org/packages/3.23/org.Hs.eg.db)_⁩ را بارگذاری می‌کنیم:‬
+جدول نتایج ما تا کنون تنها شامل شناسه‌های <span dir="ltr">Ensembl</span> <span dir="ltr">gene</span> (ژن) است، اما نام‌های جایگزین ژن ممکن است در تفسیر اطلاعات مفیدتر باشند. بسته‌های حاشیه‌نویسی در <span dir="ltr">Bioconductor</span> در نگاشتن طرح‌های مختلف شناسه به یکدیگر کمک می‌کنند. بستهٔ _[<span dir="ltr">AnnotationDbi](https://bioconductor.org/packages/3.23/AnnotationDbi)_</span> و بستهٔ حاشیه‌نویسی _[<span dir="ltr">org.Hs.eg.db](https://bioconductor.org/packages/3.23/org.Hs.eg.db)_</span> را بارگذاری می‌کنیم:
 
 ```
 library("AnnotationDbi")
 library("org.Hs.eg.db")
 ```
 
-‫این بستهٔ حاشیه‌نویسیِ ارگانیسم (“⁦org⁩”) برای _⁦Homo⁩ ⁦sapiens_⁩ (“⁦Hs⁩”) است که به‌صورت یک بستهٔ پایگاه‌دادهٔ _⁦AnnotationDbi_⁩ (“⁦db⁩”) سازمان‌دهی شده و از ⁦Entrez⁩ ⁦Gene⁩ ⁦IDs⁩ (“⁦eg⁩”) به‌عنوان کلید اولیه استفاده می‌کند. برای گرفتن فهرستی از همهٔ نوع‌های کلید موجود، از دستور زیر استفاده کنید:‬
+این بستهٔ حاشیه‌نویسیِ ارگانیسم (“<span dir="ltr">org</span>”) برای _<span dir="ltr">Homo</span> <span dir="ltr">sapiens_</span> (“<span dir="ltr">Hs</span>”) است که به‌صورت یک بستهٔ پایگاه‌دادهٔ _<span dir="ltr">AnnotationDbi_</span> (“<span dir="ltr">db</span>”) سازمان‌دهی شده و از <span dir="ltr">Entrez</span> <span dir="ltr">Gene</span> <span dir="ltr">IDs</span> (“<span dir="ltr">eg</span>”) به‌عنوان کلید اولیه استفاده می‌کند. برای گرفتن فهرستی از همهٔ نوع‌های کلید موجود، از دستور زیر استفاده کنید:
 
 ```
 columns(org.Hs.eg.db)
@@ -1425,7 +1425,7 @@ columns(org.Hs.eg.db)
 ## [26] "UNIPROT"
 ```
 
-‫می‌توانیم از تابع _⁦mapIds_⁩ برای افزودن ستون‌های جداگانه به جدول نتایج استفاده کنیم. نام ردیف‌های جدول نتایج را به‌عنوان کلید می‌دهیم، و مشخص می‌کنیم که __⁦KEEP_BIDI_00000__⁩ . آرگومان __⁦KEEP_BIDI_00001__⁩ به تابع _⁦mapIds_⁩ می‌گوید که چه اطلاعاتی را می‌خواهیم، و آرگومان __⁦KEEP_BIDI_00002__⁩ تعیین می‌کند در صورت وجود چند مقدار مختلف برای یک مقدار ورودی چه باید کرد. در اینجا می‌خواهیم فقط اولین مقدار موجود در پایگاه‌داده بازگردانده شود. برای افزودن نماد ژن و شناسهٔ ⁦Entrez⁩، دوبار _⁦mapIds_⁩ را فراخوانی می‌کنیم.‬
+می‌توانیم از تابع _<span dir="ltr">mapIds_</span> برای افزودن ستون‌های جداگانه به جدول نتایج استفاده کنیم. نام ردیف‌های جدول نتایج را به‌عنوان کلید می‌دهیم، و مشخص می‌کنیم که __<span dir="ltr">KEEP_BIDI_00000__</span> . آرگومان __<span dir="ltr">KEEP_BIDI_00001__</span> به تابع _<span dir="ltr">mapIds_</span> می‌گوید که چه اطلاعاتی را می‌خواهیم، و آرگومان __<span dir="ltr">KEEP_BIDI_00002__</span> تعیین می‌کند در صورت وجود چند مقدار مختلف برای یک مقدار ورودی چه باید کرد. در اینجا می‌خواهیم فقط اولین مقدار موجود در پایگاه‌داده بازگردانده شود. برای افزودن نماد ژن و شناسهٔ <span dir="ltr">Entrez</span>، دوبار _<span dir="ltr">mapIds_</span> را فراخوانی می‌کنیم.
 
 ```
 ens.str <- substr(rownames(res), 1, 15)
@@ -1441,7 +1441,7 @@ res$entrez <- mapIds(org.Hs.eg.db,
                      multiVals="first")
 ```
 
-‫اکنون نتایج شامل شناسه‌های خارجی ژن موردنظر است:‬
+اکنون نتایج شامل شناسه‌های خارجی ژن موردنظر است:
 
 ```
 resOrdered <- res[order(res$pvalue),]
@@ -1470,20 +1470,20 @@ head(resOrdered)
 ## ENSG00000211445.11        GPX3        2878
 ```
 
-## ‫‫۷٫۱ خروجی‌گیری از نتایج‬
+## ۷٫۱ خروجی‌گیری از نتایج
 
-‫شما می‌توانید به‌سادگی جدول نتایج را در یک فایل ⁦CSV⁩ ذخیره کنید و سپس آن را به‌اشتراک بگذارید یا با یک برنامهٔ صفحه‌گسترده مانند ⁦Excel⁩ باز کنید. فراخوانی _⁦as.data.frame_⁩ لازم است تا شیء _⁦DataFrame_⁩ (بستهٔ _[⁦IRanges](https://bioconductor.org/packages/3.23/IRanges)_⁩) به یک شیء _⁦data.frame_⁩ تبدیل شود که _⁦write.csv_⁩ بتواند آن را پردازش کند. در این‌جا برای نمایش فقط 100 ژن برتر را برمی‌داریم.‬
+شما می‌توانید به‌سادگی جدول نتایج را در یک فایل <span dir="ltr">CSV</span> ذخیره کنید و سپس آن را به‌اشتراک بگذارید یا با یک برنامهٔ صفحه‌گسترده مانند <span dir="ltr">Excel</span> باز کنید. فراخوانی _<span dir="ltr">as.data.frame_</span> لازم است تا شیء _<span dir="ltr">DataFrame_</span> (بستهٔ _[<span dir="ltr">IRanges](https://bioconductor.org/packages/3.23/IRanges)_</span>) به یک شیء _<span dir="ltr">data.frame_</span> تبدیل شود که _<span dir="ltr">write.csv_</span> بتواند آن را پردازش کند. در این‌جا برای نمایش فقط 100 ژن برتر را برمی‌داریم.
 
 ```
 resOrderedDF <- as.data.frame(resOrdered)[1:100, ]
 write.csv(resOrderedDF, file = "results.csv")
 ```
 
-‫روش‌های پیچیده‌تر برای صدور نتایج در ویگنت _⁦DESeq2_⁩ شرح داده شده‌اند، که لینک‌هایی به سایر بسته‌های ⁦Bioconductor⁩ فراهم می‌کنند که تسهیل‌کنندهٔ مصورسازی و ساخت گزارش هستند.‬
+روش‌های پیچیده‌تر برای صدور نتایج در ویگنت _<span dir="ltr">DESeq2_</span> شرح داده شده‌اند، که لینک‌هایی به سایر بسته‌های <span dir="ltr">Bioconductor</span> فراهم می‌کنند که تسهیل‌کنندهٔ مصورسازی و ساخت گزارش هستند.
 
-## ‫‫۷٫۲ ترسیم تغییرات نسبت در فضای ژنومی‬
+## ۷٫۲ ترسیم تغییرات نسبت در فضای ژنومی
 
-‫اگر از تابع _⁦tximeta_⁩ برای خواندن داده‌های کمی‌سازی استفاده کرده باشیم، آنگاه شیء _⁦DESeqDataSet_⁩ ما روی مجموعه‌ای از اشیاء آمادهٔ ⁦Bioconductor⁩ ساخته شده است که مختصات ژن‌ها را مشخص می‌کنند. بنابراین به‌راحتی می‌توانیم نتایج ⁦differential⁩ ⁦expression⁩ ⁦analysis⁩ (تحلیل بیان تفاضلی) را در فضای ژنومی رسم کنیم. در حالی که توابع _⁦results_⁩ یا _⁦lfcShrink_⁩ به‌صورت پیش‌فرض یک _⁦DataFrame_⁩ بازمی‌گردانند، با استفاده از آرگومان __⁦KEEP_BIDI_00000__⁩ می‌توانیم خروجی از نوع _⁦GRanges_⁩ یا _⁦GRangesList_⁩ درخواست کنیم (نوع دوم تنها در صورتی ممکن است که پیش از ایجاد _⁦DESeqDataSet_⁩ از تابع _⁦addExons_⁩ در بستهٔ _⁦tximeta_⁩ استفاده کرده باشیم).‬
+اگر از تابع _<span dir="ltr">tximeta_</span> برای خواندن داده‌های کمی‌سازی استفاده کرده باشیم، آنگاه شیء _<span dir="ltr">DESeqDataSet_</span> ما روی مجموعه‌ای از اشیاء آمادهٔ <span dir="ltr">Bioconductor</span> ساخته شده است که مختصات ژن‌ها را مشخص می‌کنند. بنابراین به‌راحتی می‌توانیم نتایج <span dir="ltr">differential</span> <span dir="ltr">expression</span> <span dir="ltr">analysis</span> (تحلیل بیان تفاضلی) را در فضای ژنومی رسم کنیم. در حالی که توابع _<span dir="ltr">results_</span> یا _<span dir="ltr">lfcShrink_</span> به‌صورت پیش‌فرض یک _<span dir="ltr">DataFrame_</span> بازمی‌گردانند، با استفاده از آرگومان __<span dir="ltr">KEEP_BIDI_00000__</span> می‌توانیم خروجی از نوع _<span dir="ltr">GRanges_</span> یا _<span dir="ltr">GRangesList_</span> درخواست کنیم (نوع دوم تنها در صورتی ممکن است که پیش از ایجاد _<span dir="ltr">DESeqDataSet_</span> از تابع _<span dir="ltr">addExons_</span> در بستهٔ _<span dir="ltr">tximeta_</span> استفاده کرده باشیم).
 
 ```
 resGR <- lfcShrink(dds, coef="dex_trt_vs_untrt", type="apeglm", format="GRanges")
@@ -1522,20 +1522,20 @@ resGR
 ##   seqinfo: 25 sequences (1 circular) from hg38 genome
 ```
 
-‫برای برچسب‌زنی ژن‌ها روی نمودار لازم است دوباره نماد را اضافه کنیم:‬
+برای برچسب‌زنی ژن‌ها روی نمودار لازم است دوباره نماد را اضافه کنیم:
 
 ```
 ens.str <- substr(names(resGR), 1, 15)
 resGR$symbol <- mapIds(org.Hs.eg.db, ens.str, "SYMBOL", "ENSEMBL")
 ```
 
-‫برای رسمِ ⁦GRanges⁩ و متادیتای مرتبط — یعنی تغییرات لگاریتمیِ ضریب که ناشی از درمان با دگزامتازون هستند — از بستهٔ _[⁦Gviz](https://bioconductor.org/packages/3.23/Gviz)_⁩ استفاده می‌کنیم.‬
+برای رسمِ <span dir="ltr">GRanges</span> و متادیتای مرتبط — یعنی تغییرات لگاریتمیِ ضریب که ناشی از درمان با دگزامتازون هستند — از بستهٔ _[<span dir="ltr">Gviz](https://bioconductor.org/packages/3.23/Gviz)_</span> استفاده می‌کنیم.
 
 ```
 library("Gviz")
 ```
 
-‫قطعه‌کد زیر بازه‌ای به طول 1٬000٬000 جفت باز بالادست و پایین‌دست را نسبت به ژنی که کمترین مقدار ⁦p⁩ را دارد مشخص می‌کند. برای ژن‌های واقع در این پنجره زیرمجموعه‌ای از نتایج کامل ایجاد می‌کنیم. اگر نماد وجود داشته باشد و در زیرمجموعه تک‌رُدی باشد، آن را به‌عنوان نام اضافه می‌کنیم.‬
+قطعه‌کد زیر بازه‌ای به طول 1٬000٬000 جفت باز بالادست و پایین‌دست را نسبت به ژنی که کمترین مقدار <span dir="ltr">p</span> را دارد مشخص می‌کند. برای ژن‌های واقع در این پنجره زیرمجموعه‌ای از نتایج کامل ایجاد می‌کنیم. اگر نماد وجود داشته باشد و در زیرمجموعه تک‌رُدی باشد، آن را به‌عنوان نام اضافه می‌کنیم.
 
 ```
 window <- resGR[topGene] + 1e6
@@ -1545,14 +1545,14 @@ naOrDup <- is.na(resGRsub$symbol) | duplicated(resGRsub$symbol)
 resGRsub$group <- ifelse(naOrDup, names(resGRsub), resGRsub$symbol)
 ```
 
-‫برداری ایجاد می‌کنیم که مشخص کند آیا ژن‌های این زیرمجموعه مقدار کمی از __⁦KEEP_BIDI_00000__⁩ داشته‌اند یا خیر.‬
+برداری ایجاد می‌کنیم که مشخص کند آیا ژن‌های این زیرمجموعه مقدار کمی از __<span dir="ltr">KEEP_BIDI_00000__</span> داشته‌اند یا خیر.
 
 ```
 status <- factor(ifelse(resGRsub$padj < 0.05 & !is.na(resGRsub$padj),
                         "sig", "notsig"))
 ```
 
-‫سپس می‌توانیم نتایج را با توابع _[⁦Gviz](https://bioconductor.org/packages/3.23/Gviz)_⁩ رسم کنیم (شکل زیر). یک «ردیف محور» برای مشخص کردن موقعیت در ژنوم می‌سازیم، یک ردیف که ژن‌ها و نام‌هایشان را نشان می‌دهد و بر اساس معنی‌داری رنگ‌آمیزی می‌شود، و یک ردیف داده که میله‌های عمودی را رسم می‌کند که تغییرات لگاریتمیِ تعدیلات‌شدهٔ ضریب تولیدشده توسط _⁦DESeq2_⁩ را نشان می‌دهد؛ این مقادیر تنها زمانی بزرگ هستند که اثر به‌خوبی توسط اطلاعات موجود در شمارش‌ها پشتیبانی شده باشد.‬
+سپس می‌توانیم نتایج را با توابع _[<span dir="ltr">Gviz](https://bioconductor.org/packages/3.23/Gviz)_</span> رسم کنیم (شکل زیر). یک «ردیف محور» برای مشخص کردن موقعیت در ژنوم می‌سازیم، یک ردیف که ژن‌ها و نام‌هایشان را نشان می‌دهد و بر اساس معنی‌داری رنگ‌آمیزی می‌شود، و یک ردیف داده که میله‌های عمودی را رسم می‌کند که تغییرات لگاریتمیِ تعدیلات‌شدهٔ ضریب تولیدشده توسط _<span dir="ltr">DESeq2_</span> را نشان می‌دهد؛ این مقادیر تنها زمانی بزرگ هستند که اثر به‌خوبی توسط اطلاعات موجود در شمارش‌ها پشتیبانی شده باشد.
 
 ```
 options(ucscChromosomeNames = FALSE)
@@ -1564,21 +1564,21 @@ plotTracks(list(g, d, a), groupAnnotation = "group",
            notsig = "grey", sig = "hotpink")
 ```
 
-‫**⁦log2⁩ ⁦fold⁩ ⁦changes⁩ ⁦in⁩ ⁦genomic⁩ ⁦region⁩ ⁦surrounding⁩ ⁦the⁩ ⁦gene⁩ ⁦with⁩ ⁦smallest⁩ ⁦adjusted⁩ _⁦p_⁩ ⁦value.⁩** ژن‌هایی که به رنگ صورتی مشخص شده‌اند مقدار ⁦adjusted⁩ ⁦p-value⁩ (مقدار ⁦p⁩ تعدیل‌شده) کمتر از 0.1 دارند.‬
+**<span dir="ltr">log2</span> <span dir="ltr">fold</span> <span dir="ltr">changes</span> <span dir="ltr">in</span> <span dir="ltr">genomic</span> <span dir="ltr">region</span> <span dir="ltr">surrounding</span> <span dir="ltr">the</span> <span dir="ltr">gene</span> <span dir="ltr">with</span> <span dir="ltr">smallest</span> <span dir="ltr">adjusted</span> _<span dir="ltr">p_</span> <span dir="ltr">value.</span>** ژن‌هایی که به رنگ صورتی مشخص شده‌اند مقدار <span dir="ltr">adjusted</span> <span dir="ltr">p-value</span> (مقدار <span dir="ltr">p</span> تعدیل‌شده) کمتر از 0.1 دارند.
 
-# ‫‫8 حذف آثار دسته‌ای پنهان‬
+# 8 حذف آثار دسته‌ای پنهان
 
-‫فرض کنید ما نمی‌دانستیم در آزمایش از خطوط سلولی مختلف استفاده شده است و تنها اطلاع ما اعمال درمان با دگزامتازون بود. اثر خط سلولی بر شمارش‌ها در این صورت نمایانگر یک تغییر ناخواسته و پنهان خواهد بود که ممکن است بسیاری یا همهٔ ژن‌ها را در مجموعه‌داده تحت تاثیر قرار دهد. می‌توانیم از روش‌های آماری طراحی‌شده برای ⁦RNA-seq⁩ در بستهٔ _[⁦sva](https://bioconductor.org/packages/3.23/sva)_⁩ (⁦Leek⁩ 2014) یا بستهٔ _[⁦RUVSeq](https://bioconductor.org/packages/3.23/RUVSeq)_⁩ (⁦Risso⁩ ⁦et⁩ ⁦al.⁩ 2014) در ⁦Bioconductor⁩ برای کشف چنین گروه‌بندی‌هایی از نمونه‌ها استفاده کنیم، و سپس آن‌ها را به طرح _⁦DESeqDataSet_⁩ اضافه کنیم تا اثرشان را کنترل کنیم.‬
+فرض کنید ما نمی‌دانستیم در آزمایش از خطوط سلولی مختلف استفاده شده است و تنها اطلاع ما اعمال درمان با دگزامتازون بود. اثر خط سلولی بر شمارش‌ها در این صورت نمایانگر یک تغییر ناخواسته و پنهان خواهد بود که ممکن است بسیاری یا همهٔ ژن‌ها را در مجموعه‌داده تحت تاثیر قرار دهد. می‌توانیم از روش‌های آماری طراحی‌شده برای <span dir="ltr">RNA-seq</span> در بستهٔ _[<span dir="ltr">sva](https://bioconductor.org/packages/3.23/sva)_</span> (<span dir="ltr">Leek</span> 2014) یا بستهٔ _[<span dir="ltr">RUVSeq](https://bioconductor.org/packages/3.23/RUVSeq)_</span> (<span dir="ltr">Risso</span> <span dir="ltr">et</span> <span dir="ltr">al.</span> 2014) در <span dir="ltr">Bioconductor</span> برای کشف چنین گروه‌بندی‌هایی از نمونه‌ها استفاده کنیم، و سپس آن‌ها را به طرح _<span dir="ltr">DESeqDataSet_</span> اضافه کنیم تا اثرشان را کنترل کنیم.
 
-‫بستهٔ _⁦SVA_⁩ از اصطلاح متغیرهای جانشین برای متغیرهای برآوردشده‌ای استفاده می‌کند که می‌خواهیم در تحلیل لحاظ شوند، در حالی که بستهٔ ⁦RUV⁩ از اصطلاح عوامل تغییر ناخواسته استفاده می‌کند و خودِ نام بسته «⁦Remove⁩ ⁦Unwanted⁩ ⁦Variation⁩» این عنوان را توضیح می‌دهد. ابتدا از _⁦SVA_⁩ برای یافتن آثار دسته‌ای پنهان استفاده می‌کنیم و سپس به سراغ _⁦RUV_⁩ می‌رویم.‬
+بستهٔ _<span dir="ltr">SVA_</span> از اصطلاح متغیرهای جانشین برای متغیرهای برآوردشده‌ای استفاده می‌کند که می‌خواهیم در تحلیل لحاظ شوند، در حالی که بستهٔ <span dir="ltr">RUV</span> از اصطلاح عوامل تغییر ناخواسته استفاده می‌کند و خودِ نام بسته «<span dir="ltr">Remove</span> <span dir="ltr">Unwanted</span> <span dir="ltr">Variation</span>» این عنوان را توضیح می‌دهد. ابتدا از _<span dir="ltr">SVA_</span> برای یافتن آثار دسته‌ای پنهان استفاده می‌کنیم و سپس به سراغ _<span dir="ltr">RUV_</span> می‌رویم.
 
-## ‫‫۸٫۱ استفاده از ⁦SVA⁩ همراه با ⁦DESeq2⁩‬
+## ۸٫۱ استفاده از <span dir="ltr">SVA</span> همراه با <span dir="ltr">DESeq2</span>
 
 ```
 library("sva")
 ```
 
-‫در ادامه ماتریسی از ⁦normalized⁩ ⁦count⁩ (شمارش)‌های نرمال‌شده را به‌دست می‌آوریم که در آن میانگین شمارش در میان نمونه‌ها بزرگ‌تر از 1 است. همان‌طور که پیش‌تر توضیح دادیم، هدف بازیابی هرگونه اثر دسته‌ای پنهان است، در حالتی که اطلاعات مربوط به خط سلولی را نداریم. بنابراین از ماتریس مدل کامل با متغیر _⁦dex_⁩ استفاده می‌کنیم و یک ماتریس مدل کاهش‌یافته یا تهی که تنها شامل ترم ثابت است می‌سازیم. در پایان مشخص می‌کنیم که می‌خواهیم 2 متغیر جانشین برآورد شود. برای اطلاعات بیشتر صفحهٔ راهنمای تابع _⁦svaseq_⁩ را با وارد کردن __⁦KEEP_BIDI_00000__⁩ مطالعه کنید.‬
+در ادامه ماتریسی از <span dir="ltr">normalized</span> <span dir="ltr">count</span> (شمارش)‌های نرمال‌شده را به‌دست می‌آوریم که در آن میانگین شمارش در میان نمونه‌ها بزرگ‌تر از 1 است. همان‌طور که پیش‌تر توضیح دادیم، هدف بازیابی هرگونه اثر دسته‌ای پنهان است، در حالتی که اطلاعات مربوط به خط سلولی را نداریم. بنابراین از ماتریس مدل کامل با متغیر _<span dir="ltr">dex_</span> استفاده می‌کنیم و یک ماتریس مدل کاهش‌یافته یا تهی که تنها شامل ترم ثابت است می‌سازیم. در پایان مشخص می‌کنیم که می‌خواهیم 2 متغیر جانشین برآورد شود. برای اطلاعات بیشتر صفحهٔ راهنمای تابع _<span dir="ltr">svaseq_</span> را با وارد کردن __<span dir="ltr">KEEP_BIDI_00000__</span> مطالعه کنید.
 
 ```
 dat  <- counts(dds, normalized = TRUE)
@@ -1609,7 +1609,7 @@ svseq$sv
 ## [7,] -0.6238462  0.05013275
 ## [8,] -0.5920563  0.04873233
 ```
-‫از آن‌جا که در واقع خطوط سلولی را می‌شناسیم، می‌توانیم ببینیم روش ⁦SVA⁩ تا چه حد در بازسازی این متغیرها موفق بوده است (شکل زیر).‬
+از آن‌جا که در واقع خطوط سلولی را می‌شناسیم، می‌توانیم ببینیم روش <span dir="ltr">SVA</span> تا چه حد در بازسازی این متغیرها موفق بوده است (شکل زیر).
 
 ```
 par(mfrow = c(2, 1), mar = c(3,5,3,1))
@@ -1619,9 +1619,9 @@ for (i in 1:2) {
  }
 ```
 
-‫**متغیرهای جانشین ۱ و ۲ بر حسب خط سلولی رسم شده‌اند.** در اینجا منبع پنهان تغییرپذیری (خط سلولی) را می‌دانیم و بنابراین می‌توانیم مشاهده کنیم که رویهٔ ⁦SVA⁩ چگونه یک منبع تغییر را که با خط سلولی همبسته است شناسایی می‌کند.‬
+**متغیرهای جانشین ۱ و ۲ بر حسب خط سلولی رسم شده‌اند.** در اینجا منبع پنهان تغییرپذیری (خط سلولی) را می‌دانیم و بنابراین می‌توانیم مشاهده کنیم که رویهٔ <span dir="ltr">SVA</span> چگونه یک منبع تغییر را که با خط سلولی همبسته است شناسایی می‌کند.
 
-‫در انتها، برای استفاده از ⁦SVA⁩ به‌منظور حذف هر تأثیری که متغیرهای جانشین ممکن است روی ⁦count⁩ (شمارش)ها داشته باشند، کافی است این دو متغیر جانشین را به‌صورت ستون به _⁦DESeqDataSet_⁩ اضافه کنیم و سپس آن‌ها را در طراحی وارد کنیم:‬
+در انتها، برای استفاده از <span dir="ltr">SVA</span> به‌منظور حذف هر تأثیری که متغیرهای جانشین ممکن است روی <span dir="ltr">count</span> (شمارش)ها داشته باشند، کافی است این دو متغیر جانشین را به‌صورت ستون به _<span dir="ltr">DESeqDataSet_</span> اضافه کنیم و سپس آن‌ها را در طراحی وارد کنیم:
 
 ```
 ddssva <- dds
@@ -1630,17 +1630,17 @@ ddssva$SV2 <- svseq$sv[,2]
 design(ddssva) <- ~ SV1 + SV2 + dex
 ```
 
-‫سپس می‌توانیم با اجرای _⁦DESeq_⁩ با طراحی جدید، نتایجی را به‌دست آوریم که برای متغیرهای جانشین کنترل‌شده باشند.‬
+سپس می‌توانیم با اجرای _<span dir="ltr">DESeq_</span> با طراحی جدید، نتایجی را به‌دست آوریم که برای متغیرهای جانشین کنترل‌شده باشند.
 
-## ‫‫۸٫۲ استفاده از ⁦RUV⁩ همراه با ⁦DESeq2⁩‬
+## ۸٫۲ استفاده از <span dir="ltr">RUV</span> همراه با <span dir="ltr">DESeq2</span>
 
-‫همچنین می‌توانیم از روش _⁦RUV_⁩ در بستهٔ _⁦RUVSeq_⁩ برای شناسایی ⁦batch⁩ ⁦effect⁩ (اثر دسته‌ای)های پنهان استفاده کنیم.‬
+همچنین می‌توانیم از روش _<span dir="ltr">RUV_</span> در بستهٔ _<span dir="ltr">RUVSeq_</span> برای شناسایی <span dir="ltr">batch</span> <span dir="ltr">effect</span> (اثر دسته‌ای)های پنهان استفاده کنیم.
 
 ```
 library("RUVSeq")
 ```
 
-‫می‌توانیم از تابع __⁦KEEP_BIDI_00000__⁩ برای برآورد عوامل تغییرات ناخواسته استفاده کنیم؛ این عوامل مشابهِ ⁦surrogate⁩ ⁦variables⁩ در _⁦SVA_⁩ هستند. تفاوت نسبت به روش _⁦SVA_⁩ که پیش‌تر نشان داده شد این است که ابتدا _⁦DESeq_⁩ و _⁦results_⁩ را اجرا می‌کنیم تا ⁦p⁩‑⁦value⁩هایی برای تحلیل بدون اطلاع از دسته‌ها به‌دست آوریم، مثلاً فقط __⁦KEEP_BIDI_00001__.⁩ فرض کنید جدول نتایج حاصل __⁦KEEP_BIDI_00002__⁩ باشد؛ سپس مجموعه‌ای از ژن‌های کنترل تجربی را با انتخاب ⁦gene⁩ (ژن)‌هایی که ⁦p⁩‑⁦value⁩ کوچک ندارند، استخراج می‌کنیم.‬
+می‌توانیم از تابع __<span dir="ltr">KEEP_BIDI_00000__</span> برای برآورد عوامل تغییرات ناخواسته استفاده کنیم؛ این عوامل مشابهِ <span dir="ltr">surrogate</span> <span dir="ltr">variables</span> در _<span dir="ltr">SVA_</span> هستند. تفاوت نسبت به روش _<span dir="ltr">SVA_</span> که پیش‌تر نشان داده شد این است که ابتدا _<span dir="ltr">DESeq_</span> و _<span dir="ltr">results_</span> را اجرا می‌کنیم تا <span dir="ltr">p</span>‑<span dir="ltr">value</span>هایی برای تحلیل بدون اطلاع از دسته‌ها به‌دست آوریم، مثلاً فقط __<span dir="ltr">KEEP_BIDI_00001__.</span> فرض کنید جدول نتایج حاصل __<span dir="ltr">KEEP_BIDI_00002__</span> باشد؛ سپس مجموعه‌ای از ژن‌های کنترل تجربی را با انتخاب <span dir="ltr">gene</span> (ژن)‌هایی که <span dir="ltr">p</span>‑<span dir="ltr">value</span> کوچک ندارند، استخراج می‌کنیم.
 
 ```
 set <- newSeqExpressionSet(counts(dds))
@@ -1665,7 +1665,7 @@ pData(set)
 ## SRR1039521 -0.28105040 -0.5214111067
 ```
 
-‫می‌توانیم عوامل برآوردشده توسط _⁦RUV_⁩ را رسم کنیم:‬
+می‌توانیم عوامل برآوردشده توسط _<span dir="ltr">RUV_</span> را رسم کنیم:
 
 ```
 par(mfrow = c(2, 1), mar = c(3,5,3,1))
@@ -1675,9 +1675,9 @@ for (i in 1:2) {
  }
 ```
 
-‫**عوامل تغییرات ناخواسته بر حسب خط سلولی رسم شده‌اند.**‬
+**عوامل تغییرات ناخواسته بر حسب خط سلولی رسم شده‌اند.**
 
-‫همان‌طور که پیش‌تر، اگر بخواهیم برای این عوامل کنترل قائل شویم، آن‌ها را به _⁦DESeqDataSet_⁩ و به طراحی اضافه می‌کنیم:‬
+همان‌طور که پیش‌تر، اگر بخواهیم برای این عوامل کنترل قائل شویم، آن‌ها را به _<span dir="ltr">DESeqDataSet_</span> و به طراحی اضافه می‌کنیم:
 
 ```
 ddsruv <- dds
@@ -1686,13 +1686,13 @@ ddsruv$W2 <- set$W_2
 design(ddsruv) <- ~ W1 + W2 + dex
 ```
 
-‫سپس _⁦DESeq_⁩ را با طراحی جدید اجرا می‌کنیم تا پارامترها و نتایج دوباره برآورد شوند.‬
+سپس _<span dir="ltr">DESeq_</span> را با طراحی جدید اجرا می‌کنیم تا پارامترها و نتایج دوباره برآورد شوند.
 
-# ‫‫۹ آزمایش‌های ⁦time⁩ ⁦course⁩ (دورهٔ زمانی)‬
+# ۹ آزمایش‌های <span dir="ltr">time</span> <span dir="ltr">course</span> (دورهٔ زمانی)
 
-‫_⁦DESeq2_⁩ می‌تواند برای تحلیل تجربیات زمانی به‌کار رود؛ برای نمونه برای یافتن ژن‌هایی که در یک شرط خاص در طول زمان واکنش نشان می‌دهند در مقایسه با مجموعه‌ای از نمونه‌های پایه.‬
+_<span dir="ltr">DESeq2_</span> می‌تواند برای تحلیل تجربیات زمانی به‌کار رود؛ برای نمونه برای یافتن ژن‌هایی که در یک شرط خاص در طول زمان واکنش نشان می‌دهند در مقایسه با مجموعه‌ای از نمونه‌های پایه.
 
-‫در اینجا یک تحلیل پایه‌ای سری زمانی را با بستهٔ دادهٔ _[⁦fission](https://bioconductor.org/packages/3.23/fission)_⁩ نشان می‌دهیم که شامل شمارش‌های ژن برای یک سری زمانی ⁦RNA-seq⁩ از مخمر تقسیم‌شونده است (⁦Leong⁩ ⁦et⁩ ⁦al.⁩ 2014). مخمرها در معرض استرس اکسایشی قرار گرفتند و نیمی از نمونه‌ها حذف ژن _⁦atf21_⁩ را داشتند. از فرمول طراحی‌ای استفاده می‌کنیم که اختلاف سویه در زمان 0، تغییرات در طول زمان، و هر اختلاف اختصاصی سویه در طول زمان را مدل می‌کند (ترم تداخل __⁦KEEP_BIDI_00001__⁩).‬
+در اینجا یک تحلیل پایه‌ای سری زمانی را با بستهٔ دادهٔ _[<span dir="ltr">fission](https://bioconductor.org/packages/3.23/fission)_</span> نشان می‌دهیم که شامل شمارش‌های ژن برای یک سری زمانی <span dir="ltr">RNA-seq</span> از مخمر تقسیم‌شونده است (<span dir="ltr">Leong</span> <span dir="ltr">et</span> <span dir="ltr">al.</span> 2014). مخمرها در معرض استرس اکسایشی قرار گرفتند و نیمی از نمونه‌ها حذف ژن _<span dir="ltr">atf21_</span> را داشتند. از فرمول طراحی‌ای استفاده می‌کنیم که اختلاف سویه در زمان 0، تغییرات در طول زمان، و هر اختلاف اختصاصی سویه در طول زمان را مدل می‌کند (ترم تداخل __<span dir="ltr">KEEP_BIDI_00001__</span>).
 
 ```
 library("fission")
@@ -1700,7 +1700,7 @@ data("fission")
 ddsTC <- DESeqDataSet(fission, ~ strain + minute + strain:minute)
 ```
 
-‫بخش کد زیر یک آزمون نسبت درست‌نمایی را اجرا می‌کند که در آن اختلافات اختصاصی سویه در طول زمان حذف می‌شوند. ژن‌هایی که از این آزمون ⁦p⁩‑⁦value⁩های کوچکی می‌گیرند، آن‌هایی هستند که در یک یا چند نقطهٔ زمانی پس از زمان صفر اثر اختصاصی سویه نشان داده‌اند. بنابراین توجه داشته باشید که ژن‌هایی که در هر دو سویه به‌طور مشابه در طول زمان افزایش یا کاهش یافته‌اند، ⁦p⁩‑⁦value⁩های کوچکی نخواهند داشت.‬
+بخش کد زیر یک آزمون نسبت درست‌نمایی را اجرا می‌کند که در آن اختلافات اختصاصی سویه در طول زمان حذف می‌شوند. ژن‌هایی که از این آزمون <span dir="ltr">p</span>‑<span dir="ltr">value</span>های کوچکی می‌گیرند، آن‌هایی هستند که در یک یا چند نقطهٔ زمانی پس از زمان صفر اثر اختصاصی سویه نشان داده‌اند. بنابراین توجه داشته باشید که ژن‌هایی که در هر دو سویه به‌طور مشابه در طول زمان افزایش یا کاهش یافته‌اند، <span dir="ltr">p</span>‑<span dir="ltr">value</span>های کوچکی نخواهند داشت.
 
 ```
 ddsTC <- DESeq(ddsTC, test="LRT", reduced = ~ strain + minute)
@@ -1727,9 +1727,9 @@ head(resTC[order(resTC$padj),], 4)
 ## SPAC1002.17c 3.46682e-04        urg2
 ```
 
-‫این تنها یکی از آزمون‌هایی است که می‌توان به داده‌های سری زمانی اعمال کرد. گزینهٔ دیگر مدل‌سازی شمارش‌ها به‌عنوان یک تابع پیوستهٔ زمان و افزودن یک ترم تداخل بین شرط و آن تابع پیوسته است. می‌توان چنین مدلی را با توابع پایهٔ اسپلاین در ⁦R⁩ ساخت؛ رویکردی جدیدتر استفاده از فرآیندهای گاوسی است (⁦Tonner⁩ ⁦et⁩ ⁦al.⁩ 2017).‬
+این تنها یکی از آزمون‌هایی است که می‌توان به داده‌های سری زمانی اعمال کرد. گزینهٔ دیگر مدل‌سازی شمارش‌ها به‌عنوان یک تابع پیوستهٔ زمان و افزودن یک ترم تداخل بین شرط و آن تابع پیوسته است. می‌توان چنین مدلی را با توابع پایهٔ اسپلاین در <span dir="ltr">R</span> ساخت؛ رویکردی جدیدتر استفاده از فرآیندهای گاوسی است (<span dir="ltr">Tonner</span> <span dir="ltr">et</span> <span dir="ltr">al.</span> 2017).
 
-‫می‌توانیم شمارش‌ها را برای گروه‌ها در طول زمان با استفاده از _[⁦ggplot2](https://cran.r-project.org/package=ggplot2)_⁩ رسم کنیم؛ برای ژنی که کوچک‌ترین ⁦adjusted⁩ ⁦p-value⁩ (مقدار ⁦p⁩ تعدیل‌شده) را دارد — آزمون برای پروفایل زمانی وابسته به شرط و با در نظر گرفتن اختلافات در زمان 0 (شکل زیر). به‌خاطر داشته باشید که ترم‌های تداخل، اختلاف بین دو گروه در زمان مشخص پس از در نظر گرفتن اختلاف زمان 0 هستند.‬
+می‌توانیم شمارش‌ها را برای گروه‌ها در طول زمان با استفاده از _[<span dir="ltr">ggplot2](https://cran.r-project.org/package=ggplot2)_</span> رسم کنیم؛ برای ژنی که کوچک‌ترین <span dir="ltr">adjusted</span> <span dir="ltr">p-value</span> (مقدار <span dir="ltr">p</span> تعدیل‌شده) را دارد — آزمون برای پروفایل زمانی وابسته به شرط و با در نظر گرفتن اختلافات در زمان 0 (شکل زیر). به‌خاطر داشته باشید که ترم‌های تداخل، اختلاف بین دو گروه در زمان مشخص پس از در نظر گرفتن اختلاف زمان 0 هستند.
 
 ```
 fiss <- plotCounts(ddsTC, which.min(resTC$padj), 
@@ -1741,9 +1741,9 @@ ggplot(fiss,
   scale_y_log10()
 ```
 
-‫**شمارش‌های نرمال‌شده — نتیجهٔ ⁦normalization⁩ (نرمال‌سازی) — برای ژنی با تغییرات وابسته به شرط در طول زمان.**‬
+**شمارش‌های نرمال‌شده — نتیجهٔ <span dir="ltr">normalization</span> (نرمال‌سازی) — برای ژنی با تغییرات وابسته به شرط در طول زمان.**
 
-‫آزمون‌های والد برای تغییرات چندبرابریِ لگاریتمی به پایهٔ 2 در نقاط زمانی منفرد را می‌توان با استفاده از آرگومان __⁦KEEP_BIDI_00000__⁩ در _⁦results_⁩ بررسی کرد:‬
+آزمون‌های والد برای تغییرات چندبرابریِ لگاریتمی به پایهٔ 2 در نقاط زمانی منفرد را می‌توان با استفاده از آرگومان __<span dir="ltr">KEEP_BIDI_00000__</span> در _<span dir="ltr">results_</span> بررسی کرد:
 
 ```
 resultsNames(ddsTC)
@@ -1770,7 +1770,7 @@ res30[which.min(res30$padj),]
 ## SPBC2F12.09c   174.671       -2.60047  0.634343  -4.09947 4.14099e-05  0.279931
 ```
 
-‫هم‌چنین می‌توان ژن‌های معنادار را بر اساس پروفایل‌های زمانی آن‌ها خوشه‌بندی کرد. ماتریسی از تغییرات چندبرابریِ لگاریتمی به پایهٔ 2 را با استفاده از تابع _⁦coef_⁩ استخراج می‌کنیم. توجه داشته باشید که این‌ها برآوردهای بیشینهٔ درست‌نمایی هستند. برای به‌دست‌آوردن ⁦LFC⁩های جمع‌شده (⁦shrunken⁩)، باید آن‌ها را یک ضریب در هر نوبت با استفاده از __⁦KEEP_BIDI_00000__⁩ استخراج کرد.‬
+هم‌چنین می‌توان ژن‌های معنادار را بر اساس پروفایل‌های زمانی آن‌ها خوشه‌بندی کرد. ماتریسی از تغییرات چندبرابریِ لگاریتمی به پایهٔ 2 را با استفاده از تابع _<span dir="ltr">coef_</span> استخراج می‌کنیم. توجه داشته باشید که این‌ها برآوردهای بیشینهٔ درست‌نمایی هستند. برای به‌دست‌آوردن <span dir="ltr">LFC</span>های جمع‌شده (<span dir="ltr">shrunken</span>)، باید آن‌ها را یک ضریب در هر نوبت با استفاده از __<span dir="ltr">KEEP_BIDI_00000__</span> استخراج کرد.
 
 ```
 betas <- coef(ddsTC)
@@ -1784,7 +1784,7 @@ colnames(betas)
 ## [10] "strainmut.minute60"  "strainmut.minute120" "strainmut.minute180"
 ```
 
-‫اکنون می‌توانیم تغییرات لگاریتمیِ پایهٔ 2 را در یک نقشهٔ حرارتی رسم کنیم (شکل زیر).‬
+اکنون می‌توانیم تغییرات لگاریتمیِ پایهٔ 2 را در یک نقشهٔ حرارتی رسم کنیم (شکل زیر).
 
 ```
 topGenes <- head(order(resTC$padj),20)
@@ -1796,19 +1796,19 @@ pheatmap(mat, breaks=seq(from=-thr, to=thr, length=101),
          cluster_col=FALSE)
 ```
 
-‫**نقشهٔ حرارتیِ تغییرات لگاریتمیِ پایهٔ 2 برای ژن‌هایی با کوچک‌ترین مقدار ⁦p⁩ تعدیل‌شده.** مجموعهٔ پایینِ ژن‌ها نشان‌دهندهٔ القای قوی بیان برای نمونه‌های پایه در دقایق ۱۵–۶۰ است (کادرهای قرمز در گوشهٔ پایین چپ)، ولی سپس اختلافات جزئی‌ای برای سویهٔ موتانت در مقاطع بعدی دیده می‌شود (نمایش در کادرهای گوشهٔ پایین راست).‬
+**نقشهٔ حرارتیِ تغییرات لگاریتمیِ پایهٔ 2 برای ژن‌هایی با کوچک‌ترین مقدار <span dir="ltr">p</span> تعدیل‌شده.** مجموعهٔ پایینِ ژن‌ها نشان‌دهندهٔ القای قوی بیان برای نمونه‌های پایه در دقایق ۱۵–۶۰ است (کادرهای قرمز در گوشهٔ پایین چپ)، ولی سپس اختلافات جزئی‌ای برای سویهٔ موتانت در مقاطع بعدی دیده می‌شود (نمایش در کادرهای گوشهٔ پایین راست).
 
-# ‫‫۱۰ پیوست‬
+# ۱۰ پیوست
 
-## ‫‫۱۰٫۱ جزئیات به‌روز دربارهٔ کمی‌سازی‬
+## ۱۰٫۱ جزئیات به‌روز دربارهٔ کمی‌سازی
 
-‫روند کاری فوق، مراحل برآورد فراوانی را که منجر به ایجاد اشیاء __⁦KEEP_BIDI_00000__⁩ و __⁦KEEP_BIDI_00001__⁩ در بستهٔ _⁦airway_⁩ شد، تشریح می‌کند. این شامل نگاشت ⁦read⁩ (خوانش)های ⁦RNA-seq⁩ به رونوشت (⁦transcript⁩)‌های مرجع انسانی در ⁦GENCODE⁩ ⁦v29⁩ با استفاده از ⁦salmon⁩ ⁦v0.14.1⁩ بود. این گام برآورد فراوانی در سال 2019 انجام شد.‬
+روند کاری فوق، مراحل برآورد فراوانی را که منجر به ایجاد اشیاء __<span dir="ltr">KEEP_BIDI_00000__</span> و __<span dir="ltr">KEEP_BIDI_00001__</span> در بستهٔ _<span dir="ltr">airway_</span> شد، تشریح می‌کند. این شامل نگاشت <span dir="ltr">read</span> (خوانش)های <span dir="ltr">RNA-seq</span> به رونوشت (<span dir="ltr">transcript</span>)‌های مرجع انسانی در <span dir="ltr">GENCODE</span> <span dir="ltr">v29</span> با استفاده از <span dir="ltr">salmon</span> <span dir="ltr">v0.14.1</span> بود. این گام برآورد فراوانی در سال 2019 انجام شد.
 
-‫برای ارائهٔ جزئیات به‌روزتر دربارهٔ برآورد فراوانی، اطلاعات زیر را در پیوست قرار می‌دهیم. جزئیات به‌روز دربارهٔ برآورد فراوانی توسط ⁦Vince⁩ ⁦Carey⁩ در 2026 تهیه شده و از ابزارهای جدید و همچنین ⁦GENCODE⁩ ⁦v49⁩ استفاده می‌کند.‬
+برای ارائهٔ جزئیات به‌روزتر دربارهٔ برآورد فراوانی، اطلاعات زیر را در پیوست قرار می‌دهیم. جزئیات به‌روز دربارهٔ برآورد فراوانی توسط <span dir="ltr">Vince</span> <span dir="ltr">Carey</span> در 2026 تهیه شده و از ابزارهای جدید و همچنین <span dir="ltr">GENCODE</span> <span dir="ltr">v49</span> استفاده می‌کند.
 
-### ‫‫۱۰٫۱٫۱ دانلود فایل‌های ⁦FASTQ⁩‬
+### ۱۰٫۱٫۱ دانلود فایل‌های <span dir="ltr">FASTQ</span>
 
-‫روش‌های پیشنهادی برای دسترسی به داده‌های خام جهت پیش‌پردازش و تحلیل در طول زمان تغییر می‌کنند. از تاریخ 13 آوریل 2026، ⁦NCBI⁩ __⁦KEEP_BIDI_00000__⁩ را برای عملیات شبکهٔ با کارایی بالا که منابع را از ⁦Sequence⁩ ⁦Read⁩ ⁦Archive⁩ بازیابی می‌کنند فراهم می‌کند. [⁦SRA-tools⁩ ⁦wiki](https://github.com/ncbi/sra-tools/wiki/08.-prefetch-and-fasterq-dump)⁩ __⁦KEEP_BIDI_00002__⁩ و __⁦KEEP_BIDI_00003__⁩ را شرح می‌دهد. یکی از رویکردها برای دریافت فایل‌های ⁦FASTQ⁩ آزمایش ⁦airway⁩ استفادهٔ مستقیم از __⁦KEEP_BIDI_00004__⁩ است. دستورات زیر برای یک نمونه ⁦FASTQ⁩ فشرده‌شده با ⁦gzip⁩ تولید می‌کنند:‬
+روش‌های پیشنهادی برای دسترسی به داده‌های خام جهت پیش‌پردازش و تحلیل در طول زمان تغییر می‌کنند. از تاریخ 13 آوریل 2026، <span dir="ltr">NCBI</span> __<span dir="ltr">KEEP_BIDI_00000__</span> را برای عملیات شبکهٔ با کارایی بالا که منابع را از <span dir="ltr">Sequence</span> <span dir="ltr">Read</span> <span dir="ltr">Archive</span> بازیابی می‌کنند فراهم می‌کند. [<span dir="ltr">SRA-tools</span> <span dir="ltr">wiki](https://github.com/ncbi/sra-tools/wiki/08.-prefetch-and-fasterq-dump)</span> __<span dir="ltr">KEEP_BIDI_00002__</span> و __<span dir="ltr">KEEP_BIDI_00003__</span> را شرح می‌دهد. یکی از رویکردها برای دریافت فایل‌های <span dir="ltr">FASTQ</span> آزمایش <span dir="ltr">airway</span> استفادهٔ مستقیم از __<span dir="ltr">KEEP_BIDI_00004__</span> است. دستورات زیر برای یک نمونه <span dir="ltr">FASTQ</span> فشرده‌شده با <span dir="ltr">gzip</span> تولید می‌کنند:
 
 ```
 fasterq-dump -p -e 4 SRR1039509
@@ -1816,19 +1816,19 @@ gzip SRR1039509_1.fastq
 gzip SRR1039509_2.fastq
 ```
 
-‫پس از اجرای این روند برای ۸ نمونهٔ آزمایش ⁦airway⁩، تقریباً ۲۲ گیگابایت ⁦FASTQ⁩ فشرده موجود خواهد بود.‬
+پس از اجرای این روند برای ۸ نمونهٔ آزمایش <span dir="ltr">airway</span>، تقریباً ۲۲ گیگابایت <span dir="ltr">FASTQ</span> فشرده موجود خواهد بود.
 
-### ‫‫۱۰٫۱٫۲ ساخت نمایهٔ ⁦Salmon⁩‬
+### ۱۰٫۱٫۲ ساخت نمایهٔ <span dir="ltr">Salmon</span>
 
-‫ما از‬
+ما از
 
 ```
 salmon index -t gencode.v49.transcripts.fa.gz -i gencode.v49_salmon_1.11.4
 ```
 
-‫پس از بازیابی ⁦FASTA⁩ فشرده از [⁦GENCODE](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_49/gencode.v49.transcripts.fa.gz)⁩ استفاده کردیم.‬
+پس از بازیابی <span dir="ltr">FASTA</span> فشرده از [<span dir="ltr">GENCODE](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_49/gencode.v49.transcripts.fa.gz)</span> استفاده کردیم.
 
-‫فرآیند ایندکس‌سازی پیام‌های زیادی تولید می‌کند. برخی نمونه‌ها:‬
+فرآیند ایندکس‌سازی پیام‌های زیادی تولید می‌کند. برخی نمونه‌ها:
 
 ```
 [2026-04-13 06:23:04.280] [puff::index::jointLog] [warning] Entry with header [ENST00000631435.1|ENSG00000282253.1|OTTHUMG00000190586.2|OTTHUMT00000485282.2|TRBD1-201|TRBD1|12|TR_D_gene|], had length less than equal to the k-mer length of 31 (perhaps after poly-A clipping)
@@ -1842,7 +1842,7 @@ wrote 516988 cleaned references
 [2026-04-13 06:23:12.270] [puff::index::jointLog] [info] ntHll estimated 185456630 distinct k-mers, setting filter size to 2^32
 ```
 
-‫پوشهٔ حاصل دارای محتوایی به‌صورت زیر است:‬
+پوشهٔ حاصل دارای محتوایی به‌صورت زیر است:
 
 ```
 gencode.v49_salmon_1.11.4
@@ -1860,11 +1860,11 @@ gencode.v49_salmon_1.11.4
 └── versionInfo.json
 ```
 
-### ‫‫۱۰٫۱٫۳ کمی‌سازی ⁦abundance⁩ (فراوانی) با ⁦Salmon⁩‬
+### ۱۰٫۱٫۳ کمی‌سازی <span dir="ltr">abundance</span> (فراوانی) با <span dir="ltr">Salmon</span>
 
-‫فرمان ⁦snakemake⁩ با گزینهٔ __⁦KEEP_BIDI_00000__⁩ روی یک ⁦M4⁩ ⁦macbook⁩ ⁦air⁩ با 32 ⁦GB⁩ حافظهٔ رم اجرا شد و در مدت یک ساعت تکمیل شد.‬
+فرمان <span dir="ltr">snakemake</span> با گزینهٔ __<span dir="ltr">KEEP_BIDI_00000__</span> روی یک <span dir="ltr">M4</span> <span dir="ltr">macbook</span> <span dir="ltr">air</span> با 32 <span dir="ltr">GB</span> حافظهٔ رم اجرا شد و در مدت یک ساعت تکمیل شد.
 
-‫پوشهٔ تولیدشده برای یک نمونه ساختاری به‌شکل زیر دارد:‬
+پوشهٔ تولیدشده برای یک نمونه ساختاری به‌شکل زیر دارد:
 
 ```
 quants
@@ -1890,12 +1890,12 @@ quants
 │   └── quant.sf
 ```
 
-‫مجموع فضای دیسک برای برآوردهای فراوانیِ ۸ نمونه تقریباً ۸ گیگابایت بود.‬
+مجموع فضای دیسک برای برآوردهای فراوانیِ ۸ نمونه تقریباً ۸ گیگابایت بود.
 
-### ‫‫۱۰٫۱٫۴ تولید ⁦RangedSummarizedExperiment⁩ با ⁦tximeta⁩‬
+### ۱۰٫۱٫۴ تولید <span dir="ltr">RangedSummarizedExperiment</span> با <span dir="ltr">tximeta</span>
 
-‫با ⁦Gencode⁩ ⁦v49⁩، __⁦KEEP_BIDI_00000__⁩ روی برآوردهای فراوانی اعمال شد.‬
-‫برای ۸ نمونه پیام‌هایی تولید می‌شود که شامل موارد زیر است:‬
+با <span dir="ltr">Gencode</span> <span dir="ltr">v49</span>، __<span dir="ltr">KEEP_BIDI_00000__</span> روی برآوردهای فراوانی اعمال شد.
+برای ۸ نمونه پیام‌هایی تولید می‌شود که شامل موارد زیر است:
 
 ```
 building TxDb with 'txdbmaker' package
@@ -1924,13 +1924,13 @@ To keep these txps, and to skip adding ranges, use skipMeta=TRUE
 Example missing txps: [ENST00000707233.1, ENST00000710274.1, ENST00000707308.1, ...]
 ```
 
-‫بسته به وضعیت اتصال شما به اینترنت، برخی از پرس‌وجوهای ⁦FTP⁩ که __⁦KEEP_BIDI_00000__⁩ از طرف کاربر انجام می‌دهد ممکن است شکست بخورند. به خطاهای 421 «سرویس در دسترس نیست» توجه کنید، و در صورت مشاهده، پس از بهبود اتصال مجدداً تلاش کنید.‬
+بسته به وضعیت اتصال شما به اینترنت، برخی از پرس‌وجوهای <span dir="ltr">FTP</span> که __<span dir="ltr">KEEP_BIDI_00000__</span> از طرف کاربر انجام می‌دهد ممکن است شکست بخورند. به خطاهای 421 «سرویس در دسترس نیست» توجه کنید، و در صورت مشاهده، پس از بهبود اتصال مجدداً تلاش کنید.
 
-# ‫‫11 اطلاعات نشست‬
+# 11 اطلاعات نشست
 
-‫در بخش پایانی این سند، تابع _⁦sessionInfo_⁩ را فراخوانی می‌کنیم که شمارهٔ نسخهٔ ⁦R⁩ و نسخه‌های تمام بسته‌های به‌کاررفته در این نشست را گزارش می‌دهد. نگهداری چنین گزارشی عادت خوبی است، زیرا در صورت توقف اجرای یک اسکریپت ⁦R⁩ یا تغییر نتایج به‌دلیل به‌روزرسانی توابع در نسخه‌های جدید بسته‌ها، کمک می‌کند تا منشأ مشکل را شناسایی کنید. با قرار دادن این گزارش در انتهای اسکریپت، گزارش‌های شما قابل بازتولیدتر خواهند شد.‬
+در بخش پایانی این سند، تابع _<span dir="ltr">sessionInfo_</span> را فراخوانی می‌کنیم که شمارهٔ نسخهٔ <span dir="ltr">R</span> و نسخه‌های تمام بسته‌های به‌کاررفته در این نشست را گزارش می‌دهد. نگهداری چنین گزارشی عادت خوبی است، زیرا در صورت توقف اجرای یک اسکریپت <span dir="ltr">R</span> یا تغییر نتایج به‌دلیل به‌روزرسانی توابع در نسخه‌های جدید بسته‌ها، کمک می‌کند تا منشأ مشکل را شناسایی کنید. با قرار دادن این گزارش در انتهای اسکریپت، گزارش‌های شما قابل بازتولیدتر خواهند شد.
 
-‫اطلاعات نشست باید همیشه همراه با تمام کدهای به‌کاررفته در تحلیل، در هر ایمیلی که به ⁦https://support.bioconductor.org/⁩ ارسال می‌شود نیز ضمیمه گردد.‬
+اطلاعات نشست باید همیشه همراه با تمام کدهای به‌کاررفته در تحلیل، در هر ایمیلی که به <span dir="ltr">https://support.bioconductor.org/</span> ارسال می‌شود نیز ضمیمه گردد.
 
 ```
 sessionInfo()
@@ -2034,75 +2034,75 @@ sessionInfo()
 ## [136] bit_4.6.0
 ```
 
-# ‫‫منابع‬
+# منابع
 
-‫⁦Anders⁩, ⁦Simon⁩, ⁦and⁩ ⁦Wolfgang⁩ ⁦Huber.⁩ 2010. «⁦differential⁩ ⁦expression⁩ ⁦analysis⁩ (تحلیل بیان تفاضلی) برای داده‌های توالی ⁦count⁩ (شمارش).» _⁦Genome⁩ ⁦Biology_⁩ 11 (10): ⁦R106+.⁩ <⁦https://doi.org/10.1186/gb-2010-11-10-r106⁩> .‬
+<span dir="ltr">Anders</span>, <span dir="ltr">Simon</span>, <span dir="ltr">and</span> <span dir="ltr">Wolfgang</span> <span dir="ltr">Huber.</span> 2010. «<span dir="ltr">differential</span> <span dir="ltr">expression</span> <span dir="ltr">analysis</span> (تحلیل بیان تفاضلی) برای داده‌های توالی <span dir="ltr">count</span> (شمارش).» _<span dir="ltr">Genome</span> <span dir="ltr">Biology_</span> 11 (10): <span dir="ltr">R106+.</span> <<span dir="ltr">https://doi.org/10.1186/gb-2010-11-10-r106</span>> .
 
-‫⁦Anders⁩, ⁦Simon⁩, ⁦Paul⁩ ⁦T.⁩ ⁦Pyl⁩, ⁦and⁩ ⁦Wolfgang⁩ ⁦Huber.⁩ 2015. «⁦HTSeq⁩ – یک چارچوب پایتون برای کار با داده‌های توالی‌یابی با توان بالا.» _⁦Bioinformatics_⁩ 31 (2): 166–69. <⁦https://doi.org/10.1093/bioinformatics/btu638⁩> .‬
+<span dir="ltr">Anders</span>, <span dir="ltr">Simon</span>, <span dir="ltr">Paul</span> <span dir="ltr">T.</span> <span dir="ltr">Pyl</span>, <span dir="ltr">and</span> <span dir="ltr">Wolfgang</span> <span dir="ltr">Huber.</span> 2015. «<span dir="ltr">HTSeq</span> – یک چارچوب پایتون برای کار با داده‌های توالی‌یابی با توان بالا.» _<span dir="ltr">Bioinformatics_</span> 31 (2): 166–69. <<span dir="ltr">https://doi.org/10.1093/bioinformatics/btu638</span>> .
 
-‫⁦Benjamini⁩, ⁦Yoav⁩, ⁦and⁩ ⁦Yosef⁩ ⁦Hochberg.⁩ 1995. «کنترل ⁦false⁩ ⁦discovery⁩ ⁦rate⁩ (نرخ کشف کاذب): یک روش عملی و قدرتمند برای ⁦multiple⁩ ⁦testing⁩ (آزمون‌های چندگانه).» _⁦Journal⁩ ⁦of⁩ ⁦the⁩ ⁦Royal⁩ ⁦Statistical⁩ ⁦Society.⁩ ⁦Series⁩ ⁦B⁩ (⁦Methodological⁩)_ 57 (1): 289–300. <⁦http://www.jstor.org/stable/2346101⁩> .‬
+<span dir="ltr">Benjamini</span>, <span dir="ltr">Yoav</span>, <span dir="ltr">and</span> <span dir="ltr">Yosef</span> <span dir="ltr">Hochberg.</span> 1995. «کنترل <span dir="ltr">false</span> <span dir="ltr">discovery</span> <span dir="ltr">rate</span> (نرخ کشف کاذب): یک روش عملی و قدرتمند برای <span dir="ltr">multiple</span> <span dir="ltr">testing</span> (آزمون‌های چندگانه).» _<span dir="ltr">Journal</span> <span dir="ltr">of</span> <span dir="ltr">the</span> <span dir="ltr">Royal</span> <span dir="ltr">Statistical</span> <span dir="ltr">Society.</span> <span dir="ltr">Series</span> <span dir="ltr">B</span> (<span dir="ltr">Methodological</span>)_ 57 (1): 289–300. <<span dir="ltr">http://www.jstor.org/stable/2346101</span>> .
 
-‫⁦Bourgon⁩, ⁦R.⁩, ⁦R.⁩ ⁦Gentleman⁩, ⁦and⁩ ⁦W.⁩ ⁦Huber.⁩ 2010. «فیلتر مستقل توان کشف را در آزمایش‌های پرتوان افزایش می‌دهد.» _⁦Proceedings⁩ ⁦of⁩ ⁦the⁩ ⁦National⁩ ⁦Academy⁩ ⁦of⁩ ⁦Sciences_⁩ 107 (21): 9546–51. <⁦https://doi.org/10.1073/pnas.0914005107⁩> .‬
+<span dir="ltr">Bourgon</span>, <span dir="ltr">R.</span>, <span dir="ltr">R.</span> <span dir="ltr">Gentleman</span>, <span dir="ltr">and</span> <span dir="ltr">W.</span> <span dir="ltr">Huber.</span> 2010. «فیلتر مستقل توان کشف را در آزمایش‌های پرتوان افزایش می‌دهد.» _<span dir="ltr">Proceedings</span> <span dir="ltr">of</span> <span dir="ltr">the</span> <span dir="ltr">National</span> <span dir="ltr">Academy</span> <span dir="ltr">of</span> <span dir="ltr">Sciences_</span> 107 (21): 9546–51. <<span dir="ltr">https://doi.org/10.1073/pnas.0914005107</span>> .
 
-‫⁦Bray⁩, ⁦Nicolas⁩, ⁦Harold⁩ ⁦Pimentel⁩, ⁦Pall⁩ ⁦Melsted⁩, ⁦and⁩ ⁦Lior⁩ ⁦Pachter.⁩ 2016. «تقریب احتمالاتی نزدیک به بهینه برای کمی‌سازی ⁦RNA-Seq.⁩» _⁦Nature⁩ ⁦Biotechnology_⁩ 34: 525–27. <⁦http://dx.doi.org/10.1038/nbt.3519⁩> .‬
+<span dir="ltr">Bray</span>, <span dir="ltr">Nicolas</span>, <span dir="ltr">Harold</span> <span dir="ltr">Pimentel</span>, <span dir="ltr">Pall</span> <span dir="ltr">Melsted</span>, <span dir="ltr">and</span> <span dir="ltr">Lior</span> <span dir="ltr">Pachter.</span> 2016. «تقریب احتمالاتی نزدیک به بهینه برای کمی‌سازی <span dir="ltr">RNA-Seq.</span>» _<span dir="ltr">Nature</span> <span dir="ltr">Biotechnology_</span> 34: 525–27. <<span dir="ltr">http://dx.doi.org/10.1038/nbt.3519</span>> .
 
-‫⁦Dudoit⁩, ⁦Rine⁩, ⁦Yee⁩ ⁦H.⁩ ⁦Yang⁩, ⁦Matthew⁩ ⁦J.⁩ ⁦Callow⁩, ⁦and⁩ ⁦Terence⁩ ⁦P.⁩ ⁦Speed.⁩ 2002. «روش‌های آماری برای شناسایی ژن‌های متفاوت بیان‌شده در آزمایش‌های ⁦cDNA⁩ ⁦microarray⁩ تکرارشده.» _⁦Statistica⁩ ⁦Sinica_⁩ , 111–39.‬
+<span dir="ltr">Dudoit</span>, <span dir="ltr">Rine</span>, <span dir="ltr">Yee</span> <span dir="ltr">H.</span> <span dir="ltr">Yang</span>, <span dir="ltr">Matthew</span> <span dir="ltr">J.</span> <span dir="ltr">Callow</span>, <span dir="ltr">and</span> <span dir="ltr">Terence</span> <span dir="ltr">P.</span> <span dir="ltr">Speed.</span> 2002. «روش‌های آماری برای شناسایی ژن‌های متفاوت بیان‌شده در آزمایش‌های <span dir="ltr">cDNA</span> <span dir="ltr">microarray</span> تکرارشده.» _<span dir="ltr">Statistica</span> <span dir="ltr">Sinica_</span> , 111–39.
 
-‫⁦Frankish⁩, ⁦Adam⁩, ⁦Alexandra⁩ ⁦Bignell⁩, ⁦Andrew⁩ ⁦Berry⁩, ⁦Andrew⁩ ⁦Yates⁩, ⁦Anne⁩ ⁦Parker⁩, ⁦Bianca⁩ ⁦M⁩ ⁦Schmitt⁩, ⁦Bronwen⁩ ⁦Aken⁩, ⁦et⁩ ⁦al.⁩ 2018. «ژن‌شناسی مرجع ⁦GENCODE⁩ برای ژنوم‌های انسان و موش.» _⁦Nucleic⁩ ⁦Acids⁩ ⁦Research_⁩ 47 (⁦D1⁩): ⁦D766⁩–⁦D773.⁩‬
+<span dir="ltr">Frankish</span>, <span dir="ltr">Adam</span>, <span dir="ltr">Alexandra</span> <span dir="ltr">Bignell</span>, <span dir="ltr">Andrew</span> <span dir="ltr">Berry</span>, <span dir="ltr">Andrew</span> <span dir="ltr">Yates</span>, <span dir="ltr">Anne</span> <span dir="ltr">Parker</span>, <span dir="ltr">Bianca</span> <span dir="ltr">M</span> <span dir="ltr">Schmitt</span>, <span dir="ltr">Bronwen</span> <span dir="ltr">Aken</span>, <span dir="ltr">et</span> <span dir="ltr">al.</span> 2018. «ژن‌شناسی مرجع <span dir="ltr">GENCODE</span> برای ژنوم‌های انسان و موش.» _<span dir="ltr">Nucleic</span> <span dir="ltr">Acids</span> <span dir="ltr">Research_</span> 47 (<span dir="ltr">D1</span>): <span dir="ltr">D766</span>–<span dir="ltr">D773.</span>
 
-‫⁦Hardcastle⁩, ⁦Thomas⁩, ⁦and⁩ ⁦Krystyna⁩ ⁦Kelly.⁩ 2010. «⁦baySeq:⁩ روش‌های بیزی تجربی برای شناسایی ⁦differential⁩ ⁦expression⁩ (تحلیل بیان تفاضلی) در داده‌های شمارش توالی.» _⁦BMC⁩ ⁦Bioinformatics_⁩ 11 (1): 422+. <⁦https://doi.org/10.1186/1471-2105-11-422⁩> .‬
+<span dir="ltr">Hardcastle</span>, <span dir="ltr">Thomas</span>, <span dir="ltr">and</span> <span dir="ltr">Krystyna</span> <span dir="ltr">Kelly.</span> 2010. «<span dir="ltr">baySeq:</span> روش‌های بیزی تجربی برای شناسایی <span dir="ltr">differential</span> <span dir="ltr">expression</span> (تحلیل بیان تفاضلی) در داده‌های شمارش توالی.» _<span dir="ltr">BMC</span> <span dir="ltr">Bioinformatics_</span> 11 (1): 422+. <<span dir="ltr">https://doi.org/10.1186/1471-2105-11-422</span>> .
 
-‫⁦Himes⁩, ⁦Blanca⁩ ⁦E.⁩, ⁦Xiaofeng⁩ ⁦Jiang⁩, ⁦Peter⁩ ⁦Wagner⁩, ⁦Ruoxi⁩ ⁦Hu⁩, ⁦Qiyu⁩ ⁦Wang⁩, ⁦Barbara⁩ ⁦Klanderman⁩, ⁦Reid⁩ ⁦M.⁩ ⁦Whitaker⁩, ⁦et⁩ ⁦al.⁩ 2014. «پروفایل‌سازی ترنسکریپتوم ⁦RNA-Seq⁩ نشان می‌دهد ⁦CRISPLD2⁩ ژنی پاسخ‌پذیر به گلوکوکورتیکوئید است که عملکرد سایتوکاین‌ها را در سلول‌های ماهیچهٔ صاف مجاری تنفسی تنظیم می‌کند.» _⁦PloS⁩ ⁦One_⁩ 9 (6). <⁦https://doi.org/10.1371/journal.pone.0099625⁩> .‬
+<span dir="ltr">Himes</span>, <span dir="ltr">Blanca</span> <span dir="ltr">E.</span>, <span dir="ltr">Xiaofeng</span> <span dir="ltr">Jiang</span>, <span dir="ltr">Peter</span> <span dir="ltr">Wagner</span>, <span dir="ltr">Ruoxi</span> <span dir="ltr">Hu</span>, <span dir="ltr">Qiyu</span> <span dir="ltr">Wang</span>, <span dir="ltr">Barbara</span> <span dir="ltr">Klanderman</span>, <span dir="ltr">Reid</span> <span dir="ltr">M.</span> <span dir="ltr">Whitaker</span>, <span dir="ltr">et</span> <span dir="ltr">al.</span> 2014. «پروفایل‌سازی ترنسکریپتوم <span dir="ltr">RNA-Seq</span> نشان می‌دهد <span dir="ltr">CRISPLD2</span> ژنی پاسخ‌پذیر به گلوکوکورتیکوئید است که عملکرد سایتوکاین‌ها را در سلول‌های ماهیچهٔ صاف مجاری تنفسی تنظیم می‌کند.» _<span dir="ltr">PloS</span> <span dir="ltr">One_</span> 9 (6). <<span dir="ltr">https://doi.org/10.1371/journal.pone.0099625</span>> .
 
-‫⁦Huber⁩, ⁦Wolfgang⁩, ⁦Vincent⁩ ⁦J.⁩ ⁦Carey⁩, ⁦Robert⁩ ⁦Gentleman⁩, ⁦Simon⁩ ⁦Anders⁩, ⁦Marc⁩ ⁦Carlson⁩, ⁦Benilton⁩ ⁦S.⁩ ⁦Carvalho⁩, ⁦Hector⁩ ⁦Corrada⁩ ⁦C.⁩ ⁦Bravo⁩, ⁦et⁩ ⁦al.⁩ 2015. «هماهنگ‌سازی تحلیل‌های ژنومی پرتوان با ⁦Bioconductor.⁩» _⁦Nature⁩ ⁦Methods_⁩ 12 (2): 115–21. <⁦https://doi.org/10.1038/nmeth.3252⁩> .‬
+<span dir="ltr">Huber</span>, <span dir="ltr">Wolfgang</span>, <span dir="ltr">Vincent</span> <span dir="ltr">J.</span> <span dir="ltr">Carey</span>, <span dir="ltr">Robert</span> <span dir="ltr">Gentleman</span>, <span dir="ltr">Simon</span> <span dir="ltr">Anders</span>, <span dir="ltr">Marc</span> <span dir="ltr">Carlson</span>, <span dir="ltr">Benilton</span> <span dir="ltr">S.</span> <span dir="ltr">Carvalho</span>, <span dir="ltr">Hector</span> <span dir="ltr">Corrada</span> <span dir="ltr">C.</span> <span dir="ltr">Bravo</span>, <span dir="ltr">et</span> <span dir="ltr">al.</span> 2015. «هماهنگ‌سازی تحلیل‌های ژنومی پرتوان با <span dir="ltr">Bioconductor.</span>» _<span dir="ltr">Nature</span> <span dir="ltr">Methods_</span> 12 (2): 115–21. <<span dir="ltr">https://doi.org/10.1038/nmeth.3252</span>> .
 
-‫⁦Ignatiadis⁩, ⁦Nikolaos⁩, ⁦Bernd⁩ ⁦Klaus⁩, ⁦Judith⁩ ⁦Zaugg⁩, ⁦and⁩ ⁦Wolfgang⁩ ⁦Huber.⁩ 2016. «وزن‌دهی فرضیه‌محور داده‌محور توان کشف را در آزمون‌های چندگانه در مقیاس ژنومی افزایش می‌دهد.» _⁦Nature⁩ ⁦Methods_⁩ . <⁦http://dx.doi.org/10.1038/nmeth.3885⁩> .‬
+<span dir="ltr">Ignatiadis</span>, <span dir="ltr">Nikolaos</span>, <span dir="ltr">Bernd</span> <span dir="ltr">Klaus</span>, <span dir="ltr">Judith</span> <span dir="ltr">Zaugg</span>, <span dir="ltr">and</span> <span dir="ltr">Wolfgang</span> <span dir="ltr">Huber.</span> 2016. «وزن‌دهی فرضیه‌محور داده‌محور توان کشف را در آزمون‌های چندگانه در مقیاس ژنومی افزایش می‌دهد.» _<span dir="ltr">Nature</span> <span dir="ltr">Methods_</span> . <<span dir="ltr">http://dx.doi.org/10.1038/nmeth.3885</span>> .
 
-‫⁦K⁩ö⁦ster⁩, ⁦Johannes⁩, ⁦and⁩ ⁦Sven⁩ ⁦Rahmann.⁩ 2012. «⁦Snakemake⁩ - یک سامانهٔ کاریابی بیوانفورماتیک مقیاس‌پذیر.» _⁦Bioinformatics_⁩ . <⁦https://doi.org/10.1093/bioinformatics/bts480⁩> .‬
+<span dir="ltr">K</span>ö<span dir="ltr">ster</span>, <span dir="ltr">Johannes</span>, <span dir="ltr">and</span> <span dir="ltr">Sven</span> <span dir="ltr">Rahmann.</span> 2012. «<span dir="ltr">Snakemake</span> - یک سامانهٔ کاریابی بیوانفورماتیک مقیاس‌پذیر.» _<span dir="ltr">Bioinformatics_</span> . <<span dir="ltr">https://doi.org/10.1093/bioinformatics/bts480</span>> .
 
-‫⁦Law⁩, ⁦Charity⁩ ⁦W.⁩, ⁦Yunshun⁩ ⁦Chen⁩, ⁦Wei⁩ ⁦Shi⁩, ⁦and⁩ ⁦Gordon⁩ ⁦K.⁩ ⁦Smyth.⁩ 2014. «⁦Voom:⁩ وزن‌های دقت ابزارهای مدل‌خطی را برای شمارش‌های ⁦read⁩ (خوانش) در ⁦RNA⁩‑⁦seq⁩ فعال می‌سازند.» _⁦Genome⁩ ⁦Biology_⁩ 15 (2): ⁦R29+.⁩ <⁦https://doi.org/10.1186/gb-2014-15-2-r29⁩> .‬
+<span dir="ltr">Law</span>, <span dir="ltr">Charity</span> <span dir="ltr">W.</span>, <span dir="ltr">Yunshun</span> <span dir="ltr">Chen</span>, <span dir="ltr">Wei</span> <span dir="ltr">Shi</span>, <span dir="ltr">and</span> <span dir="ltr">Gordon</span> <span dir="ltr">K.</span> <span dir="ltr">Smyth.</span> 2014. «<span dir="ltr">Voom:</span> وزن‌های دقت ابزارهای مدل‌خطی را برای شمارش‌های <span dir="ltr">read</span> (خوانش) در <span dir="ltr">RNA</span>‑<span dir="ltr">seq</span> فعال می‌سازند.» _<span dir="ltr">Genome</span> <span dir="ltr">Biology_</span> 15 (2): <span dir="ltr">R29+.</span> <<span dir="ltr">https://doi.org/10.1186/gb-2014-15-2-r29</span>> .
 
-‫⁦Lawrence⁩, ⁦Michael⁩, ⁦Wolfgang⁩ ⁦Huber⁩, ⁦Herv⁩é ⁦Pag⁩è⁦s⁩, ⁦Patrick⁩ ⁦Aboyoun⁩, ⁦Marc⁩ ⁦Carlson⁩, ⁦Robert⁩ ⁦Gentleman⁩, ⁦Martin⁩ ⁦T.⁩ ⁦Morgan⁩, ⁦and⁩ ⁦Vincent⁩ ⁦J.⁩ ⁦Carey.⁩ 2013. «نرم‌افزاری برای محاسبه و حاشیه‌نویسی بازه‌های ژنومی.» ⁦Edited⁩ ⁦by⁩ ⁦Andreas⁩ ⁦Prlic.⁩ _⁦PLoS⁩ ⁦Computational⁩ ⁦Biology_⁩ 9 (8): ⁦e1003118+.⁩ <⁦https://doi.org/10.1371/journal.pcbi.1003118⁩> .‬
+<span dir="ltr">Lawrence</span>, <span dir="ltr">Michael</span>, <span dir="ltr">Wolfgang</span> <span dir="ltr">Huber</span>, <span dir="ltr">Herv</span>é <span dir="ltr">Pag</span>è<span dir="ltr">s</span>, <span dir="ltr">Patrick</span> <span dir="ltr">Aboyoun</span>, <span dir="ltr">Marc</span> <span dir="ltr">Carlson</span>, <span dir="ltr">Robert</span> <span dir="ltr">Gentleman</span>, <span dir="ltr">Martin</span> <span dir="ltr">T.</span> <span dir="ltr">Morgan</span>, <span dir="ltr">and</span> <span dir="ltr">Vincent</span> <span dir="ltr">J.</span> <span dir="ltr">Carey.</span> 2013. «نرم‌افزاری برای محاسبه و حاشیه‌نویسی بازه‌های ژنومی.» <span dir="ltr">Edited</span> <span dir="ltr">by</span> <span dir="ltr">Andreas</span> <span dir="ltr">Prlic.</span> _<span dir="ltr">PLoS</span> <span dir="ltr">Computational</span> <span dir="ltr">Biology_</span> 9 (8): <span dir="ltr">e1003118+.</span> <<span dir="ltr">https://doi.org/10.1371/journal.pcbi.1003118</span>> .
 
-‫⁦Leek⁩, ⁦Jeffrey⁩ ⁦T.⁩ 2014. «⁦svaseq:⁩ حذف ⁦batch⁩ ⁦effect⁩ (اثر دسته‌ای) و سایر نویزهای ناخواسته از داده‌های توالی‌یابی.» _⁦Nucleic⁩ ⁦Acids⁩ ⁦Research_⁩ 42 (21): 000. <⁦https://doi.org/10.1093/nar/gku864⁩> .‬
+<span dir="ltr">Leek</span>, <span dir="ltr">Jeffrey</span> <span dir="ltr">T.</span> 2014. «<span dir="ltr">svaseq:</span> حذف <span dir="ltr">batch</span> <span dir="ltr">effect</span> (اثر دسته‌ای) و سایر نویزهای ناخواسته از داده‌های توالی‌یابی.» _<span dir="ltr">Nucleic</span> <span dir="ltr">Acids</span> <span dir="ltr">Research_</span> 42 (21): 000. <<span dir="ltr">https://doi.org/10.1093/nar/gku864</span>> .
 
-‫⁦Leng⁩, ⁦N.⁩, ⁦J.⁩ ⁦A.⁩ ⁦Dawson⁩, ⁦J.⁩ ⁦A.⁩ ⁦Thomson⁩, ⁦V.⁩ ⁦Ruotti⁩, ⁦A.⁩ ⁦I.⁩ ⁦Rissman⁩, ⁦B.⁩ ⁦M.⁩ ⁦G.⁩ ⁦Smits⁩, ⁦J.⁩ ⁦D.⁩ ⁦Haag⁩, ⁦M.⁩ ⁦N.⁩ ⁦Gould⁩, ⁦R.⁩ ⁦M.⁩ ⁦Stewart⁩, ⁦and⁩ ⁦C.⁩ ⁦Kendziorski.⁩ 2013. «⁦EBSeq:⁩ یک مدل سلسله‌مراتبی بیزی تجربی برای استنباط در آزمایش‌های ⁦RNA⁩‑⁦seq.⁩» _⁦Bioinformatics_⁩ 29 (8): 1035–43. <⁦https://doi.org/10.1093/bioinformatics/btt087⁩> .‬
+<span dir="ltr">Leng</span>, <span dir="ltr">N.</span>, <span dir="ltr">J.</span> <span dir="ltr">A.</span> <span dir="ltr">Dawson</span>, <span dir="ltr">J.</span> <span dir="ltr">A.</span> <span dir="ltr">Thomson</span>, <span dir="ltr">V.</span> <span dir="ltr">Ruotti</span>, <span dir="ltr">A.</span> <span dir="ltr">I.</span> <span dir="ltr">Rissman</span>, <span dir="ltr">B.</span> <span dir="ltr">M.</span> <span dir="ltr">G.</span> <span dir="ltr">Smits</span>, <span dir="ltr">J.</span> <span dir="ltr">D.</span> <span dir="ltr">Haag</span>, <span dir="ltr">M.</span> <span dir="ltr">N.</span> <span dir="ltr">Gould</span>, <span dir="ltr">R.</span> <span dir="ltr">M.</span> <span dir="ltr">Stewart</span>, <span dir="ltr">and</span> <span dir="ltr">C.</span> <span dir="ltr">Kendziorski.</span> 2013. «<span dir="ltr">EBSeq:</span> یک مدل سلسله‌مراتبی بیزی تجربی برای استنباط در آزمایش‌های <span dir="ltr">RNA</span>‑<span dir="ltr">seq.</span>» _<span dir="ltr">Bioinformatics_</span> 29 (8): 1035–43. <<span dir="ltr">https://doi.org/10.1093/bioinformatics/btt087</span>> .
 
-‫⁦Leong⁩, ⁦Hui⁩ ⁦S.⁩, ⁦Keren⁩ ⁦Dawson⁩, ⁦Chris⁩ ⁦Wirth⁩, ⁦Yaoyong⁩ ⁦Li⁩, ⁦Yvonne⁩ ⁦Connolly⁩, ⁦Duncan⁩ ⁦L.⁩ ⁦Smith⁩, ⁦Caroline⁩ ⁦R.⁩ ⁦Wilkinson⁩, ⁦and⁩ ⁦Crispin⁩ ⁦J.⁩ ⁦Miller.⁩ 2014. «یک سامانهٔ غیرکدکنندهٔ جهانی ⁦RNA⁩ سطوح پروتئینی جلبک شکافندهٔ (⁦fission⁩ ⁦yeast⁩) را در پاسخ به استرس تنظیم می‌کند.» _⁦Nature⁩ ⁦Communications_⁩ 5\. <⁦https://doi.org/10.1038/ncomms4947⁩> .‬
+<span dir="ltr">Leong</span>, <span dir="ltr">Hui</span> <span dir="ltr">S.</span>, <span dir="ltr">Keren</span> <span dir="ltr">Dawson</span>, <span dir="ltr">Chris</span> <span dir="ltr">Wirth</span>, <span dir="ltr">Yaoyong</span> <span dir="ltr">Li</span>, <span dir="ltr">Yvonne</span> <span dir="ltr">Connolly</span>, <span dir="ltr">Duncan</span> <span dir="ltr">L.</span> <span dir="ltr">Smith</span>, <span dir="ltr">Caroline</span> <span dir="ltr">R.</span> <span dir="ltr">Wilkinson</span>, <span dir="ltr">and</span> <span dir="ltr">Crispin</span> <span dir="ltr">J.</span> <span dir="ltr">Miller.</span> 2014. «یک سامانهٔ غیرکدکنندهٔ جهانی <span dir="ltr">RNA</span> سطوح پروتئینی جلبک شکافندهٔ (<span dir="ltr">fission</span> <span dir="ltr">yeast</span>) را در پاسخ به استرس تنظیم می‌کند.» _<span dir="ltr">Nature</span> <span dir="ltr">Communications_</span> 5\. <<span dir="ltr">https://doi.org/10.1038/ncomms4947</span>> .
 
-‫⁦Li⁩, ⁦Bo⁩, ⁦and⁩ ⁦Colin⁩ ⁦N.⁩ ⁦Dewey.⁩ 2011. «⁦RSEM:⁩ برآورد فراوانی (⁦quantification⁩) دقیق رونوشت‌ها از داده‌های ⁦RNA⁩‑⁦Seq⁩ با یا بدون ژنوم مرجع.» _⁦BMC⁩ ⁦Bioinformatics_⁩ 12: 323+. <⁦https://doi.org/10.1186/1471-2105-12-3231⁩> .‬
+<span dir="ltr">Li</span>, <span dir="ltr">Bo</span>, <span dir="ltr">and</span> <span dir="ltr">Colin</span> <span dir="ltr">N.</span> <span dir="ltr">Dewey.</span> 2011. «<span dir="ltr">RSEM:</span> برآورد فراوانی (<span dir="ltr">quantification</span>) دقیق رونوشت‌ها از داده‌های <span dir="ltr">RNA</span>‑<span dir="ltr">Seq</span> با یا بدون ژنوم مرجع.» _<span dir="ltr">BMC</span> <span dir="ltr">Bioinformatics_</span> 12: 323+. <<span dir="ltr">https://doi.org/10.1186/1471-2105-12-3231</span>> .
 
-‫⁦Liao⁩, ⁦Y.⁩, ⁦G.⁩ ⁦K.⁩ ⁦Smyth⁩, ⁦and⁩ ⁦W.⁩ ⁦Shi.⁩ 2014. «⁦featureCounts:⁩ یک برنامهٔ عمومی و کارآمد برای تخصیص خوانش‌ها به ویژگی‌های ژنومی.» _⁦Bioinformatics_⁩ 30 (7): 923–30. <⁦https://doi.org/10.1093/bioinformatics/btt656⁩> .‬
+<span dir="ltr">Liao</span>, <span dir="ltr">Y.</span>, <span dir="ltr">G.</span> <span dir="ltr">K.</span> <span dir="ltr">Smyth</span>, <span dir="ltr">and</span> <span dir="ltr">W.</span> <span dir="ltr">Shi.</span> 2014. «<span dir="ltr">featureCounts:</span> یک برنامهٔ عمومی و کارآمد برای تخصیص خوانش‌ها به ویژگی‌های ژنومی.» _<span dir="ltr">Bioinformatics_</span> 30 (7): 923–30. <<span dir="ltr">https://doi.org/10.1093/bioinformatics/btt656</span>> .
 
-‫⁦Love⁩, ⁦Michael⁩ ⁦I.⁩, ⁦John⁩ ⁦B.⁩ ⁦Hogenesch⁩, ⁦and⁩ ⁦Rafael⁩ ⁦A.⁩ ⁦Irizarry.⁩ 2016. «مدل‌سازی شیب توالی قطعات ⁦RNA⁩‑⁦Seq⁩ خطاهای سیستماتیک در برآورد فراوانی (⁦abundance⁩ (فراوانی)) رونوشت‌ها را کاهش می‌دهد.» _⁦Nature⁩ ⁦Biotechnology_⁩ 34 (12): 1287–91. <⁦http://dx.doi.org/10.1038/nbt.3682⁩> .‬
+<span dir="ltr">Love</span>, <span dir="ltr">Michael</span> <span dir="ltr">I.</span>, <span dir="ltr">John</span> <span dir="ltr">B.</span> <span dir="ltr">Hogenesch</span>, <span dir="ltr">and</span> <span dir="ltr">Rafael</span> <span dir="ltr">A.</span> <span dir="ltr">Irizarry.</span> 2016. «مدل‌سازی شیب توالی قطعات <span dir="ltr">RNA</span>‑<span dir="ltr">Seq</span> خطاهای سیستماتیک در برآورد فراوانی (<span dir="ltr">abundance</span> (فراوانی)) رونوشت‌ها را کاهش می‌دهد.» _<span dir="ltr">Nature</span> <span dir="ltr">Biotechnology_</span> 34 (12): 1287–91. <<span dir="ltr">http://dx.doi.org/10.1038/nbt.3682</span>> .
 
-‫⁦Love⁩, ⁦Michael⁩ ⁦I.⁩, ⁦Wolfgang⁩ ⁦Huber⁩, ⁦and⁩ ⁦Simon⁩ ⁦Anders.⁩ 2014. «برآورد تعدیل‌شدهٔ تغییرات تابی (⁦fold⁩ ⁦change⁩) و ⁦dispersion⁩ (پراکندگی) برای داده‌های ⁦RNA⁩‑⁦seq⁩ با ⁦DESeq2.⁩» _⁦Genome⁩ ⁦Biology_⁩ 15 (12): 550+. <⁦https://doi.org/10.1186/s13059-014-0550-8⁩> .‬
+<span dir="ltr">Love</span>, <span dir="ltr">Michael</span> <span dir="ltr">I.</span>, <span dir="ltr">Wolfgang</span> <span dir="ltr">Huber</span>, <span dir="ltr">and</span> <span dir="ltr">Simon</span> <span dir="ltr">Anders.</span> 2014. «برآورد تعدیل‌شدهٔ تغییرات تابی (<span dir="ltr">fold</span> <span dir="ltr">change</span>) و <span dir="ltr">dispersion</span> (پراکندگی) برای داده‌های <span dir="ltr">RNA</span>‑<span dir="ltr">seq</span> با <span dir="ltr">DESeq2.</span>» _<span dir="ltr">Genome</span> <span dir="ltr">Biology_</span> 15 (12): 550+. <<span dir="ltr">https://doi.org/10.1186/s13059-014-0550-8</span>> .
 
-‫⁦Love⁩, ⁦Michael⁩ ⁦I.⁩, ⁦Charlotte⁩ ⁦Soneson⁩, ⁦Peter⁩ ⁦F.⁩ ⁦Hickey⁩, ⁦Lisa⁩ ⁦K.⁩ ⁦Johnson⁩, ⁦N.⁩ ⁦Tessa⁩ ⁦Pierce⁩, ⁦Lori⁩ ⁦Shepherd⁩, ⁦Martin⁩ ⁦Morgan⁩, ⁦and⁩ ⁦Rob⁩ ⁦Patro.⁩ 2020. «⁦Tximeta:⁩ جمع‌های بررسی چکسام‌های توالی مرجع برای شناسایی منشأ در ⁦RNA⁩‑⁦seq.⁩» _⁦PLOS⁩ ⁦Computational⁩ ⁦Biology_⁩ . <⁦https://doi.org/10.1371/journal.pcbi.1007664⁩> .‬
-‫⁦Patro⁩, ⁦Rob⁩, ⁦Geet⁩ ⁦Duggal⁩, ⁦Michael⁩ ⁦I.⁩ ⁦Love⁩, ⁦Rafael⁩ ⁦A.⁩ ⁦Irizarry⁩, ⁦and⁩ ⁦Carl⁩ ⁦Kingsford.⁩ 2017. «⁦Salmon⁩ برآورد فراوانی بیان ⁦transcript⁩ (رونوشت) را به‌سرعت و با درنظر گرفتن بایاس ارائه می‌کند.» _⁦Nature⁩ ⁦Methods_.⁩ <⁦http://dx.doi.org/10.1038/nmeth.4197⁩> .‬
+<span dir="ltr">Love</span>, <span dir="ltr">Michael</span> <span dir="ltr">I.</span>, <span dir="ltr">Charlotte</span> <span dir="ltr">Soneson</span>, <span dir="ltr">Peter</span> <span dir="ltr">F.</span> <span dir="ltr">Hickey</span>, <span dir="ltr">Lisa</span> <span dir="ltr">K.</span> <span dir="ltr">Johnson</span>, <span dir="ltr">N.</span> <span dir="ltr">Tessa</span> <span dir="ltr">Pierce</span>, <span dir="ltr">Lori</span> <span dir="ltr">Shepherd</span>, <span dir="ltr">Martin</span> <span dir="ltr">Morgan</span>, <span dir="ltr">and</span> <span dir="ltr">Rob</span> <span dir="ltr">Patro.</span> 2020. «<span dir="ltr">Tximeta:</span> جمع‌های بررسی چکسام‌های توالی مرجع برای شناسایی منشأ در <span dir="ltr">RNA</span>‑<span dir="ltr">seq.</span>» _<span dir="ltr">PLOS</span> <span dir="ltr">Computational</span> <span dir="ltr">Biology_</span> . <<span dir="ltr">https://doi.org/10.1371/journal.pcbi.1007664</span>> .
+<span dir="ltr">Patro</span>, <span dir="ltr">Rob</span>, <span dir="ltr">Geet</span> <span dir="ltr">Duggal</span>, <span dir="ltr">Michael</span> <span dir="ltr">I.</span> <span dir="ltr">Love</span>, <span dir="ltr">Rafael</span> <span dir="ltr">A.</span> <span dir="ltr">Irizarry</span>, <span dir="ltr">and</span> <span dir="ltr">Carl</span> <span dir="ltr">Kingsford.</span> 2017. «<span dir="ltr">Salmon</span> برآورد فراوانی بیان <span dir="ltr">transcript</span> (رونوشت) را به‌سرعت و با درنظر گرفتن بایاس ارائه می‌کند.» _<span dir="ltr">Nature</span> <span dir="ltr">Methods_.</span> <<span dir="ltr">http://dx.doi.org/10.1038/nmeth.4197</span>> .
 
-‫⁦Risso⁩, ⁦Davide⁩, ⁦John⁩ ⁦Ngai⁩, ⁦Terence⁩ ⁦P.⁩ ⁦Speed⁩, ⁦and⁩ ⁦Sandrine⁩ ⁦Dudoit.⁩ 2014. «⁦normalization⁩ (نرمال‌سازی) داده‌های ⁦RNA-seq⁩ با استفاده از تحلیل عاملی روی ⁦gene⁩ (ژن)‌های کنترلی یا نمونه‌ها.» _⁦Nature⁩ ⁦Biotechnology_⁩ 32 (9): 896–902. <⁦https://doi.org/10.1038/nbt.2931⁩> .‬
+<span dir="ltr">Risso</span>, <span dir="ltr">Davide</span>, <span dir="ltr">John</span> <span dir="ltr">Ngai</span>, <span dir="ltr">Terence</span> <span dir="ltr">P.</span> <span dir="ltr">Speed</span>, <span dir="ltr">and</span> <span dir="ltr">Sandrine</span> <span dir="ltr">Dudoit.</span> 2014. «<span dir="ltr">normalization</span> (نرمال‌سازی) داده‌های <span dir="ltr">RNA-seq</span> با استفاده از تحلیل عاملی روی <span dir="ltr">gene</span> (ژن)‌های کنترلی یا نمونه‌ها.» _<span dir="ltr">Nature</span> <span dir="ltr">Biotechnology_</span> 32 (9): 896–902. <<span dir="ltr">https://doi.org/10.1038/nbt.2931</span>> .
 
-‫⁦Robert⁩, ⁦Christelle⁩, ⁦and⁩ ⁦Mick⁩ ⁦Watson.⁩ 2015. «خطاها در برآورد فراوانی ⁦RNA-Seq⁩ بر ⁦gene⁩ (ژن)هایی که با بیماری‌های انسانی مرتبط‌اند تأثیر می‌گذارد.» _⁦Genome⁩ ⁦Biology_.⁩ <⁦https://doi.org/10.1186/s13059-015-0734-x⁩> .‬
+<span dir="ltr">Robert</span>, <span dir="ltr">Christelle</span>, <span dir="ltr">and</span> <span dir="ltr">Mick</span> <span dir="ltr">Watson.</span> 2015. «خطاها در برآورد فراوانی <span dir="ltr">RNA-Seq</span> بر <span dir="ltr">gene</span> (ژن)هایی که با بیماری‌های انسانی مرتبط‌اند تأثیر می‌گذارد.» _<span dir="ltr">Genome</span> <span dir="ltr">Biology_.</span> <<span dir="ltr">https://doi.org/10.1186/s13059-015-0734-x</span>> .
 
-‫⁦Robinson⁩, ⁦M.⁩ ⁦D.⁩, ⁦D.⁩ ⁦J.⁩ ⁦McCarthy⁩, ⁦and⁩ ⁦G.⁩ ⁦K.⁩ ⁦Smyth.⁩ 2009. «⁦edgeR:⁩ یک بسته ⁦Bioconductor⁩ برای ⁦differential⁩ ⁦expression⁩ ⁦analysis⁩ (تحلیل بیان تفاضلی) داده‌های دیجیتال بیان ⁦gene⁩ (ژن).» _⁦Bioinformatics_⁩ 26 (1): 139–40. <⁦https://doi.org/10.1093/bioinformatics/btp616⁩> .‬
+<span dir="ltr">Robinson</span>, <span dir="ltr">M.</span> <span dir="ltr">D.</span>, <span dir="ltr">D.</span> <span dir="ltr">J.</span> <span dir="ltr">McCarthy</span>, <span dir="ltr">and</span> <span dir="ltr">G.</span> <span dir="ltr">K.</span> <span dir="ltr">Smyth.</span> 2009. «<span dir="ltr">edgeR:</span> یک بسته <span dir="ltr">Bioconductor</span> برای <span dir="ltr">differential</span> <span dir="ltr">expression</span> <span dir="ltr">analysis</span> (تحلیل بیان تفاضلی) داده‌های دیجیتال بیان <span dir="ltr">gene</span> (ژن).» _<span dir="ltr">Bioinformatics_</span> 26 (1): 139–40. <<span dir="ltr">https://doi.org/10.1093/bioinformatics/btp616</span>> .
 
-‫⁦Schurch⁩, ⁦Nicholas⁩ ⁦J.⁩, ⁦Pieta⁩ ⁦Schofield⁩, ⁦Marek⁩ ⁦Gierlinski⁩, ⁦Christian⁩ ⁦Cole⁩, ⁦Alexander⁩ ⁦Sherstnev⁩, ⁦Vijender⁩ ⁦Singh⁩, ⁦Nicola⁩ ⁦Wrobel⁩, ⁦et⁩ ⁦al.⁩ 2016. «چه تعداد تکرار زیستی در یک آزمایش ⁦RNA-Seq⁩ لازم است و کدام ابزار برای ⁦differential⁩ ⁦expression⁩ ⁦analysis⁩ (تحلیل بیان تفاضلی) مناسب‌تر است؟» 22 (6): 839–51. <⁦https://doi.org/10.1261/rna.053959.115⁩> .‬
+<span dir="ltr">Schurch</span>, <span dir="ltr">Nicholas</span> <span dir="ltr">J.</span>, <span dir="ltr">Pieta</span> <span dir="ltr">Schofield</span>, <span dir="ltr">Marek</span> <span dir="ltr">Gierlinski</span>, <span dir="ltr">Christian</span> <span dir="ltr">Cole</span>, <span dir="ltr">Alexander</span> <span dir="ltr">Sherstnev</span>, <span dir="ltr">Vijender</span> <span dir="ltr">Singh</span>, <span dir="ltr">Nicola</span> <span dir="ltr">Wrobel</span>, <span dir="ltr">et</span> <span dir="ltr">al.</span> 2016. «چه تعداد تکرار زیستی در یک آزمایش <span dir="ltr">RNA-Seq</span> لازم است و کدام ابزار برای <span dir="ltr">differential</span> <span dir="ltr">expression</span> <span dir="ltr">analysis</span> (تحلیل بیان تفاضلی) مناسب‌تر است؟» 22 (6): 839–51. <<span dir="ltr">https://doi.org/10.1261/rna.053959.115</span>> .
 
-‫⁦Soneson⁩, ⁦Charlotte⁩, ⁦Michael⁩ ⁦I.⁩ ⁦Love⁩, ⁦and⁩ ⁦Mark⁩ ⁦Robinson.⁩ 2015. «⁦Differential⁩ ⁦analyses⁩ برای ⁦RNA-seq:⁩ برآوردهای در سطح ⁦transcript⁩ (رونوشت) استنباط‌های در سطح ⁦gene⁩ (ژن) را بهبود می‌بخشند.» _⁦F1000Research_⁩ 4 (1521). <⁦https://doi.org/10.12688/f1000research.7563.1⁩> .‬
+<span dir="ltr">Soneson</span>, <span dir="ltr">Charlotte</span>, <span dir="ltr">Michael</span> <span dir="ltr">I.</span> <span dir="ltr">Love</span>, <span dir="ltr">and</span> <span dir="ltr">Mark</span> <span dir="ltr">Robinson.</span> 2015. «<span dir="ltr">Differential</span> <span dir="ltr">analyses</span> برای <span dir="ltr">RNA-seq:</span> برآوردهای در سطح <span dir="ltr">transcript</span> (رونوشت) استنباط‌های در سطح <span dir="ltr">gene</span> (ژن) را بهبود می‌بخشند.» _<span dir="ltr">F1000Research_</span> 4 (1521). <<span dir="ltr">https://doi.org/10.12688/f1000research.7563.1</span>> .
 
-‫⁦Srivastava⁩, ⁦Avi⁩, ⁦Laraib⁩ ⁦Malik⁩, ⁦Hirak⁩ ⁦Sarkar⁩, ⁦Mohsen⁩ ⁦Zakeri⁩, ⁦Fatemeh⁩ ⁦Almodaresi⁩, ⁦Charlotte⁩ ⁦Soneson⁩, ⁦Michael⁩ ⁦I.⁩ ⁦Love⁩, ⁦Carl⁩ ⁦Kingsford⁩, ⁦and⁩ ⁦Rob⁩ ⁦Patro.⁩ 2020. «روش‌های تراز و نگاشت بر برآورد فراوانی ⁦transcript⁩ (رونوشت) تأثیر می‌گذارند.» _⁦Genome⁩ ⁦Biology_⁩ 21 (1): 239. <⁦https://doi.org/10.1186/s13059-020-02151-8⁩> .‬
+<span dir="ltr">Srivastava</span>, <span dir="ltr">Avi</span>, <span dir="ltr">Laraib</span> <span dir="ltr">Malik</span>, <span dir="ltr">Hirak</span> <span dir="ltr">Sarkar</span>, <span dir="ltr">Mohsen</span> <span dir="ltr">Zakeri</span>, <span dir="ltr">Fatemeh</span> <span dir="ltr">Almodaresi</span>, <span dir="ltr">Charlotte</span> <span dir="ltr">Soneson</span>, <span dir="ltr">Michael</span> <span dir="ltr">I.</span> <span dir="ltr">Love</span>, <span dir="ltr">Carl</span> <span dir="ltr">Kingsford</span>, <span dir="ltr">and</span> <span dir="ltr">Rob</span> <span dir="ltr">Patro.</span> 2020. «روش‌های تراز و نگاشت بر برآورد فراوانی <span dir="ltr">transcript</span> (رونوشت) تأثیر می‌گذارند.» _<span dir="ltr">Genome</span> <span dir="ltr">Biology_</span> 21 (1): 239. <<span dir="ltr">https://doi.org/10.1186/s13059-020-02151-8</span>> .
 
-‫⁦Tonner⁩, ⁦Peter⁩ ⁦D⁩, ⁦Cynthia⁩ ⁦L⁩ ⁦Darnell⁩, ⁦Barbara⁩ ⁦E⁩ ⁦Engelhardt⁩, ⁦and⁩ ⁦Amy⁩ ⁦K⁩ ⁦Schmid.⁩ 2017. «شناسایی رشد تفاضلی جمعیت‌های میکروبی با رگرسیون فرآیند گاوسی.» _⁦Genome⁩ ⁦Research_⁩ 27: 320–33. <⁦https://doi.org/10.1101/gr.210286.116⁩> .‬
+<span dir="ltr">Tonner</span>, <span dir="ltr">Peter</span> <span dir="ltr">D</span>, <span dir="ltr">Cynthia</span> <span dir="ltr">L</span> <span dir="ltr">Darnell</span>, <span dir="ltr">Barbara</span> <span dir="ltr">E</span> <span dir="ltr">Engelhardt</span>, <span dir="ltr">and</span> <span dir="ltr">Amy</span> <span dir="ltr">K</span> <span dir="ltr">Schmid.</span> 2017. «شناسایی رشد تفاضلی جمعیت‌های میکروبی با رگرسیون فرآیند گاوسی.» _<span dir="ltr">Genome</span> <span dir="ltr">Research_</span> 27: 320–33. <<span dir="ltr">https://doi.org/10.1101/gr.210286.116</span>> .
 
-‫⁦Townes⁩, ⁦F.⁩ ⁦William⁩, ⁦Stephanie⁩ ⁦C.⁩ ⁦Hicks⁩, ⁦Martin⁩ ⁦J.⁩ ⁦Aryee⁩, ⁦and⁩ ⁦Rafael⁩ ⁦A.⁩ ⁦Irizarry.⁩ 2019. «انتخاب ویژگی و کاهش بُعد برای ⁦RNA-Seq⁩ تک‌سلولی بر پایه یک مدل چندنومیالی.» _⁦Genome⁩ ⁦Biology_⁩ 20 (1): 295. <⁦https://doi.org/10.1186/s13059-019-1861-6⁩> .‬
+<span dir="ltr">Townes</span>, <span dir="ltr">F.</span> <span dir="ltr">William</span>, <span dir="ltr">Stephanie</span> <span dir="ltr">C.</span> <span dir="ltr">Hicks</span>, <span dir="ltr">Martin</span> <span dir="ltr">J.</span> <span dir="ltr">Aryee</span>, <span dir="ltr">and</span> <span dir="ltr">Rafael</span> <span dir="ltr">A.</span> <span dir="ltr">Irizarry.</span> 2019. «انتخاب ویژگی و کاهش بُعد برای <span dir="ltr">RNA-Seq</span> تک‌سلولی بر پایه یک مدل چندنومیالی.» _<span dir="ltr">Genome</span> <span dir="ltr">Biology_</span> 20 (1): 295. <<span dir="ltr">https://doi.org/10.1186/s13059-019-1861-6</span>> .
 
-‫⁦Trapnell⁩, ⁦Cole⁩, ⁦David⁩ ⁦G⁩ ⁦Hendrickson⁩, ⁦Martin⁩ ⁦Sauvageau⁩, ⁦Loyal⁩ ⁦Goff⁩, ⁦John⁩ ⁦L⁩ ⁦Rinn⁩, ⁦and⁩ ⁦Lior⁩ ⁦Pachter.⁩ 2013. «تحلیل تفاضلی تنظیم ژن با دقت رونوشت (⁦transcript⁩ (رونوشت)) با استفاده از ⁦RNA-seq.⁩» _⁦Nature⁩ ⁦Biotechnology_.⁩ <⁦https://doi.org/10.1038/nbt.2450⁩> .‬
+<span dir="ltr">Trapnell</span>, <span dir="ltr">Cole</span>, <span dir="ltr">David</span> <span dir="ltr">G</span> <span dir="ltr">Hendrickson</span>, <span dir="ltr">Martin</span> <span dir="ltr">Sauvageau</span>, <span dir="ltr">Loyal</span> <span dir="ltr">Goff</span>, <span dir="ltr">John</span> <span dir="ltr">L</span> <span dir="ltr">Rinn</span>, <span dir="ltr">and</span> <span dir="ltr">Lior</span> <span dir="ltr">Pachter.</span> 2013. «تحلیل تفاضلی تنظیم ژن با دقت رونوشت (<span dir="ltr">transcript</span> (رونوشت)) با استفاده از <span dir="ltr">RNA-seq.</span>» _<span dir="ltr">Nature</span> <span dir="ltr">Biotechnology_.</span> <<span dir="ltr">https://doi.org/10.1038/nbt.2450</span>> .
 
-‫⁦Wickham⁩, ⁦Hadley.⁩ 2009. _⁦ggplot2_.⁩ ⁦New⁩ ⁦York⁩, ⁦NY:⁩ ⁦Springer⁩ ⁦New⁩ ⁦York.⁩ <⁦https://doi.org/10.1007/978-0-387-98141-3⁩> .‬
+<span dir="ltr">Wickham</span>, <span dir="ltr">Hadley.</span> 2009. _<span dir="ltr">ggplot2_.</span> <span dir="ltr">New</span> <span dir="ltr">York</span>, <span dir="ltr">NY:</span> <span dir="ltr">Springer</span> <span dir="ltr">New</span> <span dir="ltr">York.</span> <<span dir="ltr">https://doi.org/10.1007/978-0-387-98141-3</span>> .
 
-‫⁦Witten⁩, ⁦Daniela⁩ ⁦M.⁩ 2011. «طبقه‌بندی و خوشه‌بندی داده‌های توالی‌یابی با استفاده از مدل پواسون.» _⁦The⁩ ⁦Annals⁩ ⁦of⁩ ⁦Applied⁩ ⁦Statistics_⁩ 5 (4): 2493–2518. <⁦https://doi.org/10.1214/11-AOAS493⁩> .‬
+<span dir="ltr">Witten</span>, <span dir="ltr">Daniela</span> <span dir="ltr">M.</span> 2011. «طبقه‌بندی و خوشه‌بندی داده‌های توالی‌یابی با استفاده از مدل پواسون.» _<span dir="ltr">The</span> <span dir="ltr">Annals</span> <span dir="ltr">of</span> <span dir="ltr">Applied</span> <span dir="ltr">Statistics_</span> 5 (4): 2493–2518. <<span dir="ltr">https://doi.org/10.1214/11-AOAS493</span>> .
 
-‫⁦Wu⁩, ⁦Hao⁩, ⁦Chi⁩ ⁦Wang⁩, ⁦and⁩ ⁦Zhijin⁩ ⁦Wu.⁩ 2013. «یک برآوردگر کوچک‌سازی جدید برای ⁦dispersion⁩ (پراکندگی)، تشخیص ⁦differential⁩ ⁦expression⁩ (تحلیل بیان تفاضلی) را در داده‌های ⁦RNA-seq⁩ بهبود می‌دهد.» _⁦Biostatistics_⁩ 14 (2): 232–43. <⁦https://doi.org/10.1093/biostatistics/kxs033⁩> .‬
+<span dir="ltr">Wu</span>, <span dir="ltr">Hao</span>, <span dir="ltr">Chi</span> <span dir="ltr">Wang</span>, <span dir="ltr">and</span> <span dir="ltr">Zhijin</span> <span dir="ltr">Wu.</span> 2013. «یک برآوردگر کوچک‌سازی جدید برای <span dir="ltr">dispersion</span> (پراکندگی)، تشخیص <span dir="ltr">differential</span> <span dir="ltr">expression</span> (تحلیل بیان تفاضلی) را در داده‌های <span dir="ltr">RNA-seq</span> بهبود می‌دهد.» _<span dir="ltr">Biostatistics_</span> 14 (2): 232–43. <<span dir="ltr">https://doi.org/10.1093/biostatistics/kxs033</span>> .
 
-‫⁦Zhu⁩, ⁦Anqi⁩, ⁦Joseph⁩ ⁦G.⁩ ⁦Ibrahim⁩, ⁦and⁩ ⁦Michael⁩ ⁦I.⁩ ⁦Love.⁩ 2018. «توزیع‌های پیشین سنگین‌دم برای داده‌های ⁦sequence⁩ ⁦count⁩ (شمارش): حذف نویز و حفظ تفاوت‌های بزرگ.» _⁦Bioinformatics_.⁩ <⁦https://doi.org/10.1093/bioinformatics/bty895⁩> .‬
+<span dir="ltr">Zhu</span>, <span dir="ltr">Anqi</span>, <span dir="ltr">Joseph</span> <span dir="ltr">G.</span> <span dir="ltr">Ibrahim</span>, <span dir="ltr">and</span> <span dir="ltr">Michael</span> <span dir="ltr">I.</span> <span dir="ltr">Love.</span> 2018. «توزیع‌های پیشین سنگین‌دم برای داده‌های <span dir="ltr">sequence</span> <span dir="ltr">count</span> (شمارش): حذف نویز و حفظ تفاوت‌های بزرگ.» _<span dir="ltr">Bioinformatics_.</span> <<span dir="ltr">https://doi.org/10.1093/bioinformatics/bty895</span>> .
