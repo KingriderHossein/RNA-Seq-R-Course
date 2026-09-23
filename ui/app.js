@@ -1,4 +1,4 @@
-/* UI version: 1.0.0 */
+/* UI version: 1.0.1 */
 
 (() => {
   "use strict";
@@ -241,16 +241,6 @@
     });
   }
 
-  function enhanceLinks() {
-    [...article.querySelectorAll("a[href]")].forEach((link) => {
-      const href = link.getAttribute("href");
-      if (!href || href.startsWith("#")) return;
-
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-    });
-  }
-
   function openToc() {
     tocPanel?.classList.add("is-open");
     tocBackdrop.hidden = false;
@@ -319,7 +309,6 @@
       buildToc(headings);
       enhanceCodeBlocks();
       enhanceTables();
-      enhanceLinks();
       updateScrollUI();
 
       if (window.location.hash) {
